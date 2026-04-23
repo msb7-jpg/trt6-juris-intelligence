@@ -5,6 +5,6 @@ import opendataloader_pdf
 opendataloader_pdf.convert(
     input_path=["mock.pdf"],
     output_dir="output/",
-    # image_output='off',
+    image_output='off',
     format="markdown,json"
 )

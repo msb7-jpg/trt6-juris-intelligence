@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Página de Resultados - JusTRT6</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#d6e0f6",
+                      "surface-bright": "#f6f9ff",
+                      "primary": "#002045",
+                      "on-primary-fixed": "#001b3c",
+                      "on-background": "#161c22",
+                      "surface-container-low": "#eef4fc",
+                      "inverse-surface": "#2b3137",
+                      "on-tertiary-fixed-variant": "#633f0f",
+                      "on-primary-container": "#86a0cd",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#f6f9ff",
+                      "primary-fixed": "#d6e3ff",
+                      "surface-container-high": "#e3e9f1",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "on-error": "#ffffff",
+                      "outline": "#74777f",
+                      "primary-fixed-dim": "#adc7f7",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#bdc7dc",
+                      "surface-variant": "#dde3eb",
+                      "on-secondary-fixed-variant": "#3d4759",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#dde3eb",
+                      "on-secondary-fixed": "#121c2c",
+                      "surface": "#f6f9ff",
+                      "inverse-on-surface": "#ebf1f9",
+                      "surface-tint": "#455f88",
+                      "primary-container": "#1a365d",
+                      "secondary": "#555f71",
+                      "tertiary-container": "#4f2e00",
+                      "outline-variant": "#c4c6cf",
+                      "tertiary": "#321b00",
+                      "tertiary-fixed": "#ffddba",
+                      "inverse-primary": "#adc7f7",
+                      "on-secondary-container": "#596376",
+                      "error-container": "#ffdad6",
+                      "surface-dim": "#d4dbe2",
+                      "on-tertiary-container": "#c6955e",
+                      "secondary-fixed": "#d9e3f9",
+                      "on-tertiary-fixed": "#2b1700",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#e8eef6",
+                      "tertiary-fixed-dim": "#f2bc82",
+                      "on-surface-variant": "#43474e",
+                      "on-surface": "#161c22",
+                      "on-tertiary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "1.5rem",
+                      "margin": "2rem",
+                      "lg": "1.5rem",
+                      "base": "4px",
+                      "md": "1rem",
+                      "sm": "0.5rem",
+                      "xs": "0.25rem",
+                      "xl": "2rem"
+              },
+              "fontFamily": {
+                      "h1": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "h2": [
+                              "Inter"
+                      ],
+                      "data-mono": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "h1": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h3": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h2": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "data-mono": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "letterSpacing": "0px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg antialiased min-h-screen flex flex-col">
+<nav class="bg-white dark:bg-slate-900 font-inter antialiased tracking-tight docked full-width top-0 border-b border-b border-[#E2E8F0] dark:border-slate-800 shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black tracking-tighter text-[#1A365D] dark:text-white">JusTRT6</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#1A365D] dark:hover:text-blue-300 transition-colors active:opacity-80 transition-all" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#1A365D] dark:hover:text-blue-300 transition-colors active:opacity-80 transition-all" href="#">Strategy Lab</a>
+<a class="text-[#1A365D] dark:text-white border-b-2 border-[#1A365D] dark:border-blue-500 pb-1 font-bold hover:text-[#1A365D] dark:hover:text-blue-300 transition-colors active:opacity-80 transition-all" href="#">Case Search</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-[#1A365D] dark:hover:text-blue-300 transition-colors active:opacity-80 transition-all" href="#">Archives</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 hover:text-[#1A365D] transition-colors p-2">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-500 hover:text-[#1A365D] transition-colors p-2">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="professional headshot of a person in a corporate setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMKRRZQCVnzpj6SkCx_zNzQPpkdGLesgUBlLFO9Z3FS_ohijWRXeyL0LOdxHFFcFwQhZWNgTnMyTBix_SwBB6Zr6eGizLkS3aRuv2fNAcoiMtfU-Hu7PAHLX0iSFVhmWBLr9bhtN7egqGD8kLF3I6wmK0BMW9F-NUqkNyBKck9AUUIJkXt_jFvymn9a-MC-favEKNkQyjmAzhi4l4v1jLOtusVzP9idNVyLSC4B4pDxV0b8kbcdbybBmUxdR9oEt74ZzYomI0iDwGw"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-6 py-8">
+<div class="mb-8">
+<h1 class="font-h1 text-h1 text-primary-container">Análise de Precedentes</h1>
+<p class="font-body-md text-body-md text-secondary mt-1">Busca baseada em inteligência semântica e histórico decisório.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<section class="lg:col-span-7 flex flex-col gap-4">
+<div class="flex justify-between items-end mb-2">
+<h2 class="font-h3 text-h3 text-on-surface">Resultados Encontrados (142)</h2>
+<button class="flex items-center gap-2 text-primary-container hover:text-surface-tint font-label-caps text-label-caps transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filtrar
+                    </button>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1)] flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-data-mono text-data-mono text-primary-container block">0001234-56.2023.5.06.0001</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mt-1 block">TRT-6 · 1ª Turma · Relator: Des. Eduardo Pugliesi</span>
+</div>
+<div class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-full flex items-center gap-1 border border-primary-fixed-dim">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-label-caps text-label-caps uppercase">96% Similar</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-DEFAULT border-l-2 border-primary-container">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<strong>Síntese da Decisão:</strong> Reconhecimento de vínculo empregatício e pagamento de horas extras excedentes à 8ª diária. O tribunal considerou a habitualidade e subordinação comprovadas pelas provas testemunhais, descaracterizando o trabalho autônomo.
+                        </p>
+</div>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#VínculoEmpregatício</span>
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#HorasExtras</span>
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#ProvaTestemunhal</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1)] flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-data-mono text-data-mono text-primary-container block">0000987-12.2022.5.06.0014</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mt-1 block">TRT-6 · 3ª Turma · Relator: Des. Milton Gouveia</span>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-2 py-0.5 rounded-full flex items-center gap-1 border border-tertiary-fixed-dim">
+<span class="material-symbols-outlined text-[14px]">remove_circle_outline</span>
+<span class="font-label-caps text-label-caps uppercase">78% Similar</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-DEFAULT border-l-2 border-outline-variant">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<strong>Síntese da Decisão:</strong> Provimento parcial para excluir a condenação em danos morais, mantendo o pagamento das horas de trajeto (in itinere). A turma entendeu não haver prova cabal de ofensa à honra do trabalhador.
+                        </p>
+</div>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#DanosMorais</span>
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#HorasInItinere</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] transition-shadow hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.1)] flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-data-mono text-data-mono text-primary-container block">0002345-89.2023.5.06.0005</span>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mt-1 block">TRT-6 · 2ª Turma · Relator: Des. Ivan Valença</span>
+</div>
+<div class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-full flex items-center gap-1 border border-primary-fixed-dim">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-label-caps text-label-caps uppercase">91% Similar</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-DEFAULT border-l-2 border-primary-container">
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">
+<strong>Síntese da Decisão:</strong> Condenação solidária do grupo econômico. Configurada a coordenação entre as empresas reclamadas, justifica-se a responsabilidade conjunta pelas verbas rescisórias e multas do art. 477 da CLT.
+                        </p>
+</div>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#GrupoEconômico</span>
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#ResponsabilidadeSolidária</span>
+<span class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded-DEFAULT font-label-caps text-label-caps uppercase">#Art477</span>
+</div>
+</div>
+</section>
+<aside class="lg:col-span-5 flex flex-col gap-6">
+<h2 class="font-h3 text-h3 text-on-surface mb-2">Painel de Insights</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed-dim rounded-full blur-3xl opacity-20 -mr-10 -mt-10 pointer-events-none"></div>
+<h3 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">donut_large</span> Probabilidade de Êxito
+                        </h3>
+<div class="flex items-center gap-6">
+<div class="relative w-24 h-24 flex items-center justify-center flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.8"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="82, 100" stroke-linecap="round" stroke-width="3.8"></path>
+</svg>
+<span class="absolute font-h2 text-h2 text-primary-container">82%</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface-variant">Alta correlação jurisprudencial favorável ao polo passivo nesta turma específica.</p>
+<div class="mt-2 flex gap-2">
+<span class="inline-flex items-center gap-1 text-[12px] font-medium text-[#137333] bg-[#e6f4ea] px-2 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +5% vs Média TRT
+                                    </span>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+<h3 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">account_balance_wallet</span> Impacto Financeiro (Acordos)
+                        </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface p-3 rounded-DEFAULT border border-outline-variant">
+<span class="font-label-caps text-label-caps text-secondary block mb-1">Média</span>
+<span class="font-h3 text-h3 text-on-surface">R$ 42.500</span>
+</div>
+<div class="bg-surface p-3 rounded-DEFAULT border border-outline-variant">
+<span class="font-label-caps text-label-caps text-secondary block mb-1">Mediana</span>
+<span class="font-h3 text-h3 text-primary-container">R$ 35.200</span>
+</div>
+</div>
+</div>
+<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<h3 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">schedule</span> Tempo Médio
+                        </h3>
+<div>
+<span class="font-h1 text-h1 text-primary-container block">14<span class="text-h3 text-secondary font-normal ml-1">meses</span></span>
+<span class="font-body-md text-body-md text-secondary block mt-1">Até prolação de sentença</span>
+</div>
+</div>
+<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] flex flex-col justify-between">
+<h3 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">gavel</span> Risco de Recurso
+                        </h3>
+<div>
+<span class="font-h1 text-h1 text-on-surface block">65%</span>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<div class="col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]">
+<h3 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">menu_book</span> Argumentação Relevante
+                        </h3>
+<ul class="flex flex-col gap-3">
+<li class="flex items-start gap-3 p-2 hover:bg-surface rounded-DEFAULT transition-colors">
+<span class="material-symbols-outlined text-primary-container mt-0.5">article</span>
+<div>
+<span class="font-data-mono text-data-mono text-on-surface block">Súmula 331, IV, TST</span>
+<span class="font-body-md text-body-md text-secondary block mt-0.5">Citada em 84% dos casos procedentes.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-2 hover:bg-surface rounded-DEFAULT transition-colors">
+<span class="material-symbols-outlined text-primary-container mt-0.5">article</span>
+<div>
+<span class="font-data-mono text-data-mono text-on-surface block">Art. 818 da CLT</span>
+<span class="font-body-md text-body-md text-secondary block mt-0.5">Base principal para inversão do ônus da prova.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-2 hover:bg-surface rounded-DEFAULT transition-colors">
+<span class="material-symbols-outlined text-primary-container mt-0.5">history_edu</span>
+<div>
+<span class="font-data-mono text-data-mono text-on-surface block">Precedente Vinculante STF</span>
+<span class="font-body-md text-body-md text-secondary block mt-0.5">Tema 725 da Repercussão Geral.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</body></html>
