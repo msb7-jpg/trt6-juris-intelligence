@@ -16,3 +16,6 @@ juristcu.db
 
 .vscode/
 .env
+
+# Git worktrees (local-only)
+.worktrees/
