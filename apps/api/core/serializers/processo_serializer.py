@@ -1,5 +1,6 @@
 
 from rest_framework import serializers
+from shared.schemas.resumo_ia import Desfecho, ResultadoReclamante, StatusProcesso, TipoAtoPrincipal
 
 from core.models.analise import Analise
 from core.models.assunto import Assunto
@@ -125,4 +126,39 @@ class ProcessoSerializer(serializers.ModelSerializer):
 class ProcessoDeduplicarEntradaSerializer(ProcessoSerializer):
     class Meta(ProcessoSerializer.Meta):
         validators = []
+
+
+class AnaliseEntradaSerializer(serializers.Serializer):
+    resumo = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=256)
+    tipo_ato_principal = serializers.ChoiceField(
+        required=False,
+        allow_null=True,
+        choices=TipoAtoPrincipal.choices(),
+    )
+    decisao = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=256)
+    palavras_chave = serializers.ListField(
+        required=False,
+        allow_empty=True,
+        child=serializers.CharField(max_length=128),
+    )
+    status = serializers.ChoiceField(required=False, allow_null=True, choices=StatusProcesso.choices())
+    desfecho = serializers.ChoiceField(required=False, allow_null=True, choices=Desfecho.choices())
+    resultado_reclamante = serializers.ChoiceField(
+        required=False,
+        allow_null=True,
+        choices=ResultadoReclamante.choices(),
+    )
+    valor_causa = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    custas_valor_total = serializers.DecimalField(
+        required=False,
+        allow_null=True,
+        max_digits=10,
+        decimal_places=2,
+    )
+
+
+class ProcessoAdicionarAnaliseEntradaSerializer(serializers.Serializer):
+    numero_processo = serializers.CharField()
+    grau = serializers.CharField()
+    analise = AnaliseEntradaSerializer()
 

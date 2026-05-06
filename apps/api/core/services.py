@@ -4,6 +4,8 @@ from collections.abc import Mapping, Sequence
 from django.db.models import Q
 from shared.s3_client import get_s3_client
 
+from core.models.analise import Analise
+from core.models.palavra_chave import PalavraChave
 from core.models.processo import Processo
 
 PDF_BUCKET_NAME = "pje-documents"
@@ -11,6 +13,10 @@ PDF_BUCKET_NAME = "pje-documents"
 
 class ProcessoSemPdfLookupError(Exception):
     """Raised when pending PDF lookup cannot be completed."""
+
+
+class ProcessoNotFoundError(Exception):
+    """Raised when process cannot be found for requested keys."""
 
 
 def _normalize_grau(grau: str) -> str:
@@ -101,3 +107,48 @@ def listar_processos_nao_possuem_pdf() -> list[Processo]:
             pendentes.append(processo)
 
     return pendentes
+
+
+def _normalize_grau_for_query(grau: str) -> set[str]:
+    normalized = _normalize_grau(grau)
+    if not normalized:
+        return {""}
+    return {normalized, f"G{normalized}"}
+
+
+def _sanitize_palavras_chave(values: list[str]) -> list[str]:
+    output: list[str] = []
+    for raw in values:
+        normalized = (raw or "").strip()
+        if normalized:
+            output.append(normalized)
+    return output
+
+
+def adicionar_analise_ao_processo(numero_processo: str, grau: str, analise_data: dict) -> Processo:
+    graus = _normalize_grau_for_query(grau)
+    processo = Processo.objects.filter(
+        numero_processo=numero_processo,
+    ).filter(
+        Q(grau__in=graus)
+    ).first()
+
+    if processo is None:
+        raise ProcessoNotFoundError("Processo nao encontrado para numero e grau informados.")
+
+    palavras_chave = _sanitize_palavras_chave(analise_data.pop("palavras_chave", []))
+
+    if processo.analise is None:
+        processo.analise = Analise.objects.create(**analise_data)
+    else:
+        for attr, value in analise_data.items():
+            setattr(processo.analise, attr, value)
+        processo.analise.save()
+
+    processo.analise.palavras_chave.clear()
+    for palavra in palavras_chave:
+        palavra_obj, _ = PalavraChave.objects.get_or_create(nome=palavra)
+        processo.analise.palavras_chave.add(palavra_obj)
+
+    processo.save(update_fields=["analise"])
+    return processo

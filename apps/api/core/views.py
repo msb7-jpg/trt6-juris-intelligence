@@ -33,13 +33,16 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.serializers.processo_serializer import (
+    ProcessoAdicionarAnaliseEntradaSerializer,
     ProcessoDeduplicarEntradaSerializer,
     ProcessoResumoSerializer,
     ProcessoSemPdfResumoSerializer,
     ProcessoSerializer,
 )
 from core.services import (
+    ProcessoNotFoundError,
     ProcessoSemPdfLookupError,
+    adicionar_analise_ao_processo,
     filtrar_processos_faltantes,
     listar_processos_nao_possuem_pdf,
 )
@@ -84,5 +87,29 @@ class ProcessoViewset(viewsets.ViewSet):
             )
 
         output_serializer = ProcessoSemPdfResumoSerializer(processos, many=True)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def adicionar_analise(self, request: Request):
+        input_serializer = ProcessoAdicionarAnaliseEntradaSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        payload = input_serializer.validated_data
+        try:
+            processo = adicionar_analise_ao_processo(
+                numero_processo=payload["numero_processo"],
+                grau=payload["grau"],
+                analise_data=dict(payload["analise"]),
+            )
+        except ProcessoNotFoundError as exc:
+            return Response(
+                {
+                    "mensagem": "Processo nao encontrado.",
+                    "detalhes": str(exc),
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        output_serializer = ProcessoResumoSerializer(processo)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 

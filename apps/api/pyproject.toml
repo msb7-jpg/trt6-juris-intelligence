@@ -27,9 +27,4 @@ shared = { workspace = true }
 ingestion = { workspace = true }
 
 [tool.django-stubs]
-django_settings_module = "core.settings"
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "api.settings"
-pythonpath = ["."]
-testpaths = ["core/tests"]
+django_settings_module = "api.settings"
