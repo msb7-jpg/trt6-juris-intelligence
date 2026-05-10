@@ -44,6 +44,9 @@ def main():
         out = pipeline.save_http_response(session, resp)
         print(f"    Arquivo salvo: {out}")
         http_download_ok = resp.status_code == 200
+        # Trigger deduplication after a successful download
+        from ..deduplication import deduplicate_processos
+        deduplicate_processos.delay()
     except Exception as e:
         print(f"[!] Erro ao baixar íntegra via HTTP: {e}")
 

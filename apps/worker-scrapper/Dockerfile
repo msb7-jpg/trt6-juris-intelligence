@@ -3,8 +3,6 @@ FROM python:3.13-slim
 # Pull uv binary
 COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
 
-ENV PYTHONPATH="/app/shared/src:${PYTHONPATH}"
-
 # System deps for Playwright
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -14,9 +12,16 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python deps
-COPY . /app/
+WORKDIR /app
 
-RUN uv sync --frozen --no-dev
+# Workspace-friendly intermediate layers.
+COPY pyproject.toml uv.lock /app/
+RUN uv sync --frozen --no-install-workspace --no-dev
+
+COPY . /app/
+# RUN uv sync --locked --no-dev
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Playwright browsers
 RUN uv run python -m playwright install --with-deps chromium

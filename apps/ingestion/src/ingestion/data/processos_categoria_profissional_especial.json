@@ -10,6 +10,32 @@
             }
           ],
           "classe": {
+            "codigo": 11886,
+            "nome": "Recurso Ordinário - Rito Sumaríssimo"
+          },
+          "data_ajuizamento": "20251113091110",
+          "data_hora_ultima_atualizacao": "2026-04-30T13:10:53.491000Z",
+          "grau": "G2",
+          "id": "TRT6_G2_00004599420255060143",
+          "numero_processo": "00004599420255060143",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 74269,
+            "nome": "GAB. DES. JOSÉ LUCIANO ALEXO"
+          },
+          "timestamp": "2026-04-30T13:10:53.491000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13641,
+              "nome": "Categoria Profissional Especial"
+            }
+          ],
+          "classe": {
             "codigo": 1125,
             "nome": "Ação Trabalhista - Rito Sumaríssimo"
           },
@@ -232,32 +258,6 @@
             "nome": "JABOATÃO DOS GUARARAPES  - 05A VARA"
           },
           "timestamp": "2025-11-07T20:13:37.013000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13641,
-              "nome": "Categoria Profissional Especial"
-            }
-          ],
-          "classe": {
-            "codigo": 1125,
-            "nome": "Ação Trabalhista - Rito Sumaríssimo"
-          },
-          "data_ajuizamento": "20230807090732",
-          "data_hora_ultima_atualizacao": "2026-01-08T20:46:10.510000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00007956620235060144",
-          "numero_processo": "00007956620235060144",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2607901,
-            "codigo": 20697,
-            "nome": "JABOATÃO DOS GUARARAPES  - 04A VARA"
-          },
-          "timestamp": "2026-01-08T20:46:10.510000Z",
           "tribunal": "TRT6"
         }
       }

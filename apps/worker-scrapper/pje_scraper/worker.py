@@ -5,10 +5,11 @@ from shared.celery_client import app
 from shared.logger import get_logger
 from shared.s3_client import get_s3_client
 
+from shared.constants import PDF_BUCKET, WORKER_LLM_TASK_NAME
+
 client = get_s3_client()
 logger = get_logger("worker_scrapper")
-PDF_BUCKET = "pje-documents"
-WORKER_LLM_TASK_NAME = "worker_llm.run_pipeline"
+
 
 @app.task
 def run_pipeline(numero: str, grau: str = "1", headless: bool = True):

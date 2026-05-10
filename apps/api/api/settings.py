@@ -82,10 +82,21 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'juristcu.db',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'juristcu.db',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'trt6',
+        'USER': 'trt6',
+        'PASSWORD': 'trt6',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 

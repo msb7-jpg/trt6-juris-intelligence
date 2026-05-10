@@ -10,6 +10,32 @@
             }
           ],
           "classe": {
+            "codigo": 1125,
+            "nome": "Ação Trabalhista - Rito Sumaríssimo"
+          },
+          "data_ajuizamento": "20231107144754",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:24:10.275000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00009509820235060005",
+          "numero_processo": "00009509820235060005",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20654,
+            "nome": "RECIFE  - 05A VARA"
+          },
+          "timestamp": "2026-04-30T14:24:10.275000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 14007,
+              "nome": "Responsabilidade Civil do Empregador"
+            }
+          ],
+          "classe": {
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
@@ -232,32 +258,6 @@
             "nome": "LIMOEIRO  - 01A VARA"
           },
           "timestamp": "2026-03-09T16:48:30.692000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 14007,
-              "nome": "Responsabilidade Civil do Empregador"
-            }
-          ],
-          "classe": {
-            "codigo": 1125,
-            "nome": "Ação Trabalhista - Rito Sumaríssimo"
-          },
-          "data_ajuizamento": "20230821195259",
-          "data_hora_ultima_atualizacao": "2026-02-05T14:26:50.337000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00006946120235060004",
-          "numero_processo": "00006946120235060004",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2611606,
-            "codigo": 20653,
-            "nome": "RECIFE  - 04A VARA"
-          },
-          "timestamp": "2026-02-05T14:26:50.337000Z",
           "tribunal": "TRT6"
         }
       }

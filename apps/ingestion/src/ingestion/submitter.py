@@ -1,14 +1,14 @@
-import os
 
 import requests
+from shared.env_manager import EnviromentManager
 from shared.logger import get_logger
 from shared.schemas.data_jud import ProcessoResumo
 
 logger = get_logger("submitter")
-
+env_manager = EnviromentManager()
 
 def _is_log_errors_enabled() -> bool:
-    return os.getenv("LOG_ERRORS", "false").strip().lower() in {"1", "true", "yes", "on"}
+    return env_manager.get_log_errors()
 
 
 def _sample_process_numbers(processos: list[dict], limit: int = 3) -> list[str]:

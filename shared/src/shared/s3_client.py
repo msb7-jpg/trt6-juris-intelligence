@@ -1,3 +1,5 @@
+import os
+
 from minio import Minio
 from shared.singleton import Singleton
 
@@ -8,7 +10,7 @@ class S3Client(metaclass=Singleton):
             endpoint,
             access_key=access_key,
             secret_key=secret_key,
-            secure=secure
+            secure=secure,
         )
 
     def create_bucket(self, bucket_name: str) -> None:
@@ -39,4 +41,8 @@ class S3Client(metaclass=Singleton):
 
 
 def get_s3_client() -> S3Client:
-    return S3Client("localhost:9000", "minioadmin", "minioadmin", secure=False)
+    endpoint = os.getenv("S3_ENDPOINT", "localhost:9000")
+    access_key = os.getenv("S3_ACCESS_KEY", "minioadmin")
+    secret_key = os.getenv("S3_SECRET_KEY", "minioadmin")
+    secure = os.getenv("S3_SECURE", "false").strip().lower() in {"1", "true", "yes", "on"}
+    return S3Client(endpoint, access_key, secret_key, secure=secure)

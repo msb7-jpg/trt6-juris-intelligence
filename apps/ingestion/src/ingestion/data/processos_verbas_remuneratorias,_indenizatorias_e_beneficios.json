@@ -13,17 +13,17 @@
             "codigo": 1125,
             "nome": "Ação Trabalhista - Rito Sumaríssimo"
           },
-          "data_ajuizamento": "20240402144931",
-          "data_hora_ultima_atualizacao": "2026-03-11T17:30:31.148000Z",
+          "data_ajuizamento": "20250926105616",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:24:09.488000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00003361120245060312",
-          "numero_processo": "00003361120245060312",
+          "id": "TRT6_G1_00011449720255060015",
+          "numero_processo": "00011449720255060015",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2604106,
-            "codigo": 20681,
-            "nome": "CARUARU  - 02A VARA"
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20664,
+            "nome": "RECIFE  - 15A VARA"
           },
-          "timestamp": "2026-03-11T17:30:31.148000Z",
+          "timestamp": "2026-04-30T14:24:09.488000Z",
           "tribunal": "TRT6"
         }
       },
@@ -39,17 +39,17 @@
             "codigo": 1125,
             "nome": "Ação Trabalhista - Rito Sumaríssimo"
           },
-          "data_ajuizamento": "20240213145226",
-          "data_hora_ultima_atualizacao": "2026-03-11T17:52:17.648000Z",
+          "data_ajuizamento": "20250716164637",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:23:39.600000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00001308220245060122",
-          "numero_processo": "00001308220245060122",
+          "id": "TRT6_G1_00006783920255060101",
+          "numero_processo": "00006783920255060101",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20708,
-            "nome": "PAULISTA  - 02A VARA"
+            "codigo_municipio_ibge": 2609600,
+            "codigo": 20702,
+            "nome": "OLINDA  - 01A VARA"
           },
-          "timestamp": "2026-03-11T17:52:17.648000Z",
+          "timestamp": "2026-04-30T14:23:39.600000Z",
           "tribunal": "TRT6"
         }
       },
@@ -65,17 +65,17 @@
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20240612113715",
-          "data_hora_ultima_atualizacao": "2026-03-11T17:57:09.479000Z",
+          "data_ajuizamento": "20250805202055",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:23:51.101000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00003348720245060232",
-          "numero_processo": "00003348720245060232",
+          "id": "TRT6_G1_00007164820255060102",
+          "numero_processo": "00007164820255060102",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2606200,
-            "codigo": 20687,
-            "nome": "GOIANA  - 02A VARA"
+            "codigo_municipio_ibge": 2609600,
+            "codigo": 20703,
+            "nome": "OLINDA  - 02A VARA"
           },
-          "timestamp": "2026-03-11T17:57:09.479000Z",
+          "timestamp": "2026-04-30T14:23:51.101000Z",
           "tribunal": "TRT6"
         }
       },
@@ -88,20 +88,20 @@
             }
           ],
           "classe": {
-            "codigo": 12374,
-            "nome": "Homologação da Transação Extrajudicial"
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20230905171228",
-          "data_hora_ultima_atualizacao": "2026-03-11T18:11:04.757000Z",
+          "data_ajuizamento": "20240224150106",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:22:34.797000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00009245720235060181",
-          "numero_processo": "00009245720235060181",
+          "id": "TRT6_G1_00000712620245060371",
+          "numero_processo": "00000712620245060371",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2606804,
-            "codigo": 20689,
-            "nome": "IGARASSU  - 01A VARA"
+            "codigo_municipio_ibge": 2613909,
+            "codigo": 20717,
+            "nome": "SERRA TALHADA  - 01A VARA"
           },
-          "timestamp": "2026-03-11T18:11:04.757000Z",
+          "timestamp": "2026-04-30T14:22:34.797000Z",
           "tribunal": "TRT6"
         }
       },
@@ -114,20 +114,20 @@
             }
           ],
           "classe": {
-            "codigo": 12374,
-            "nome": "Homologação da Transação Extrajudicial"
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20230815173943",
-          "data_hora_ultima_atualizacao": "2026-03-11T19:01:33.115000Z",
+          "data_ajuizamento": "19901016030000",
+          "data_hora_ultima_atualizacao": "2026-04-27T18:40:50.535000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00004632920235060232",
-          "numero_processo": "00004632920235060232",
+          "id": "TRT6_G1_01539009019905060121",
+          "numero_processo": "01539009019905060121",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2606200,
-            "codigo": 20687,
-            "nome": "GOIANA  - 02A VARA"
+            "codigo_municipio_ibge": 2610707,
+            "codigo": 20707,
+            "nome": "PAULISTA  - 01A VARA"
           },
-          "timestamp": "2026-03-11T19:01:33.115000Z",
+          "timestamp": "2026-04-27T18:40:50.535000Z",
           "tribunal": "TRT6"
         }
       },
@@ -140,20 +140,20 @@
             }
           ],
           "classe": {
-            "codigo": 12374,
-            "nome": "Homologação da Transação Extrajudicial"
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20240618084121",
-          "data_hora_ultima_atualizacao": "2026-03-11T19:11:02.426000Z",
+          "data_ajuizamento": "19970114040000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:37.059000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00005735720245060017",
-          "numero_processo": "00005735720245060017",
+          "id": "TRT6_G1_94194000920025060003",
+          "numero_processo": "94194000920025060003",
           "orgao_julgador": {
             "codigo_municipio_ibge": 2611606,
-            "codigo": 20666,
-            "nome": "RECIFE  - 17A VARA"
+            "codigo": 20652,
+            "nome": "RECIFE  - 03A VARA"
           },
-          "timestamp": "2026-03-11T19:11:02.426000Z",
+          "timestamp": "2026-04-13T12:30:37.059000Z",
           "tribunal": "TRT6"
         }
       },
@@ -169,17 +169,17 @@
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20080808060000",
-          "data_hora_ultima_atualizacao": "2026-03-12T14:42:38.179000Z",
+          "data_ajuizamento": "20110809030000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:43.732000Z",
           "grau": "G1",
-          "id": "TRT6_G1_01214003820085060121",
-          "numero_processo": "01214003820085060121",
+          "id": "TRT6_G1_00011291320115060018",
+          "numero_processo": "00011291320115060018",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20707,
-            "nome": "PAULISTA  - 01A VARA"
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20667,
+            "nome": "RECIFE  - 18A VARA"
           },
-          "timestamp": "2026-03-12T14:42:38.179000Z",
+          "timestamp": "2026-04-13T12:30:43.732000Z",
           "tribunal": "TRT6"
         }
       },
@@ -195,17 +195,17 @@
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20020306060000",
-          "data_hora_ultima_atualizacao": "2026-03-12T14:42:53.537000Z",
+          "data_ajuizamento": "20050831030000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:23.639000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00363002820025060121",
-          "numero_processo": "00363002820025060121",
+          "id": "TRT6_G1_01377005220055060001",
+          "numero_processo": "01377005220055060001",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20707,
-            "nome": "PAULISTA  - 01A VARA"
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20650,
+            "nome": "RECIFE  - 01A VARA"
           },
-          "timestamp": "2026-03-12T14:42:53.537000Z",
+          "timestamp": "2026-04-13T12:30:23.639000Z",
           "tribunal": "TRT6"
         }
       },
@@ -221,17 +221,17 @@
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20080808030000",
-          "data_hora_ultima_atualizacao": "2026-03-12T14:50:53.410000Z",
+          "data_ajuizamento": "20070319030000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:24.043000Z",
           "grau": "G1",
-          "id": "TRT6_G1_01217009720085060121",
-          "numero_processo": "01217009720085060121",
+          "id": "TRT6_G1_00255003420075060001",
+          "numero_processo": "00255003420075060001",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20707,
-            "nome": "PAULISTA  - 01A VARA"
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20650,
+            "nome": "RECIFE  - 01A VARA"
           },
-          "timestamp": "2026-03-12T14:50:53.410000Z",
+          "timestamp": "2026-04-13T12:30:24.043000Z",
           "tribunal": "TRT6"
         }
       },
@@ -247,17 +247,17 @@
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
-          "data_ajuizamento": "20090525030000",
-          "data_hora_ultima_atualizacao": "2026-03-12T14:51:16.466000Z",
+          "data_ajuizamento": "20120720030000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:28.579000Z",
           "grau": "G1",
-          "id": "TRT6_G1_00718001420095060121",
-          "numero_processo": "00718001420095060121",
+          "id": "TRT6_G1_00010245320125060001",
+          "numero_processo": "00010245320125060001",
           "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20707,
-            "nome": "PAULISTA  - 01A VARA"
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20650,
+            "nome": "RECIFE  - 01A VARA"
           },
-          "timestamp": "2026-03-12T14:51:16.466000Z",
+          "timestamp": "2026-04-13T12:30:28.579000Z",
           "tribunal": "TRT6"
         }
       }

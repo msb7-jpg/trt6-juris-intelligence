@@ -17,6 +17,22 @@ pytestmark = pytest.mark.django_db
 
 
 class TestProcessoViewsetNaoPossuemPdf:
+    def test_get_s3_client_uses_env_endpoint(monkeypatch):
+        monkeypatch.setenv("S3_ENDPOINT", "minio:9000")
+        monkeypatch.setenv("S3_ACCESS_KEY", "x")
+        monkeypatch.setenv("S3_SECRET_KEY", "y")
+        monkeypatch.setenv("S3_SECURE", "false")
+
+        from shared.s3_client import get_s3_client
+
+        client = get_s3_client()
+
+        # MinIO keeps endpoint in a base_url object.
+        base_url = getattr(client.client, "_base_url", None)
+        assert base_url is not None
+        assert base_url.host == "minio"
+        assert base_url.port == 9000
+
     def test_given_empty_database_when_get_nao_possuem_pdf_then_return_empty_list(self):
         api_client = APIClient()
 

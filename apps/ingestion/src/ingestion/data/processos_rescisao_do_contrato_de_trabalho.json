@@ -14,6 +14,126 @@
             }
           ],
           "classe": {
+            "codigo": 1125,
+            "nome": "Ação Trabalhista - Rito Sumaríssimo"
+          },
+          "data_ajuizamento": "20250223135813",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:23:44.075000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00002594520255060351",
+          "numero_processo": "00002594520255060351",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2606002,
+            "codigo": 20685,
+            "nome": "GARANHUNS  - 01A VARA"
+          },
+          "timestamp": "2026-04-30T14:23:44.075000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13406,
+              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
+            },
+            {
+              "codigo": 13949,
+              "nome": "Rescisão do Contrato de Trabalho"
+            }
+          ],
+          "classe": {
+            "codigo": 1125,
+            "nome": "Ação Trabalhista - Rito Sumaríssimo"
+          },
+          "data_ajuizamento": "20250109020012",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:23:44.844000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00000096220255060011",
+          "numero_processo": "00000096220255060011",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20660,
+            "nome": "RECIFE  - 11A VARA"
+          },
+          "timestamp": "2026-04-30T14:23:44.844000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13406,
+              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
+            },
+            {
+              "codigo": 13949,
+              "nome": "Rescisão do Contrato de Trabalho"
+            }
+          ],
+          "classe": {
+            "codigo": 1125,
+            "nome": "Ação Trabalhista - Rito Sumaríssimo"
+          },
+          "data_ajuizamento": "20240207214900",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:22:42.685000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00001747020245060391",
+          "numero_processo": "00001747020245060391",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2612208,
+            "codigo": 20715,
+            "nome": "SALGUEIRO  - 01A VARA"
+          },
+          "timestamp": "2026-04-30T14:22:42.685000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13406,
+              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
+            },
+            {
+              "codigo": 13949,
+              "nome": "Rescisão do Contrato de Trabalho"
+            }
+          ],
+          "classe": {
+            "codigo": 1009,
+            "nome": "Recurso Ordinário Trabalhista"
+          },
+          "data_ajuizamento": "20260123083026",
+          "data_hora_ultima_atualizacao": "2026-04-09T14:40:09.696000Z",
+          "grau": "G2",
+          "id": "TRT6_G2_00005605420255060007",
+          "numero_processo": "00005605420255060007",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20751,
+            "nome": "GAB. DES. VALDIR JOSÉ SILVA DE CARVALHO"
+          },
+          "timestamp": "2026-04-09T14:40:09.696000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13406,
+              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
+            },
+            {
+              "codigo": 13949,
+              "nome": "Rescisão do Contrato de Trabalho"
+            }
+          ],
+          "classe": {
             "codigo": 985,
             "nome": "Ação Trabalhista - Rito Ordinário"
           },
@@ -178,126 +298,6 @@
             "nome": "RECIFE  - 02A VARA"
           },
           "timestamp": "2026-04-08T18:10:58.000000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13406,
-              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
-            },
-            {
-              "codigo": 13949,
-              "nome": "Rescisão do Contrato de Trabalho"
-            }
-          ],
-          "classe": {
-            "codigo": 1125,
-            "nome": "Ação Trabalhista - Rito Sumaríssimo"
-          },
-          "data_ajuizamento": "20260224012028",
-          "data_hora_ultima_atualizacao": "2026-04-08T18:20:18.442000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00002315420265060121",
-          "numero_processo": "00002315420265060121",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2610707,
-            "codigo": 20707,
-            "nome": "PAULISTA  - 01A VARA"
-          },
-          "timestamp": "2026-04-08T18:20:18.442000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13406,
-              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
-            },
-            {
-              "codigo": 13949,
-              "nome": "Rescisão do Contrato de Trabalho"
-            }
-          ],
-          "classe": {
-            "codigo": 985,
-            "nome": "Ação Trabalhista - Rito Ordinário"
-          },
-          "data_ajuizamento": "20260108162400",
-          "data_hora_ultima_atualizacao": "2026-04-08T21:30:17.151000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00000164420265060391",
-          "numero_processo": "00000164420265060391",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2612208,
-            "codigo": 20715,
-            "nome": "SALGUEIRO  - 01A VARA"
-          },
-          "timestamp": "2026-04-08T21:30:17.151000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13406,
-              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
-            },
-            {
-              "codigo": 13949,
-              "nome": "Rescisão do Contrato de Trabalho"
-            }
-          ],
-          "classe": {
-            "codigo": 1125,
-            "nome": "Ação Trabalhista - Rito Sumaríssimo"
-          },
-          "data_ajuizamento": "20260224154247",
-          "data_hora_ultima_atualizacao": "2026-04-08T21:40:16.704000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00002151520265060311",
-          "numero_processo": "00002151520265060311",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2604106,
-            "codigo": 20680,
-            "nome": "CARUARU  - 01A VARA"
-          },
-          "timestamp": "2026-04-08T21:40:16.704000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13406,
-              "nome": "Dispensa / Rescisão do Contrato de Trabalho "
-            },
-            {
-              "codigo": 13949,
-              "nome": "Rescisão do Contrato de Trabalho"
-            }
-          ],
-          "classe": {
-            "codigo": 985,
-            "nome": "Ação Trabalhista - Rito Ordinário"
-          },
-          "data_ajuizamento": "20250821135546",
-          "data_hora_ultima_atualizacao": "2026-04-08T21:50:22.965000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00007532920255060182",
-          "numero_processo": "00007532920255060182",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2606804,
-            "codigo": 20690,
-            "nome": "IGARASSU  - 02A VARA"
-          },
-          "timestamp": "2026-04-08T21:50:22.965000Z",
           "tribunal": "TRT6"
         }
       }

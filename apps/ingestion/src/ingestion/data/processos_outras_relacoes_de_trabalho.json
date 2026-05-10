@@ -13,6 +13,32 @@
             "codigo": 1125,
             "nome": "Ação Trabalhista - Rito Sumaríssimo"
           },
+          "data_ajuizamento": "20220725170103",
+          "data_hora_ultima_atualizacao": "2026-04-30T14:23:07.005000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00001808220225060024",
+          "numero_processo": "00001808220225060024",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 84615,
+            "nome": "RECIFE  - 24A VARA"
+          },
+          "timestamp": "2026-04-30T14:23:07.005000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 13815,
+              "nome": "Outras Relações de Trabalho"
+            }
+          ],
+          "classe": {
+            "codigo": 1125,
+            "nome": "Ação Trabalhista - Rito Sumaríssimo"
+          },
           "data_ajuizamento": "20210318113019",
           "data_hora_ultima_atualizacao": "2026-03-11T19:02:58.845000Z",
           "grau": "G1",
@@ -232,32 +258,6 @@
             "nome": "RECIFE  - 20A VARA"
           },
           "timestamp": "2026-03-10T15:27:16.109000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13815,
-              "nome": "Outras Relações de Trabalho"
-            }
-          ],
-          "classe": {
-            "codigo": 1125,
-            "nome": "Ação Trabalhista - Rito Sumaríssimo"
-          },
-          "data_ajuizamento": "20241023101702",
-          "data_hora_ultima_atualizacao": "2026-03-10T15:28:42.673000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00010740920245060341",
-          "numero_processo": "00010740920245060341",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2610905,
-            "codigo": 20709,
-            "nome": "PESQUEIRA  - 01A VARA"
-          },
-          "timestamp": "2026-03-10T15:28:42.673000Z",
           "tribunal": "TRT6"
         }
       }

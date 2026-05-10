@@ -10,6 +10,58 @@
             }
           ],
           "classe": {
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
+          },
+          "data_ajuizamento": "20061016030000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:39.285000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_01454004220065060002",
+          "numero_processo": "01454004220065060002",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20651,
+            "nome": "RECIFE  - 02A VARA"
+          },
+          "timestamp": "2026-04-13T12:30:39.285000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 12942,
+              "nome": "Prescrição e Decadência no Direito do Trabalho "
+            }
+          ],
+          "classe": {
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
+          },
+          "data_ajuizamento": "20010216020000",
+          "data_hora_ultima_atualizacao": "2026-04-13T12:30:11.588000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00232006720015060015",
+          "numero_processo": "00232006720015060015",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2611606,
+            "codigo": 20664,
+            "nome": "RECIFE  - 15A VARA"
+          },
+          "timestamp": "2026-04-13T12:30:11.588000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
+              "codigo": 12942,
+              "nome": "Prescrição e Decadência no Direito do Trabalho "
+            }
+          ],
+          "classe": {
             "codigo": 1125,
             "nome": "Ação Trabalhista - Rito Sumaríssimo"
           },
@@ -206,58 +258,6 @@
             "nome": "RECIFE  - 14A VARA"
           },
           "timestamp": "2026-03-09T16:43:03.162000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 12942,
-              "nome": "Prescrição e Decadência no Direito do Trabalho "
-            }
-          ],
-          "classe": {
-            "codigo": 985,
-            "nome": "Ação Trabalhista - Rito Ordinário"
-          },
-          "data_ajuizamento": "20061016030000",
-          "data_hora_ultima_atualizacao": "2026-03-09T16:43:29.742000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_01454004220065060002",
-          "numero_processo": "01454004220065060002",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2611606,
-            "codigo": 20651,
-            "nome": "RECIFE  - 02A VARA"
-          },
-          "timestamp": "2026-03-09T16:43:29.742000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 12942,
-              "nome": "Prescrição e Decadência no Direito do Trabalho "
-            }
-          ],
-          "classe": {
-            "codigo": 985,
-            "nome": "Ação Trabalhista - Rito Ordinário"
-          },
-          "data_ajuizamento": "20070620030000",
-          "data_hora_ultima_atualizacao": "2025-12-04T11:59:03.177000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00739001920075060021",
-          "numero_processo": "00739001920075060021",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2611606,
-            "codigo": 20670,
-            "nome": "RECIFE  - 21A VARA"
-          },
-          "timestamp": "2025-12-04T11:59:03.177000Z",
           "tribunal": "TRT6"
         }
       }

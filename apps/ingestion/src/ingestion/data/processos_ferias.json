@@ -5,6 +5,48 @@
         "source": {
           "assuntos": [
             {
+              "codigo": 13254,
+              "nome": "Permuta "
+            },
+            {
+              "codigo": 13432,
+              "nome": "Férias / Gozo / Fruição "
+            },
+            {
+              "codigo": 13809,
+              "nome": "Férias"
+            },
+            {
+              "codigo": 13812,
+              "nome": "Férias Coletivas"
+            },
+            {
+              "codigo": 13996,
+              "nome": "Férias Proporcionais"
+            }
+          ],
+          "classe": {
+            "codigo": 985,
+            "nome": "Ação Trabalhista - Rito Ordinário"
+          },
+          "data_ajuizamento": "20110329030000",
+          "data_hora_ultima_atualizacao": "2026-04-27T18:40:56.171000Z",
+          "grau": "G1",
+          "id": "TRT6_G1_00004277520115060371",
+          "numero_processo": "00004277520115060371",
+          "orgao_julgador": {
+            "codigo_municipio_ibge": 2613909,
+            "codigo": 20717,
+            "nome": "SERRA TALHADA  - 01A VARA"
+          },
+          "timestamp": "2026-04-27T18:40:56.171000Z",
+          "tribunal": "TRT6"
+        }
+      },
+      {
+        "source": {
+          "assuntos": [
+            {
               "codigo": 13432,
               "nome": "Férias / Gozo / Fruição "
             },
@@ -36,48 +78,6 @@
             "nome": "GOIANA  - 03A VARA"
           },
           "timestamp": "2026-03-10T15:26:14.393000Z",
-          "tribunal": "TRT6"
-        }
-      },
-      {
-        "source": {
-          "assuntos": [
-            {
-              "codigo": 13254,
-              "nome": "Permuta "
-            },
-            {
-              "codigo": 13432,
-              "nome": "Férias / Gozo / Fruição "
-            },
-            {
-              "codigo": 13809,
-              "nome": "Férias"
-            },
-            {
-              "codigo": 13812,
-              "nome": "Férias Coletivas"
-            },
-            {
-              "codigo": 13996,
-              "nome": "Férias Proporcionais"
-            }
-          ],
-          "classe": {
-            "codigo": 985,
-            "nome": "Ação Trabalhista - Rito Ordinário"
-          },
-          "data_ajuizamento": "20110329030000",
-          "data_hora_ultima_atualizacao": "2026-03-09T16:47:33.378000Z",
-          "grau": "G1",
-          "id": "TRT6_G1_00004277520115060371",
-          "numero_processo": "00004277520115060371",
-          "orgao_julgador": {
-            "codigo_municipio_ibge": 2613909,
-            "codigo": 20717,
-            "nome": "SERRA TALHADA  - 01A VARA"
-          },
-          "timestamp": "2026-03-09T16:47:33.378000Z",
           "tribunal": "TRT6"
         }
       },

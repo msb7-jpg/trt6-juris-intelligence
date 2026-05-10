@@ -56,3 +56,12 @@ def test_run_pipeline_retries_on_failure(monkeypatch):
         )
 
     worker.run_pipeline.retry.assert_called_once()
+
+
+def test_default_llm_base_url_is_valid(monkeypatch):
+    monkeypatch.delenv("WORKER_LLM_BASE_URL", raising=False)
+
+    from main import _build_llm
+
+    llm = _build_llm()
+    assert getattr(llm, "openai_api_base") == "http://host.docker.internal:1234/v1"
