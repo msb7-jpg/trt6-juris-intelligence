@@ -16,9 +16,11 @@ WORKDIR /app
 
 # Workspace-friendly intermediate layers.
 COPY pyproject.toml uv.lock /app/
-RUN uv sync --frozen --no-install-workspace --no-dev
-
+COPY shared/ /app/shared/
+COPY apps/ingestion/ /app/apps/ingestion/
 COPY . /app/
+
+RUN uv sync --frozen --no-dev
 # RUN uv sync --locked --no-dev
 
 ENV PATH="/app/.venv/bin:$PATH"

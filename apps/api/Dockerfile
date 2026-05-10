@@ -6,15 +6,17 @@ WORKDIR /app
 
 # Workspace-friendly intermediate layers.
 COPY pyproject.toml uv.lock /app/
-RUN uv sync --frozen --no-install-workspace --no-dev
 
+COPY shared/ /app/shared/
+COPY apps/ingestion/ /app/apps/ingestion/
 COPY . /app/
 
-# Ensure the entrypoint script is in the correct location
-COPY /home/miguel/workspace/projetos6/docker/entrypoints/api.sh /entrypoints/api.sh
-RUN chmod +x /entrypoints/api.sh
-
+RUN uv sync --frozen --no-dev
 # RUN uv sync --locked --no-dev
+
+# Ensure the entrypoint script is in the correct location
+COPY docker/entrypoints/api.sh /entrypoints/api.sh
+RUN chmod +x /entrypoints/api.sh
 
 ENV PATH="/app/.venv/bin:$PATH"
 

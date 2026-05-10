@@ -7,9 +7,16 @@ WORKDIR /app
 # Workspace-friendly intermediate layers.
 # First: install only third-party deps from the root lockfile.
 COPY pyproject.toml uv.lock /app/
-RUN uv sync --frozen --no-install-workspace --no-dev
+COPY apps/ingestion/ /app/apps/ingestion/
+COPY apps/worker-llm/ /app/apps/worker-llm/
+COPY apps/worker-scrapper/ /app/apps/worker-scrapper/
+COPY shared/ /app/shared/
+
+RUN uv sync --frozen --no-dev
 
 # Second: copy the full workspace and install workspace members.
+COPY shared/ /app/shared/
+COPY apps/ingestion/ /app/apps/ingestion/
 COPY . /app/
 # RUN uv sync --locked --no-dev
 

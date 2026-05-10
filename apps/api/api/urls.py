@@ -16,6 +16,7 @@ Including another URLconf
 """
 from core.views import ProcessoViewset
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
@@ -24,9 +25,15 @@ router.register(r'processos', ProcessoViewset, basename='document')
 
 
 
+def health(request):
+    return HttpResponse('OK', content_type='text/plain')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
 ]
 
-urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+urlpatterns += [
+    path('health/', health),
+    path('silk/', include('silk.urls', namespace='silk')),
+]

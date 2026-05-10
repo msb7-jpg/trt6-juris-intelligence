@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-: "${CELERY_APP?Need to set CELERY_APP}"
+CELERY_APP=${APP_MODULE}
 
 CMD="${CELERY_CMD:-worker}"
 ARGS="${CELERY_ARGS:-}"
