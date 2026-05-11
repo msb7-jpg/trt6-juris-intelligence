@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Workspace-friendly intermediate layers.
 COPY pyproject.toml uv.lock /app/
-COPY . /app/
+COPY shared/ /app/shared/
 
 RUN uv sync --frozen --no-dev
 # RUN uv sync --locked --no-dev

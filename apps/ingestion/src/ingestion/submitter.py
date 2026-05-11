@@ -1,5 +1,5 @@
 
-import requests
+
 from shared.env_manager import EnviromentManager
 from shared.logger import get_logger
 from shared.schemas.data_jud import ProcessoResumo
@@ -21,13 +21,10 @@ def _sample_process_numbers(processos: list[dict], limit: int = 3) -> list[str]:
 
 
 class ProcessSubmitter:
-    def __init__(
-        self,
-        api_url: str = "http://localhost:8000/api/processos/deduplicar/",
-        pending_api_url: str = "http://localhost:8000/api/processos/nao_possuem_pdf/",
-    ):
-        self.api_url = api_url
-        self.pending_api_url = pending_api_url
+    def __init__(self, api_url: str = None, pending_api_url: str = None):
+        base_url = env_manager.get_api_base_url().rstrip('/')
+        self.api_url = api_url or f"{base_url}/api/processos/deduplicar/"
+        self.pending_api_url = pending_api_url or f"{base_url}/api/processos/nao_possuem_pdf/"
 
     def submit(self, processos: list[dict]) -> list[ProcessoResumo] | None:
         try:
@@ -56,6 +53,15 @@ class ProcessSubmitter:
         except Exception as exc:
             logger.error(f"Failed to submit processes: {exc}")
             return None
+
+
+    def launch_scraper(self, payload: dict) -> str:
+        """Schedule the heavy scraper pipeline.
+        Returns the Celery task id so the caller can track progress.
+        """
+        from shared.celery_client import app as celery_app
+        task = celery_app.send_task("scraper.run_pipeline", args=[payload])
+        return task.id
 
     def fetch_pending_pdf(self) -> list[ProcessoResumo] | None:
         try:

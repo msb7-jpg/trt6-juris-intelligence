@@ -2,7 +2,7 @@
 name = "worker-scrapper"
 version = "0.1.0"
 description = "Scraper para PJe TRT-6 com resolução automática de captcha via ddddocr"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "shared", # Para saber o formato da mensagem da fila e usar o cliente S3 para dar upload no PDF.
     "celery>=5.6.3",

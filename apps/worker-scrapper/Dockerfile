@@ -8,7 +8,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libnss3 libatk-bridge2.0-0 libxkbcommon0 libxcomposite1 \
         libxrandr2 libxdamage1 libgbm1 libasound2 libxshmfence1 \
-        libgtk-3-0 libdrm2 libxfixes3 && \
+        libgtk-3-0 libdrm2 libxfixes3 \
+        libxcb1 libx11-6 libxrender1 libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Python deps

@@ -22,6 +22,9 @@ class EnviromentManager:
     def get_lmstudio_model(self) -> str:
         return self.get_with_default("LMSTUDIO_MODEL", "google/gemma-3-4b")
 
+    def get_api_base_url(self) -> str:
+        return self.get_with_default("API_BASE_URL", "http://api:8000")
+
     def get_log_errors(self):
         return (
             self.get_with_default("LOG_ERRORS", "false")
