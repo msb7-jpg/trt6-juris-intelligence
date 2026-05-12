@@ -1,5 +1,6 @@
 
 
+import requests
 from shared.env_manager import EnviromentManager
 from shared.logger import get_logger
 from shared.schemas.data_jud import ProcessoResumo

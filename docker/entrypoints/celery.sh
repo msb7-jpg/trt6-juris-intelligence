@@ -14,7 +14,4 @@ CELERY_APP=${APP_MODULE}
 CMD="${CELERY_CMD:-worker}"
 ARGS="${CELERY_ARGS:-}"
 
-# Most images install dependencies into /app/.venv; ensure it's active.
-export PATH="/app/.venv/bin:${PATH}"
-
 exec celery -A "$CELERY_APP" "$CMD" $ARGS

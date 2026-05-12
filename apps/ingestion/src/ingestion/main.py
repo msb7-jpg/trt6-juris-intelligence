@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from dateutil.parser import parse as parse_date
-from pje_scraper.worker import run_pipeline
+from shared.celery_client import app
+from shared.constants import WORKER_SCRAPPER_TASK_NAME
 from shared.logger import get_logger
 from shared.schemas.data_jud import SearchResponse
 
@@ -88,7 +89,7 @@ def main():
                 processo.numero_processo,
                 processo.grau,
             )
-            run_pipeline.delay(processo.numero_processo, processo.grau)
+            app.send_task(WORKER_SCRAPPER_TASK_NAME, args=[processo.numero_processo, processo.grau])
 
         return
 
@@ -120,7 +121,7 @@ def main():
     if args.trigger:
         for p in todos_processos:
             logger.info(f"Disparando worker para processo {p['numero_processo']} grau {p['grau']}")
-            run_pipeline.delay(p["numero_processo"], p["grau"])
+            app.send_task(WORKER_SCRAPPER_TASK_NAME, args=[p["numero_processo"], p["grau"]])
 
 if __name__ == "__main__":
     main()
