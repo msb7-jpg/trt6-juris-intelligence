@@ -9,7 +9,7 @@ from shared.logger import get_logger
 from shared.s3_client import get_s3_client
 
 logger = get_logger("worker_llm")
-DEFAULT_API_URL = "http://localhost:8000/api/processos/adicionar_analise/"
+DEFAULT_API_URL = "http://api:8000/api/processos/adicionar_analise/"
 
 
 def _build_payload(numero_processo: str, grau: str, analise) -> dict:

@@ -3,6 +3,11 @@ FROM python:3.13-slim
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
 
+# JRE required by opendataloader-pdf (runs a bundled JAR via subprocess)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends default-jre-headless && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Enable bytecode compilation
@@ -45,5 +50,6 @@ RUN chmod +x /entrypoints/celery.sh
 
 ENV APP_MODULE=shared.celery_client
 ENV QUEUE=llm_queue
+ENV INCLUDE=worker
 
 CMD ["/entrypoints/celery.sh"]

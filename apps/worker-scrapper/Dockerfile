@@ -57,5 +57,6 @@ RUN chmod +x /entrypoints/celery.sh
 
 ENV APP_MODULE=shared.celery_client
 ENV QUEUE=scrapper_queue
+ENV INCLUDE=pje_scraper.worker
 
 CMD ["/entrypoints/celery.sh"]

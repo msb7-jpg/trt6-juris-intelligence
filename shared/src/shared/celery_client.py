@@ -2,19 +2,13 @@ import os
 
 from celery import Celery
 
+from shared.constants import WORKER_LLM_TASK_NAME, WORKER_SCRAPPER_TASK_NAME
+
 BROKER_URL = os.getenv("CELERY_BROKER_URL", "amqp://user:password@localhost:5672//")
 
 app = Celery("tasks", broker=BROKER_URL)
 
-# Route tasks to dedicated queues.
 app.conf.task_routes = {
-    "pje_scraper.worker.run_pipeline": {"queue": "scrapper_queue"},
-    "worker_llm.run_pipeline": {"queue": "llm_queue"},
-    "pje_scraper.deduplication.run": {"queue": "scrapper_queue"},
-}
-
-# Route tasks to dedicated queues.
-app.conf.task_routes = {
-    "pje_scraper.worker.run_pipeline": {"queue": "scrapper_queue"},
-    "worker_llm.run_pipeline": {"queue": "llm_queue"},
+    WORKER_SCRAPPER_TASK_NAME: {"queue": "scrapper_queue"},
+    WORKER_LLM_TASK_NAME: {"queue": "llm_queue"},
 }

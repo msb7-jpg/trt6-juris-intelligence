@@ -39,7 +39,13 @@ RUN python -c "import shared; import ingestion; print('Success: Packages install
 # Verify entrypoint exists
 RUN which ingest || (echo "Entrypoint 'ingest' not found in PATH" && exit 1)
 
+# Install supercronic (cron runner for containers)
+ADD --chmod=755 https://github.com/aptible/supercronic/releases/download/v0.2.30/supercronic-linux-amd64 /usr/local/bin/supercronic
+
+# Install crontab
+COPY docker/cron/ingestion.crontab /etc/cron/ingestion.crontab
+
 # Finalize app setup
 WORKDIR /app/apps/ingestion
 
-CMD ["ingest", "--provider", "api"]
+CMD ["supercronic", "/etc/cron/ingestion.crontab"]
