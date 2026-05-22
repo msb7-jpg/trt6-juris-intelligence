@@ -7,16 +7,31 @@ services:
       POSTGRES_PASSWORD: trt6
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trt6 -d trt6"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # management UI
+      - "4369:4369"    # epmd (clustering)
+      - "25672:25672"  # clustering communication
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   minio:
     image: minio/minio
-    command: server /data
+    command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -50,9 +65,12 @@ services:
       timeout: 5s
       retries: 5
     depends_on:
-      - postgres
-      - rabbitmq
-      - minio
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
 
   worker-scrapper:
     build:
@@ -67,9 +85,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      - api
-      - rabbitmq
-      - minio
+      api:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
 
   worker-llm:
     build:
@@ -85,9 +106,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      - api
-      - rabbitmq
-      - minio
+      api:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
 
   ingestion:
     build:
@@ -103,7 +127,7 @@ services:
       api:
         condition: service_healthy
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
       minio:
         condition: service_started
 

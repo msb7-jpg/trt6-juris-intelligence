@@ -22,10 +22,16 @@ def _sample_process_numbers(processos: list[dict], limit: int = 3) -> list[str]:
 
 
 class ProcessSubmitter:
-    def __init__(self, api_url: str = None, pending_api_url: str = None):
+    def __init__(
+        self,
+        api_url: str = None,
+        pending_api_url: str = None,
+        pending_analise_api_url: str = None,
+    ):
         base_url = env_manager.get_api_base_url().rstrip('/')
         self.api_url = api_url or f"{base_url}/api/processos/deduplicar/"
         self.pending_api_url = pending_api_url or f"{base_url}/api/processos/nao_possuem_pdf/"
+        self.pending_analise_api_url = pending_analise_api_url or f"{base_url}/api/processos/possuem_analise/"
 
     def submit(self, processos: list[dict]) -> list[ProcessoResumo] | None:
         try:
@@ -88,4 +94,31 @@ class ProcessSubmitter:
             return None
         except Exception as exc:
             logger.error(f"Failed to fetch pending PDFs: {exc}")
+            return None
+
+    def fetch_pending_analise(self, pending_analise_api_url: str | None = None) -> list[ProcessoResumo] | None:
+        api_url = pending_analise_api_url or self.pending_analise_api_url
+        try:
+            response = requests.get(api_url, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            logger.info(f"Resposta de processos com analise: {data}")
+            return [ProcessoResumo(**item) for item in data]
+        except requests.exceptions.HTTPError as exc:
+            response = exc.response
+            if _is_log_errors_enabled() and response is not None:
+                logger.error(
+                    "Failed to fetch processes with analise: %s | status=%s | response=%s",
+                    exc,
+                    response.status_code,
+                    response.text,
+                )
+            else:
+                logger.error(f"Failed to fetch processes with analise: {exc}")
+            return None
+        except requests.exceptions.RequestException as exc:
+            logger.error(f"Failed to fetch processes with analise due to request error: {exc}")
+            return None
+        except Exception as exc:
+            logger.error(f"Failed to fetch processes with analise: {exc}")
             return None

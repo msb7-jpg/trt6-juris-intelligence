@@ -8,8 +8,8 @@ from typing import Any
 import opendataloader_pdf
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
-from shared.llm_constants import SYSTEM_PROMPT
 from shared.env_manager import EnviromentManager
+from shared.llm_constants import SYSTEM_PROMPT
 from shared.schemas.resumo_ia import ProcessoAnalise
 
 DEFAULT_INPUT_PATH = "output/mock.md"

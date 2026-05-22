@@ -74,6 +74,17 @@ def fetch_for_topic(provider: DataProvider, topic: str) -> list[dict]:
 def main():
     args = IngestionParser()
 
+    if args.pending_analise:
+        submitter = ProcessSubmitter(pending_analise_api_url=args.pending_analise_api_url)
+        processos_com_analise = submitter.fetch_pending_analise()
+
+        if processos_com_analise is None:
+            logger.error("Erro ao buscar processos com analise na API")
+            return
+
+        logger.info(f"Processos com analise encontrados: {len(processos_com_analise)}")
+        return
+
     if args.pending_pdf:
         submitter = ProcessSubmitter(pending_api_url=args.pending_api_url)
         pendentes = submitter.fetch_pending_pdf()

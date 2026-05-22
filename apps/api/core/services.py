@@ -109,6 +109,16 @@ def listar_processos_nao_possuem_pdf() -> list[Processo]:
     return pendentes
 
 
+def listar_processos_com_analise() -> list[Processo]:
+    return list(
+        Processo.objects.filter(analise__isnull=False).only(
+            "numero_processo",
+            "grau",
+            "analise",
+        )
+    )
+
+
 def _normalize_grau_for_query(grau: str) -> set[str]:
     normalized = _normalize_grau(grau)
     if not normalized:

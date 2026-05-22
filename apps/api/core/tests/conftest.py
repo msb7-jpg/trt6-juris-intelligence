@@ -1,9 +1,9 @@
 import os
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api.settings")
+
 import pytest
 from rest_framework.test import APIClient
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api.settings")
 
 
 @pytest.fixture

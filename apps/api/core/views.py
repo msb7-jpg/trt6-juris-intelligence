@@ -33,6 +33,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.serializers.processo_serializer import (
+    ProcessoComAnaliseResumoSerializer,
     ProcessoAdicionarAnaliseEntradaSerializer,
     ProcessoDeduplicarEntradaSerializer,
     ProcessoResumoSerializer,
@@ -44,6 +45,7 @@ from core.services import (
     ProcessoSemPdfLookupError,
     adicionar_analise_ao_processo,
     filtrar_processos_faltantes,
+    listar_processos_com_analise,
     listar_processos_nao_possuem_pdf,
 )
 
@@ -87,6 +89,12 @@ class ProcessoViewset(viewsets.ViewSet):
             )
 
         output_serializer = ProcessoSemPdfResumoSerializer(processos, many=True)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def possuem_analise(self, request: Request):
+        processos = listar_processos_com_analise()
+        output_serializer = ProcessoComAnaliseResumoSerializer(processos, many=True)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])

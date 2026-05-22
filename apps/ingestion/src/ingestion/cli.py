@@ -19,10 +19,21 @@ class IngestionParser:
             help='Busca pendências de PDF na API e dispara o scraper para cada processo',
         )
         parser.add_argument(
+            '--pending-analise',
+            action='store_true',
+            help='Busca processos com analise na API',
+        )
+        parser.add_argument(
             '--pending-api-url',
             type=str,
             default='http://localhost:8000/api/processos/nao_possuem_pdf/',
             help='Endpoint da API para listar processos sem PDF',
+        )
+        parser.add_argument(
+            '--pending-analise-api-url',
+            type=str,
+            default='http://localhost:8000/api/processos/possuem_analise/',
+            help='Endpoint da API para listar processos com analise',
         )
         self.args = parser.parse_args()
 
@@ -47,5 +58,13 @@ class IngestionParser:
         return bool(self.args.pending_pdf)
 
     @property
+    def pending_analise(self) -> bool:
+        return bool(self.args.pending_analise)
+
+    @property
     def pending_api_url(self) -> str:
         return str(self.args.pending_api_url)
+
+    @property
+    def pending_analise_api_url(self) -> str:
+        return str(self.args.pending_analise_api_url)
