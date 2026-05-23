@@ -10,11 +10,13 @@ from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 from shared.env_manager import EnviromentManager
 from shared.llm_constants import SYSTEM_PROMPT
+from shared.logger import get_logger
 from shared.schemas.resumo_ia import ProcessoAnalise
 
 DEFAULT_INPUT_PATH = "output/mock.md"
 
 env_manager = EnviromentManager()
+logger = get_logger("worker_llm")
 
 def build_system_prompt() -> str:
     return SYSTEM_PROMPT
@@ -29,6 +31,7 @@ def _build_llm() -> ChatOpenAI:
 
 def _markdown_from_pdf(pdf_path: Path) -> str:
     with tempfile.TemporaryDirectory() as tmpdir:
+        logger.info("Convertendo PDF para markdown: pdf_path=%s", pdf_path)
         opendataloader_pdf.convert(
             input_path=[str(pdf_path)],
             output_dir=tmpdir,
@@ -43,6 +46,7 @@ def _markdown_from_pdf(pdf_path: Path) -> str:
 
 def extract_text_from_document(path: str) -> str:
     input_path = Path(path)
+    logger.info("Lendo documento para análise: path=%s suffix=%s", input_path, input_path.suffix.lower())
     if input_path.suffix.lower() == ".pdf":
         return _markdown_from_pdf(input_path)
     return input_path.read_text(encoding="utf-8")
@@ -51,23 +55,36 @@ def extract_text_from_document(path: str) -> str:
 def analyze_text(pdf_text: str) -> ProcessoAnalise:
 
     # create agent without persistent memory to avoid saving conversation history
+    model_name = env_manager.get_lmstudio_model()
+    logger.info(
+        "Enviando texto para LLM: model=%s characters=%s schema_fields=%s",
+        model_name,
+        len(pdf_text),
+        ",".join(ProcessoAnalise.SCHEMA["properties"].keys()),
+    )
     agent = create_agent(
         model=_build_llm(),
-        response_format=ProcessoAnalise,
-        memory=None,
+        response_format=ProcessoAnalise.SCHEMA,
     )
 
-    response = agent.invoke(
-        {
-            "messages": [
-                {"role": "system", "content": build_system_prompt()},
-                {"role": "user", "content": f"Texto extraído do PDF:\n{pdf_text}"},
-            ]
-        }
-    )
+    try:
+        response = agent.invoke(
+            {
+                "messages": [
+                    {"role": "system", "content": build_system_prompt()},
+                    {"role": "user", "content": f"Texto extraído do PDF:\n{pdf_text}"},
+                ]
+            }
+        )
+    except Exception:
+        logger.exception("Falha ao invocar LLM com structured output: model=%s", model_name)
+        raise
 
     if "structured_response" not in response:
+        logger.error("LLM não retornou structured_response: keys=%s", sorted(response.keys()))
         raise RuntimeError("LLM nao retornou structured_response.")
+
+    logger.info("LLM retornou structured_response com sucesso: model=%s", model_name)
     return response["structured_response"]
 
 
@@ -87,6 +104,7 @@ def save_response(result: Any, path: str = "result.json"):
 
 def main():
     input_path = os.getenv("WORKER_LLM_INPUT_PATH", DEFAULT_INPUT_PATH)
+    logger.info("Iniciando análise local: input_path=%s", input_path)
     response = analyze_file(input_path)
     save_response(response)
 

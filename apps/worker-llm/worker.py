@@ -37,11 +37,22 @@ def process_llm_pipeline(
         tmp_path = tmp.name
 
     try:
+        logger.info(
+            "Baixando PDF para análise: numero_processo=%s grau=%s bucket=%s object_name=%s tmp_path=%s",
+            numero_processo,
+            grau,
+            bucket_name,
+            object_name,
+            tmp_path,
+        )
         client.get_object(bucket_name, object_name, tmp_path)
+
         analise = analyze_file(tmp_path)
+
         payload = _build_payload(numero_processo, grau, analise)
 
         response = requests.post(api_url, json=payload, timeout=30)
+
         response.raise_for_status()
 
         logger.info(

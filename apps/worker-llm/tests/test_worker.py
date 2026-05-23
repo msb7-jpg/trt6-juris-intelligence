@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 import worker
 
 APP_DIR = Path(__file__).resolve().parents[1]
@@ -56,6 +57,25 @@ def test_run_pipeline_retries_on_failure(monkeypatch):
         )
 
     worker.run_pipeline.retry.assert_called_once()
+
+
+def test_run_pipeline_does_not_retry_on_http_400(monkeypatch):
+    fake_response = MagicMock()
+    fake_response.status_code = 400
+    exc = requests.exceptions.HTTPError(response=fake_response)
+
+    monkeypatch.setattr(worker, "process_llm_pipeline", MagicMock(side_effect=exc))
+    monkeypatch.setattr(worker.run_pipeline, "retry", MagicMock(side_effect=RuntimeError("retry-called")))
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        worker.run_pipeline(
+            numero_processo="0001",
+            grau="1",
+            bucket_name="pje-documents",
+            object_name="0001_1.pdf",
+        )
+
+    worker.run_pipeline.retry.assert_not_called()
 
 
 def test_default_llm_base_url_is_valid(monkeypatch):

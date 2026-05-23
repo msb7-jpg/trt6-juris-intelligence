@@ -11,6 +11,7 @@ from core.models.processo import Processo
 from core.serializers.analise_serializer import AnaliseSerializer
 from core.serializers.assunto_serializer import AssuntoSerializer
 from core.serializers.classe_serializer import ClasseSerializer
+from core.serializers.fields import BRLDecimalField
 from core.serializers.orgao_julgador_serializer import OrgaoJulgadorSerializer
 from core.types.processo_dict import ProcessoDict
 
@@ -129,13 +130,13 @@ class ProcessoDeduplicarEntradaSerializer(ProcessoSerializer):
 
 
 class AnaliseEntradaSerializer(serializers.Serializer):
-    resumo = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=256)
+    resumo = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1024)
     tipo_ato_principal = serializers.ChoiceField(
         required=False,
         allow_null=True,
         choices=TipoAtoPrincipal.choices(),
     )
-    decisao = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=256)
+    decisao = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1024)
     palavras_chave = serializers.ListField(
         required=False,
         allow_empty=True,
@@ -148,8 +149,8 @@ class AnaliseEntradaSerializer(serializers.Serializer):
         allow_null=True,
         choices=ResultadoReclamante.choices(),
     )
-    valor_causa = serializers.DecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
-    custas_valor_total = serializers.DecimalField(
+    valor_causa = BRLDecimalField(required=False, allow_null=True, max_digits=10, decimal_places=2)
+    custas_valor_total = BRLDecimalField(
         required=False,
         allow_null=True,
         max_digits=10,
@@ -161,4 +162,5 @@ class ProcessoAdicionarAnaliseEntradaSerializer(serializers.Serializer):
     numero_processo = serializers.CharField()
     grau = serializers.CharField()
     analise = AnaliseEntradaSerializer()
+
 

@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import ClassVar
 
 from pydantic import BaseModel, Field
 
@@ -53,3 +54,58 @@ class ProcessoAnalise(BaseModel):
     resultado_reclamante: ResultadoReclamante | None = Field(default=None, description="Resultado para o reclamante")
     valor_causa: float | None = Field(default=None, description="Valor da causa")
     custas_valor_total: float | None = Field(default=None, description="Valor total das custas")
+
+
+    SCHEMA: ClassVar[dict] = {
+        "type": "object",
+        "description": "Process analysis aligned with ProcessoAnalise and the API payload contract.",
+        "additionalProperties": False,
+        "properties": {
+            "numero_processo": {
+                "type": ["string", "null"],
+                "description": "Número do processo",
+            },
+            "resumo": {
+                "type": ["string", "null"],
+                "description": "Resumo do detalhado do motivo da ação",
+            },
+            "tipo_ato_principal": {
+                "type": ["string", "null"],
+                "enum": [choice[0] for choice in TipoAtoPrincipal.choices()] + [None],
+                "description": "Tipo do principal ato processual",
+            },
+            "decisao": {
+                "type": ["string", "null"],
+                "description": "Resumo da decisão principal",
+            },
+            "palavras_chave": {
+                "type": ["array", "null"],
+                "items": {"type": "string"},
+                "description": "Lista de palavras-chave do processo",
+                "minItems": 10,
+            },
+            "status": {
+                "type": ["string", "null"],
+                "enum": [choice[0] for choice in StatusProcesso.choices()] + [None],
+                "description": "Status atual do processo",
+            },
+            "desfecho": {
+                "type": ["string", "null"],
+                "enum": [choice[0] for choice in Desfecho.choices()] + [None],
+                "description": "Desfecho principal",
+            },
+            "resultado_reclamante": {
+                "type": ["string", "null"],
+                "enum": [choice[0] for choice in ResultadoReclamante.choices()] + [None],
+                "description": "Resultado para o reclamante",
+            },
+            "valor_causa": {
+                "type": ["number", "null"],
+                "description": "Valor da causa",
+            },
+            "custas_valor_total": {
+                "type": ["number", "null"],
+                "description": "Valor total das custas",
+            },
+        }
+    }

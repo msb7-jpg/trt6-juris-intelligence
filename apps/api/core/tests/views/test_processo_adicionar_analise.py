@@ -1,6 +1,14 @@
+import os
+
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api.settings")
+
+import django
+
+django.setup()
 
 from core.models.processo import Processo
 from core.tests.constants import DATA_BASE, PROCESSO_NUMERO_1, TRIBUNAL_TRT6
@@ -101,3 +109,31 @@ class TestProcessoViewsetAdicionarAnalise:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "mensagem" in response.json()
+
+    def test_given_desfecho_value_in_status_when_post_adicionar_analise_then_normalize_and_accept(self):
+        api_client = APIClient()
+        DataSetup.create_processo_existente(
+            numero_processo=PROCESSO_NUMERO_1,
+            data_hora_ultima_atualizacao=DATA_BASE,
+            tribunal=TRIBUNAL_TRT6,
+            grau="G1",
+        )
+
+        payload = {
+            "numero_processo": PROCESSO_NUMERO_1,
+            "grau": "1",
+            "analise": {
+                "resumo": "Resumo teste",
+                "status": "arquivado_sem_decisao",
+                "desfecho": "arquivado_sem_decisao",
+                "palavras_chave": ["teste"],
+            },
+        }
+
+        response = api_client.post(ADICIONAR_ANALISE_ENDPOINT, payload, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        processo = Processo.objects.get(numero_processo=PROCESSO_NUMERO_1, grau="G1")
+        assert processo.analise is not None
+        assert processo.analise.status == "arquivado"
+        assert processo.analise.desfecho == "arquivado_sem_decisao"

@@ -19,3 +19,10 @@ juristcu.db
 
 # Git worktrees (local-only)
 .worktrees/
+
+.antigravitycli/
+.claude/
+.opencode/
+.vscode/
+
+*.log

@@ -31,6 +31,9 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
+from shared.logger import get_logger
+
+logger = get_logger("core.views")
 
 from core.serializers.processo_serializer import (
     ProcessoAdicionarAnaliseEntradaSerializer,
@@ -98,8 +101,20 @@ class ProcessoViewset(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def adicionar_analise(self, request: Request):
+
         input_serializer = ProcessoAdicionarAnaliseEntradaSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
+
+        logger.info("adicionar_analise called: preview=%s", str(request.data))
+
+        is_valid = input_serializer.is_valid(raise_exception=False)
+        if not is_valid:
+            logger.warning("adicionar_analise payload validation failed: errors=%s", input_serializer.errors)
+            raise ValidationError(
+                {
+                    "mensagem": "Payload de analise invalido.",
+                    "detalhes": input_serializer.errors,
+                }
+            )
 
         payload = input_serializer.validated_data
         try:

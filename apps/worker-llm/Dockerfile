@@ -51,5 +51,6 @@ RUN chmod +x /entrypoints/celery.sh
 ENV APP_MODULE=shared.celery_client
 ENV QUEUE=llm_queue
 ENV INCLUDE=worker
+ENV CELERY_ARGS=--concurrency=1
 
 CMD ["/entrypoints/celery.sh"]

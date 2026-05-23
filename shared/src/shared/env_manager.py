@@ -13,6 +13,9 @@ class EnviromentManager:
 
         return value
 
+    def get_datajud_api_url(self) -> str:
+        return self.get_with_default("DATAJUD_API_URL", "https://api-publica.datajud.cnj.jus.br/api_publica_trt6/_search")
+
     def get_lmstudio_base_url(self) -> str:
         return self.get_with_default("LMSTUDIO_API_URL", "http://host.docker.internal:1234/v1")
 

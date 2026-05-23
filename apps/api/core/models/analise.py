@@ -5,9 +5,9 @@ from core.models.palavra_chave import PalavraChave
 
 
 class Analise(models.Model):
-    resumo = models.CharField(max_length=256, blank=True)
+    resumo = models.CharField(max_length=1024, blank=True)
     tipo_ato_principal= models.CharField(choices=TipoAtoPrincipal.choices(), max_length=32, blank=True)
-    decisao = models.CharField(max_length=256, blank=True)
+    decisao = models.CharField(max_length=1024, blank=True)
 
     # Juntado com palavras_chave_desfecho
     palavras_chave = models.ManyToManyField(PalavraChave, blank=True, default=list)
