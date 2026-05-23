@@ -35,6 +35,10 @@ from shared.logger import get_logger
 
 logger = get_logger("core.views")
 
+from core.serializers.busca_semantica_serializer import (
+    BuscaSemanticaEntradaSerializer,
+    ProcessoBuscaSemanticaSaidaSerializer,
+)
 from core.serializers.processo_serializer import (
     ProcessoAdicionarAnaliseEntradaSerializer,
     ProcessoDeduplicarEntradaSerializer,
@@ -46,6 +50,7 @@ from core.services import (
     ProcessoNotFoundError,
     ProcessoSemPdfLookupError,
     adicionar_analise_ao_processo,
+    buscar_processos_semanticos,
     filtrar_processos_faltantes,
     listar_processos_nao_possuem_analise,
     listar_processos_nao_possuem_pdf,
@@ -134,4 +139,28 @@ class ProcessoViewset(viewsets.ViewSet):
 
         output_serializer = ProcessoResumoSerializer(processo)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def busca_semantica(self, request: Request):
+        input_serializer = BuscaSemanticaEntradaSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        payload = input_serializer.validated_data
+        consulta = payload["consulta"]
+        top_k = payload.get("top_k", 5)
+
+        try:
+            resultados = buscar_processos_semanticos(consulta=consulta, top_k=top_k)
+        except Exception as exc:
+            logger.exception("Falha ao executar busca semântica.")
+            return Response(
+                {
+                    "mensagem": "Erro interno ao executar a busca semântica.",
+                    "detalhes": str(exc),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        output_serializer = ProcessoBuscaSemanticaSaidaSerializer(resultados, many=True)
+        return Response({"items": output_serializer.data}, status=status.HTTP_200_OK)
 

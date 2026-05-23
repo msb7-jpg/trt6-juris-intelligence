@@ -130,6 +130,14 @@ class ProcessoDeduplicarEntradaSerializer(ProcessoSerializer):
 
 
 class AnaliseEntradaSerializer(serializers.Serializer):
+    def to_internal_value(self, data):
+        if data and isinstance(data, dict):
+            status_val = data.get("status")
+            if status_val == "arquivado_sem_decisao":
+                data = data.copy()
+                data["status"] = "arquivado"
+        return super().to_internal_value(data)
+
     resumo = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=1024)
     tipo_ato_principal = serializers.ChoiceField(
         required=False,

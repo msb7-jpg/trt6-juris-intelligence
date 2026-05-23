@@ -1,0 +1,18 @@
+meta {
+  name: Busca Semântica
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/processos/busca_semantica/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "consulta": "Companhia Hidro Elétrica do São Francisco CHESF Rosildo Galvão",
+    "top_k": 3
+  }
+}

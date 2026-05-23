@@ -2,11 +2,14 @@
 from collections.abc import Mapping, Sequence
 
 from django.db.models import Q
+from shared.logger import get_logger
 from shared.s3_client import get_s3_client
 
 from core.models.analise import Analise
 from core.models.palavra_chave import PalavraChave
 from core.models.processo import Processo
+
+logger = get_logger("core.services")
 
 PDF_BUCKET_NAME = "pje-documents"
 
@@ -145,6 +148,42 @@ def _sanitize_palavras_chave(values: list[str]) -> list[str]:
     return output
 
 
+def montar_texto_indexacao(processo: Processo) -> str:
+    """Consolida os campos do processo e sua análise em uma string canônica formatada."""
+    classe_nome = processo.classe.nome if processo.classe else ""
+    orgao_julgador_nome = processo.orgao_julgador.nome if processo.orgao_julgador else ""
+
+    # Concatena assuntos com ponto e vírgula
+    assuntos_list = [assunto.nome for assunto in processo.assuntos.all() if assunto.nome]
+    assuntos_str = "; ".join(assuntos_list)
+
+    analise = processo.analise
+    if not analise:
+        return ""
+
+    resumo = analise.resumo or ""
+    decisao = analise.decisao or ""
+
+    # Concatena palavras-chave com ponto e vírgula
+    palavras_list = [pc.nome for pc in analise.palavras_chave.all() if pc.nome]
+    palavras_str = "; ".join(palavras_list)
+
+    desfecho = analise.desfecho or ""
+    resultado_reclamante = analise.resultado_reclamante or ""
+
+    texto_canonico = (
+        f"classe: {classe_nome}\n"
+        f"orgao_julgador: {orgao_julgador_nome}\n"
+        f"assuntos: {assuntos_str}\n"
+        f"resumo: {resumo}\n"
+        f"decisao: {decisao}\n"
+        f"palavras_chave: {palavras_str}\n"
+        f"desfecho: {desfecho}\n"
+        f"resultado_reclamante: {resultado_reclamante}"
+    )
+    return texto_canonico
+
+
 def adicionar_analise_ao_processo(numero_processo: str, grau: str, analise_data: dict) -> Processo:
     graus = _normalize_grau_for_query(grau)
     processo = Processo.objects.filter(
@@ -171,4 +210,70 @@ def adicionar_analise_ao_processo(numero_processo: str, grau: str, analise_data:
         processo.analise.palavras_chave.add(palavra_obj)
 
     processo.save(update_fields=["analise"])
+
+    # Pipeline Síncrona de Geração de Embeddings
+    try:
+        from shared.embeddings import embed_text
+        texto = montar_texto_indexacao(processo)
+        if texto:
+            logger.info(f"Gerando embedding síncrono para processo_id={processo.id}...")
+            embedding = embed_text(texto)
+            processo.analise.embedding = embedding
+            processo.analise.save(update_fields=["embedding"])
+            logger.info(f"Embedding síncrono salvo com sucesso para processo_id={processo.id}.")
+    except Exception as exc:
+        logger.exception(f"Erro ao gerar ou salvar embedding para o processo {processo.id}: {exc}")
+
     return processo
+
+
+def buscar_processos_semanticos(consulta: str, top_k: int = 5) -> list[Processo]:
+    """Realiza a busca vetorial por similaridade de cosseno direto no banco de dados."""
+    from pgvector.django import CosineDistance
+    from shared.embeddings import embed_text
+
+    logger.info(f"Iniciando busca semântica para consulta: '{consulta}' | top_k={top_k}")
+    query_embedding = embed_text(consulta)
+
+    processos = Processo.objects.filter(analise__embedding__isnull=False) \
+        .select_related("classe", "orgao_julgador", "analise") \
+        .prefetch_related("assuntos", "analise__palavras_chave") \
+        .annotate(similaridade=1 - CosineDistance("analise__embedding", query_embedding)) \
+        .order_by("-similaridade")[:top_k]
+
+    return list(processos)
+
+
+def reindexar_processos_sem_embedding() -> int:
+    """Calcula e persiste o embedding para todos os processos que possuem análise mas não possuem embedding calculado."""
+    # Filtra processos que possuem análise, mas cujo embedding na análise é nulo
+    processos = Processo.objects.filter(
+        analise__isnull=False,
+        analise__embedding__isnull=True
+    ).select_related("classe", "orgao_julgador", "analise").prefetch_related("assuntos")
+
+    total = processos.count()
+    if total == 0:
+        logger.info("Nenhum processo pendente de indexação vetorial.")
+        return 0
+
+    logger.info(f"Encontrados {total} processos pendentes de indexação vetorial. Iniciando processamento...")
+
+    from shared.embeddings import embed_text
+
+    count = 0
+    for processo in processos:
+        try:
+            texto = montar_texto_indexacao(processo)
+            if texto:
+                embedding = embed_text(texto)
+                processo.analise.embedding = embedding
+                processo.analise.save(update_fields=["embedding"])
+                count += 1
+                if count % 10 == 0 or count == total:
+                    logger.info(f"Progresso: {count}/{total} processos indexados.")
+        except Exception as exc:
+            logger.exception(f"Falha ao gerar embedding para processo_id={processo.id}: {exc}")
+
+    return count
+

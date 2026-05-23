@@ -1,4 +1,5 @@
 from django.db import models
+from pgvector.django import VectorField
 from shared.schemas.resumo_ia import Desfecho, ResultadoReclamante, StatusProcesso, TipoAtoPrincipal
 
 from core.models.palavra_chave import PalavraChave
@@ -19,6 +20,9 @@ class Analise(models.Model):
     # É possível calcular as custas percentuais a partir desses dois
     valor_causa = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     custas_valor_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    # Vetor de embedding de 384 dimensões para busca semântica
+    embedding = VectorField(dimensions=384, null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.resumo[:50]}..."
