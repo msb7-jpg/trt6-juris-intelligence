@@ -31,7 +31,7 @@ class ProcessSubmitter:
         base_url = env_manager.get_api_base_url().rstrip('/')
         self.api_url = api_url or f"{base_url}/api/processos/deduplicar/"
         self.pending_api_url = pending_api_url or f"{base_url}/api/processos/nao_possuem_pdf/"
-        self.pending_analise_api_url = pending_analise_api_url or f"{base_url}/api/processos/possuem_analise/"
+        self.pending_analise_api_url = pending_analise_api_url or f"{base_url}/api/processos/nao_possuem_analise/"
 
     def submit(self, processos: list[dict]) -> list[ProcessoResumo] | None:
         try:
@@ -102,23 +102,23 @@ class ProcessSubmitter:
             response = requests.get(api_url, timeout=30)
             response.raise_for_status()
             data = response.json()
-            logger.info(f"Resposta de processos com analise: {data}")
+            logger.info(f"Resposta de processos sem analise: {data}")
             return [ProcessoResumo(**item) for item in data]
         except requests.exceptions.HTTPError as exc:
             response = exc.response
             if _is_log_errors_enabled() and response is not None:
                 logger.error(
-                    "Failed to fetch processes with analise: %s | status=%s | response=%s",
+                    "Failed to fetch processes without analise: %s | status=%s | response=%s",
                     exc,
                     response.status_code,
                     response.text,
                 )
             else:
-                logger.error(f"Failed to fetch processes with analise: {exc}")
+                logger.error(f"Failed to fetch processes without analise: {exc}")
             return None
         except requests.exceptions.RequestException as exc:
-            logger.error(f"Failed to fetch processes with analise due to request error: {exc}")
+            logger.error(f"Failed to fetch processes without analise due to request error: {exc}")
             return None
         except Exception as exc:
-            logger.error(f"Failed to fetch processes with analise: {exc}")
+            logger.error(f"Failed to fetch processes without analise: {exc}")
             return None

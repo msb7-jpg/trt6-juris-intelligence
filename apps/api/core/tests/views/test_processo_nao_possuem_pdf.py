@@ -17,11 +17,11 @@ pytestmark = pytest.mark.django_db
 
 
 class TestProcessoViewsetNaoPossuemPdf:
-    def test_get_s3_client_uses_env_endpoint(monkeypatch):
-        monkeypatch.setenv("S3_ENDPOINT", "minio:9000")
-        monkeypatch.setenv("S3_ACCESS_KEY", "x")
-        monkeypatch.setenv("S3_SECRET_KEY", "y")
-        monkeypatch.setenv("S3_SECURE", "false")
+    def test_get_s3_client_uses_env_endpoint(self):
+        self.setenv("S3_ENDPOINT", "minio:9000")
+        self.setenv("S3_ACCESS_KEY", "x")
+        self.setenv("S3_SECRET_KEY", "y")
+        self.setenv("S3_SECURE", "false")
 
         from shared.s3_client import get_s3_client
 

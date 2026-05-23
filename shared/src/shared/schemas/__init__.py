@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ValidationError
+
 from shared.logger import get_logger
 
 logger = get_logger()

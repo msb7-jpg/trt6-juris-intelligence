@@ -1,6 +1,7 @@
 import os
 
 from minio import Minio
+
 from shared.singleton import Singleton
 
 

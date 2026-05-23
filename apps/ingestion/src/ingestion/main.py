@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dateutil.parser import parse as parse_date
 from shared.celery_client import app
-from shared.constants import WORKER_SCRAPPER_TASK_NAME
+from shared.constants import PDF_BUCKET, WORKER_LLM_TASK_NAME, WORKER_SCRAPPER_TASK_NAME
 from shared.logger import get_logger
 from shared.schemas.data_jud import SearchResponse
 
@@ -76,13 +76,40 @@ def main():
 
     if args.pending_analise:
         submitter = ProcessSubmitter(pending_analise_api_url=args.pending_analise_api_url)
-        processos_com_analise = submitter.fetch_pending_analise()
+        processos_sem_analise = submitter.fetch_pending_analise()
 
-        if processos_com_analise is None:
-            logger.error("Erro ao buscar processos com analise na API")
+        if processos_sem_analise is None:
+            logger.error("Erro ao buscar processos sem analise na API")
             return
 
-        logger.info(f"Processos com analise encontrados: {len(processos_com_analise)}")
+        logger.info(f"Processos sem analise encontrados: {len(processos_sem_analise)}")
+        logger.info(f"Celery app: {app} | Task name: {WORKER_LLM_TASK_NAME} | Queue: llm_queue")
+
+        dispatch_count = 0
+        for processo in processos_sem_analise:
+            object_name = f"{processo.numero_processo}_{processo.grau}.pdf"
+            try:
+                logger.info(
+                    "Disparando worker-llm para processo %s grau %s object %s",
+                    processo.numero_processo,
+                    processo.grau,
+                    object_name,
+                )
+                task_result = app.send_task(
+                    WORKER_LLM_TASK_NAME,
+                    kwargs={
+                        "numero_processo": processo.numero_processo,
+                        "grau": processo.grau,
+                        "bucket_name": PDF_BUCKET,
+                        "object_name": object_name,
+                    },
+                )
+                logger.info(f"Task enviada com sucesso: task_id={task_result.id}")
+                dispatch_count += 1
+            except Exception as e:
+                logger.error(f"Erro ao enviar task para {processo.numero_processo}: {e}", exc_info=True)
+
+        logger.info(f"Total de tasks disparadas: {dispatch_count}/{len(processos_sem_analise)}")
         return
 
     if args.pending_pdf:

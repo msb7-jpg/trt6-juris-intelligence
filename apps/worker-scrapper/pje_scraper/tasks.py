@@ -1,5 +1,6 @@
 from celery import shared_task
 
+
 @shared_task(bind=True, name="scraper.run_pipeline")
 def run_pipeline(self, payload: dict) -> dict:
     """Celery task wrapper around the existing pipeline.

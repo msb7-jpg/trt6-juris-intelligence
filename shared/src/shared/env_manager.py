@@ -14,7 +14,7 @@ class EnviromentManager:
         return value
 
     def get_lmstudio_base_url(self) -> str:
-        return self.get_with_default("LMSTUDIO_API_URL", "http://172.26.67.165:1234/v1")
+        return self.get_with_default("LMSTUDIO_API_URL", "http://host.docker.internal:1234/v1")
 
     def get_lmstudio_api_key(self) -> str:
         return self.get_with_default("LMSTUDIO_API_KEY", "lm-studio")

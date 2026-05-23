@@ -3,12 +3,12 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+import worker
 
 APP_DIR = Path(__file__).resolve().parents[1]
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
-import worker
 
 
 def test_process_llm_pipeline_downloads_analyzes_and_posts(monkeypatch):
@@ -64,4 +64,4 @@ def test_default_llm_base_url_is_valid(monkeypatch):
     from main import _build_llm
 
     llm = _build_llm()
-    assert getattr(llm, "openai_api_base") == "http://host.docker.internal:1234/v1"
+    assert llm.openai_api_base == "http://host.docker.internal:1234/v1"

@@ -35,10 +35,6 @@ class ProcessoSemPdfResumoSerializer(serializers.ModelSerializer):
         return raw
 
 
-class ProcessoComAnaliseResumoSerializer(ProcessoSemPdfResumoSerializer):
-    pass
-
-
 class ProcessoSerializer(serializers.ModelSerializer):
     classe = ClasseSerializer(required=False, allow_null=True)
     orgao_julgador = OrgaoJulgadorSerializer(required=False, allow_null=True)

@@ -1,5 +1,6 @@
 def test_deduplicate_processos(monkeypatch):
-    import importlib.util, pathlib
+    import importlib.util
+    import pathlib
     # Load the deduplication module directly from file path
     dedup_path = pathlib.Path(__file__).resolve().parents[2] / 'deduplication.py'
     spec = importlib.util.spec_from_file_location('deduplication', dedup_path)

@@ -21,7 +21,7 @@ class IngestionParser:
         parser.add_argument(
             '--pending-analise',
             action='store_true',
-            help='Busca processos com analise na API',
+            help='Busca processos sem analise na API e dispara o worker-llm',
         )
         parser.add_argument(
             '--pending-api-url',
@@ -32,8 +32,8 @@ class IngestionParser:
         parser.add_argument(
             '--pending-analise-api-url',
             type=str,
-            default='http://localhost:8000/api/processos/possuem_analise/',
-            help='Endpoint da API para listar processos com analise',
+            default='http://localhost:8000/api/processos/nao_possuem_analise/',
+            help='Endpoint da API para listar processos sem analise',
         )
         self.args = parser.parse_args()
 

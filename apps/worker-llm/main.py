@@ -49,10 +49,14 @@ def extract_text_from_document(path: str) -> str:
 
 
 def analyze_text(pdf_text: str) -> ProcessoAnalise:
+
+    # create agent without persistent memory to avoid saving conversation history
     agent = create_agent(
         model=_build_llm(),
         response_format=ProcessoAnalise,
+        memory=None,
     )
+
     response = agent.invoke(
         {
             "messages": [

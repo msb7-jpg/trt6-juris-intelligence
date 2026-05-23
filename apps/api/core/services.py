@@ -119,6 +119,16 @@ def listar_processos_com_analise() -> list[Processo]:
     )
 
 
+def listar_processos_nao_possuem_analise() -> list[Processo]:
+    return list(
+        Processo.objects.filter(analise__isnull=True).only(
+            "numero_processo",
+            "grau",
+            "analise",
+        )
+    )
+
+
 def _normalize_grau_for_query(grau: str) -> set[str]:
     normalized = _normalize_grau(grau)
     if not normalized:

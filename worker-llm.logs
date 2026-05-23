@@ -1,0 +1,563 @@
+ Prompt processing progress: 78.9%
+2026-05-22 01:06:28 [DEBUG]
+ slot update_slots: id  0 | task 934 | n_tokens = 3584, memory_seq_rm [3584, end)
+2026-05-22 01:06:28 [DEBUG]
+ slot init_sampler: id  0 | task 934 | init sampler, took 0.77 ms, tokens: text = 3893, total = 3893
+slot update_slots: id  0 | task 934 | prompt processing done, n_tokens = 3893, batch.n_tokens = 309
+slot update_slots: id  1 | task 933 | new prompt, n_ctx_slot = 11008, n_keep = 11890, task.n_tokens = 11890
+srv    send_error: task id = 933, error: request (11890 tokens) exceeds the available context size (11008 tokens), try increasing it
+slot      release: id  1 | task 933 | stop processing: n_tokens = 0, truncated = 0
+slot update_slots: id  2 | task 936 | new prompt, n_ctx_slot = 11008, n_keep = 14529, task.n_tokens = 14529
+srv    send_error: task id = 936, error: request (14529 tokens) exceeds the available context size (11008 tokens), try increasing it
+slot      release: id  2 | task 936 | stop processing: n_tokens = 0, truncated = 0
+slot update_slots: id  3 | task 935 | new prompt, n_ctx_slot = 11008, n_keep = 38008, task.n_tokens = 38008
+srv    send_error: task id = 935, error: request (38008 tokens) exceeds the available context size (11008 tokens), try increasing it
+slot      release: id  3 | task 935 | stop processing: n_tokens = 0, truncated = 0
+2026-05-22 01:06:28  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 92.1%
+2026-05-22 01:06:28 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:28  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 100.0%
+2026-05-22 01:06:28 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:28 [DEBUG]
+ Received request: POST to /v1/chat/completions with body  {
+  "messages": [
+    {
+      "content": "\n    Você receberá o texto extraído de um PDF de c... <Truncated in logs> ...ampo não estiver presente, preencha com null.\n    ",
+      "role": "system"
+    },
+    {
+      "content": "Texto extraído do PDF:\nFls.: 1\n\nPoder Judiciário J... <Truncated in logs> ...a|\n|654232c|23/01/2026 09:44|Despacho|Despacho|\n\n\n",
+      "role": "user"
+    }
+  ],
+  "model": "google/gemma-3-4b",
+  "stream": false,
+  "tool_choice": "required",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "ProcessoAnalise",
+        "description": "",
+        "parameters": {
+          "properties": {
+            "numero_processo": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Número do processo"
+            },
+            "resumo": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Resumo do detalhado do motivo da ação"
+            },
+            "tipo_ato_principal": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "acordo_homologado",
+                    "sentenca",
+                    "acordao",
+                    "despacho",
+                    "outro"
+                  ],
+                  "title": "TipoAtoPrincipal",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Tipo do principal ato processual"
+            },
+            "decisao": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Resumo da decisão principal"
+            },
+            "palavras_chave": {
+              "default": null,
+              "description": "Lista de palavras-chave do processo",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "minItems": 10,
+              "type": "array"
+            },
+            "status": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "arquivado",
+                    "acordo_homologado",
+                    "sentenciado",
+                    "em_andamento"
+                  ],
+                  "title": "StatusProcesso",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Status atual do processo"
+            },
+            "desfecho": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "acordo_favoravel",
+                    "sentenca_procedente",
+                    "sentenca_parcialmente_procedente",
+                    "sentenca_improcedente",
+                    "extinta",
+                    "arquivado_sem_decisao",
+                    "outro"
+                  ],
+                  "title": "Desfecho",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Desfecho principal"
+            },
+            "resultado_reclamante": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ganhou",
+                    "ganhou_parcial",
+                    "perdeu",
+                    "sem_decisao"
+                  ],
+                  "title": "ResultadoReclamante",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Resultado para o reclamante"
+            },
+            "valor_causa": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Valor da causa"
+            },
+            "custas_valor_total": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Valor total das custas"
+            }
+          },
+          "type": "object"
+        }
+      }
+    }
+  ]
+}
+2026-05-22 01:06:28  [INFO]
+ [google/gemma-3-4b] Running chat completion on conversation with 2 messages.
+2026-05-22 01:06:28 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+2026-05-22 01:06:28 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:28 [DEBUG]
+ slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = 114914155
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.01 ms
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 949 | processing task, is_child = 0
+slot update_slots: id  1 | task 949 | new prompt, n_ctx_slot = 11008, n_keep = 10188, task.n_tokens = 10188
+slot update_slots: id  1 | task 949 | cache reuse is not supported - ignoring n_cache_reuse = 256
+slot update_slots: id  1 | task 949 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 511, batch.n_tokens = 512, progress = 0.050157
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 0.0%
+2026-05-22 01:06:29 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+slot update_slots: id  1 | task 949 | n_tokens = 511, memory_seq_rm [511, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 1022, batch.n_tokens = 512, progress = 0.100314
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 5.0%
+2026-05-22 01:06:29 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+2026-05-22 01:06:29 [DEBUG]
+ slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = 114914176
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.03 ms
+2026-05-22 01:06:29 [DEBUG]
+ slot launch_slot_: id  2 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  2 | task 956 | processing task, is_child = 0
+slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = 114914196
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.02 ms
+2026-05-22 01:06:29 [DEBUG]
+ slot launch_slot_: id  3 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  3 | task 957 | processing task, is_child = 0
+slot update_slots: id  1 | task 949 | n_tokens = 1022, memory_seq_rm [1022, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 1533, batch.n_tokens = 512, progress = 0.150471
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 10.0%
+2026-05-22 01:06:29 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 1533, memory_seq_rm [1533, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 2044, batch.n_tokens = 512, progress = 0.200628
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 15.0%
+2026-05-22 01:06:29 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 2044, memory_seq_rm [2044, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 2555, batch.n_tokens = 512, progress = 0.250785
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 20.1%
+2026-05-22 01:06:29 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 2555, memory_seq_rm [2555, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 3066, batch.n_tokens = 512, progress = 0.300942
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 25.1%
+2026-05-22 01:06:29 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 3066, memory_seq_rm [3066, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 3577, batch.n_tokens = 512, progress = 0.351099
+2026-05-22 01:06:29  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 30.1%
+2026-05-22 01:06:29 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 3577, memory_seq_rm [3577, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 4088, batch.n_tokens = 512, progress = 0.401256
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 35.1%
+2026-05-22 01:06:30 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 4088, memory_seq_rm [4088, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 4599, batch.n_tokens = 512, progress = 0.451413
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 40.1%
+2026-05-22 01:06:30 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 4599, memory_seq_rm [4599, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 5110, batch.n_tokens = 512, progress = 0.501570
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Start to generate a tool call...
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 45.1%
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 50.2%
+2026-05-22 01:06:30 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 5110, memory_seq_rm [5110, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 5621, batch.n_tokens = 512, progress = 0.551728
+2026-05-22 01:06:30 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 5621, memory_seq_rm [5621, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 6132, batch.n_tokens = 512, progress = 0.601885
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 55.2%
+2026-05-22 01:06:30 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 6132, memory_seq_rm [6132, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 6643, batch.n_tokens = 512, progress = 0.652042
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Tool name generated:  ProcessoAnalise
+2026-05-22 01:06:30  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 60.2%
+2026-05-22 01:06:31 [DEBUG]
+ slot update_slots: id  1 | task 949 | n_tokens = 6643, memory_seq_rm [6643, end)
+slot update_slots: id  1 | task 949 | prompt processing progress, n_tokens = 7154, batch.n_tokens = 512, progress = 0.702199
+decode: failed to find a memory slot for batch of size 512
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 0, n_batch = 256, ret = 1
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 65.2%
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 256
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 256, n_batch = 256, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 256
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 256, n_batch = 128, ret = 1
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 70.2%
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 128
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 384, n_batch = 256, ret = 1
+decode: failed to find a memory slot for batch of size 128
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 384, n_batch = 128, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 128
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 384, n_batch = 64, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 64
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 256, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 64
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 128, ret = 1
+decode: failed to find a memory slot for batch of size 64
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 64, ret = 1
+decode: failed to find a memory slot for batch of size 64
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 32, ret = 1
+decode: failed to find a memory slot for batch of size 32
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 16, ret = 1
+decode: failed to find a memory slot for batch of size 16
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 8, ret = 1
+decode: failed to find a memory slot for batch of size 8
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 4, ret = 1
+decode: failed to find a memory slot for batch of size 4
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 448, n_batch = 2, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 62
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 256, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 62
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 128, ret = 1
+decode: failed to find a memory slot for batch of size 62
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 64, ret = 1
+decode: failed to find a memory slot for batch of size 62
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 32, ret = 1
+decode: failed to find a memory slot for batch of size 32
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 16, ret = 1
+decode: failed to find a memory slot for batch of size 16
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 8, ret = 1
+decode: failed to find a memory slot for batch of size 8
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 4, ret = 1
+decode: failed to find a memory slot for batch of size 4
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 2, ret = 1
+decode: failed to find a memory slot for batch of size 2
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 450, n_batch = 1, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 61
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 256, ret = 1
+decode: failed to find a memory slot for batch of size 61
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 128, ret = 1
+decode: failed to find a memory slot for batch of size 61
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 64, ret = 1
+decode: failed to find a memory slot for batch of size 61
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 32, ret = 1
+decode: failed to find a memory slot for batch of size 32
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 16, ret = 1
+decode: failed to find a memory slot for batch of size 16
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 8, ret = 1
+decode: failed to find a memory slot for batch of size 8
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 4, ret = 1
+2026-05-22 01:06:31 [DEBUG]
+ decode: failed to find a memory slot for batch of size 4
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 2, ret = 1
+decode: failed to find a memory slot for batch of size 2
+srv  update_slots: failed to find free space in the KV cache, retrying with smaller batch size, i = 451, n_batch = 1, ret = 1
+decode: failed to find a memory slot for batch of size 1
+srv  update_slots: Context size has been exceeded. i = 451, n_batch = 1, ret = 1
+srv    send_error: task id = 934, error: Context size has been exceeded.
+slot      release: id  0 | task 934 | stop processing: n_tokens = 3915, truncated = 0
+slot prompt_clear: id  0 | task -1 | clearing prompt with 3915 tokens
+srv    send_error: task id = 949, error: Context size has been exceeded.
+slot      release: id  1 | task 949 | stop processing: n_tokens = 7154, truncated = 0
+slot prompt_clear: id  1 | task -1 | clearing prompt with 7154 tokens
+srv    send_error: task id = 956, error: Context size has been exceeded.
+slot      release: id  2 | task 956 | stop processing: n_tokens = 0, truncated = 0
+slot prompt_clear: id  2 | task -1 | clearing prompt with 0 tokens
+srv    send_error: task id = 957, error: Context size has been exceeded.
+slot      release: id  3 | task 957 | stop processing: n_tokens = 0, truncated = 0
+slot prompt_clear: id  3 | task -1 | clearing prompt with 0 tokens
+srv  update_slots: all slots are idle
+2026-05-22 01:06:31 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:31 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:31 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:31 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:31 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+2026-05-22 01:06:31 [DEBUG]
+ slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = 117583454
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.01 ms
+2026-05-22 01:06:31 [DEBUG]
+ slot launch_slot_: id  0 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  0 | task 970 | processing task, is_child = 0
+slot update_slots: id  0 | task 970 | new prompt, n_ctx_slot = 11008, n_keep = 4455, task.n_tokens = 4455
+slot update_slots: id  0 | task 970 | cache reuse is not supported - ignoring n_cache_reuse = 256
+slot update_slots: id  0 | task 970 | n_tokens = 0, memory_seq_rm [0, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 512, batch.n_tokens = 512, progress = 0.114927
+2026-05-22 01:06:31 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 512, memory_seq_rm [512, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 1024, batch.n_tokens = 512, progress = 0.229854
+2026-05-22 01:06:31 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 1024, memory_seq_rm [1024, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 1536, batch.n_tokens = 512, progress = 0.344781
+2026-05-22 01:06:31 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 0.0%
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 11.5%
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 23.0%
+2026-05-22 01:06:31 [DEBUG]
+ LlamaV4::predict slot selection: session_id=<empty> server-selected (LCP/LRU)
+2026-05-22 01:06:31 [DEBUG]
+ slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = 117585950
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.01 ms
+slot launch_slot_: id  1 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  1 | task 975 | processing task, is_child = 0
+slot update_slots: id  0 | task 970 | n_tokens = 1536, memory_seq_rm [1536, end)
+2026-05-22 01:06:31 [DEBUG]
+ slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 2048, batch.n_tokens = 512, progress = 0.459708
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 34.5%
+2026-05-22 01:06:31 [DEBUG]
+ slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = 117589104
+srv  get_availabl: updating prompt cache
+srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000
+srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 11008 tokens, 8589934592 est)
+srv  get_availabl: prompt cache update took 0.01 ms
+slot launch_slot_: id  2 | task -1 | sampler chain: logits -> penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
+slot launch_slot_: id  2 | task 974 | processing task, is_child = 0
+slot update_slots: id  0 | task 970 | n_tokens = 2048, memory_seq_rm [2048, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 2560, batch.n_tokens = 512, progress = 0.574635
+2026-05-22 01:06:31  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 46.0%
+2026-05-22 01:06:32 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 2560, memory_seq_rm [2560, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 3072, batch.n_tokens = 512, progress = 0.689562
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 57.5%
+2026-05-22 01:06:32 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 3072, memory_seq_rm [3072, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 3584, batch.n_tokens = 512, progress = 0.804489
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 69.0%
+2026-05-22 01:06:32 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 3584, memory_seq_rm [3584, end)
+slot update_slots: id  0 | task 970 | prompt processing progress, n_tokens = 4096, batch.n_tokens = 512, progress = 0.919416
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 80.4%
+2026-05-22 01:06:32 [DEBUG]
+ slot update_slots: id  0 | task 970 | n_tokens = 4096, memory_seq_rm [4096, end)
+2026-05-22 01:06:32 [DEBUG]
+ slot init_sampler: id  0 | task 970 | init sampler, took 0.83 ms, tokens: text = 4455, total = 4455
+slot update_slots: id  0 | task 970 | prompt processing done, n_tokens = 4455, batch.n_tokens = 359
+slot update_slots: id  1 | task 975 | new prompt, n_ctx_slot = 11008, n_keep = 11071, task.n_tokens = 11071
+srv    send_error: task id = 975, error: request (11071 tokens) exceeds the available context size (11008 tokens), try increasing it
+slot      release: id  1 | task 975 | stop processing: n_tokens = 0, truncated = 0
+slot update_slots: id  2 | task 974 | new prompt, n_ctx_slot = 11008, n_keep = 17177, task.n_tokens = 17177
+srv    send_error: task id = 974, error: request (17177 tokens) exceeds the available context size (11008 tokens), try increasing it
+slot      release: id  2 | task 974 | stop processing: n_tokens = 0, truncated = 0
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 91.9%
+2026-05-22 01:06:32 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:32 [ERROR]
+ [google/gemma-3-4b] Error: Channel Error
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Prompt processing progress: 100.0%
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Start to generate a tool call...
+2026-05-22 01:06:32  [INFO]
+ [google/gemma-3-4b] Tool name generated:  ProcessoAnalise
+2026-05-22 01:06:36 [DEBUG]
+ slot print_timing: id  0 | task 970 | 
+prompt eval time =    1001.17 ms /  4455 tokens (    0.22 ms per token,  4449.79 tokens per second)
+       eval time =    4199.83 ms /   335 tokens (   12.54 ms per token,    79.77 tokens per second)
+      total time =    5201.00 ms /  4790 tokens
+2026-05-22 01:06:36 [DEBUG]
+ slot      release: id  0 | task 970 | stop processing: n_tokens = 4789, truncated = 0
+srv  update_slots: all slots are idle
+2026-05-22 01:06:36 [DEBUG]
+ LlamaV4: server assigned slot 0 to task 970
+2026-05-22 01:06:36  [INFO]
+ [google/gemma-3-4b] Model generated a tool call.
+2026-05-22 01:06:36  [INFO]
+ [google/gemma-3-4b] Model generated tool calls:  [ProcessoAnalise(numero_processo="0000674-78.2025.5.06.0011", resumo="O processo é uma Representaçã...", tipo_ato_principal="despacho", decisao="A sentença extingue o feito e...", palavras_chave=["representação pré-processual...", status="arquivado", desfecho="arquivado_sem_decisao", resultado_reclamante="sem_decisao", valor_causa="1000.00", custas_valor_total=null)]
+2026-05-22 01:06:36  [INFO]
+ [google/gemma-3-4b] Generated prediction:  {
+  "id": "chatcmpl-su3mco5chc2dphz4ey968",
+  "object": "chat.completion",
+  "created": 1779422787,
+  "model": "google/gemma-3-4b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "",
+        "reasoning_content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "379550855",
+            "function": {
+              "name": "ProcessoAnalise",
+              "arguments": "{\"numero_processo\":\"0000674-78.2025.5.06.0011\",\"resumo\":\"O processo é uma Representação Pré-Processual (RPP) proposta pela INTERFORT SEGURANCA DE VALORES LTDA em face da EMPRESA BRASILEIRA DE CORREIOS E TELEGRAFOS. O CEJUSC devolveu o processo sem proceder à tentativa de conciliação, entendendo pela incompetência do Juízo para apreciar o pedido, nos termos dos arts. 1º e 2º do Ato Conjunto TRT6-GP-GVP-CRT n.º 07/2024 – MPP.\",\"tipo_ato_principal\":\"despacho\",\"decisao\":\"A sentença extingue o feito e determina seu arquivamento, devido à incompetência do juízo para apreciar o pedido.\",\"palavras_chave\":[\"representação pré-processual\",\"incompetência\",\"conciliação\",\"CORREIOS E TELEGRAFOS\",\"INTERFORT SEGURANCA DE VALORES LTDA\"],\"status\":\"arquivado\",\"desfecho\":\"arquivado_sem_decisao\",\"resultado_reclamante\":\"sem_decisao\",\"valor_causa\":\"1000.00\",\"custas_valor_total\":null}"
+            }
+          }
+        ]
+      },
+      "logprobs": null,
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 4455,
+    "completion_tokens": 335,
+    "total_tokens": 4790,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    }
+  },
+  "stats": {},
+  "system_fingerprint": "google/gemma-3-4b"
+}
