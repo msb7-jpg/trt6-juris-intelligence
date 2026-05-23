@@ -71,7 +71,7 @@ class ProcessoAnalise(BaseModel):
             },
             "tipo_ato_principal": {
                 "type": ["string", "null"],
-                "enum": [choice[0] for choice in TipoAtoPrincipal.choices()] + [None],
+                "enum": [choice[0] for choice in TipoAtoPrincipal.choices()],
                 "description": "Tipo do principal ato processual",
             },
             "decisao": {
@@ -86,17 +86,17 @@ class ProcessoAnalise(BaseModel):
             },
             "status": {
                 "type": ["string", "null"],
-                "enum": [choice[0] for choice in StatusProcesso.choices()] + [None],
+                "enum": [choice[0] for choice in StatusProcesso.choices()],
                 "description": "Status atual do processo",
             },
             "desfecho": {
                 "type": ["string", "null"],
-                "enum": [choice[0] for choice in Desfecho.choices()] + [None],
+                "enum": [choice[0] for choice in Desfecho.choices()],
                 "description": "Desfecho principal",
             },
             "resultado_reclamante": {
                 "type": ["string", "null"],
-                "enum": [choice[0] for choice in ResultadoReclamante.choices()] + [None],
+                "enum": [choice[0] for choice in ResultadoReclamante.choices()],
                 "description": "Resultado para o reclamante",
             },
             "valor_causa": {

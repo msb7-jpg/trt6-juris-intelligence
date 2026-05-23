@@ -54,14 +54,8 @@ def extract_text_from_document(path: str) -> str:
 
 def analyze_text(pdf_text: str) -> ProcessoAnalise:
 
-    # create agent without persistent memory to avoid saving conversation history
     model_name = env_manager.get_lmstudio_model()
-    logger.info(
-        "Enviando texto para LLM: model=%s characters=%s schema_fields=%s",
-        model_name,
-        len(pdf_text),
-        ",".join(ProcessoAnalise.SCHEMA["properties"].keys()),
-    )
+
     agent = create_agent(
         model=_build_llm(),
         response_format=ProcessoAnalise.SCHEMA,
@@ -84,8 +78,13 @@ def analyze_text(pdf_text: str) -> ProcessoAnalise:
         logger.error("LLM não retornou structured_response: keys=%s", sorted(response.keys()))
         raise RuntimeError("LLM nao retornou structured_response.")
 
-    logger.info("LLM retornou structured_response com sucesso: model=%s", model_name)
-    return response["structured_response"]
+    try:
+        validated_analise = ProcessoAnalise.model_validate(response["structured_response"])
+        logger.info("LLM retornou structured_response com sucesso e validado pelo Pydantic: model=%s", model_name)
+        return validated_analise
+    except Exception as e:
+        logger.error("Falha na validação Pydantic dos dados retornados pela LLM: %s. Dados recebidos: %s", str(e), response["structured_response"])
+        raise RuntimeError(f"Retorno da LLM violou o esquema do ProcessoAnalise: {e}") from e
 
 
 def analyze_file(file_path: str) -> ProcessoAnalise:
