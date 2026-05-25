@@ -12,6 +12,8 @@ WORKDIR /app
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
+# Flush logs immediately so worker failures appear in docker logs without buffering.
+ENV PYTHONUNBUFFERED=1
 # Ensure binaries installed by pip --system are in PATH
 ENV PATH="/usr/local/bin:$PATH"
 
