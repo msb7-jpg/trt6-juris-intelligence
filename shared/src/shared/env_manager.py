@@ -23,7 +23,7 @@ class EnviromentManager:
         return self.get_with_default("LMSTUDIO_API_KEY", "lm-studio")
 
     def get_lmstudio_model(self) -> str:
-        return self.get_with_default("LMSTUDIO_MODEL", "google/gemma-3-4b")
+        return self.get_with_default("LMSTUDIO_MODEL", "expert/trt6-model") # Facade name
 
     def get_api_base_url(self) -> str:
         return self.get_with_default("API_BASE_URL", "http://api:8000")

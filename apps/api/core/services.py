@@ -277,3 +277,290 @@ def reindexar_processos_sem_embedding() -> int:
 
     return count
 
+
+def sincronizar_processos_minio(
+    modo: str,
+    dry_run: bool = False,
+    no_trigger: bool = False,
+    stdout_writer = None,
+) -> dict:
+    import re
+
+    from dateutil.parser import parse as parse_date
+    from shared.celery_client import app as celery_app
+    from shared.constants import PDF_BUCKET, WORKER_LLM_TASK_NAME
+    from shared.s3_client import get_s3_client
+
+    from core.serializers.processo_serializer import ProcessoSerializer
+
+    def log(msg, style=None):
+        if stdout_writer:
+            if style:
+                stdout_writer(msg, style)
+            else:
+                stdout_writer(msg)
+        else:
+            if style == "error":
+                logger.error(msg)
+            elif style == "warning":
+                logger.warning(msg)
+            else:
+                logger.info(msg)
+
+    client = get_s3_client()
+
+    log("Consultando objetos no bucket S3 'pje-documents'...")
+    try:
+        objects = client.list_objects(PDF_BUCKET, recursive=True)
+    except Exception as exc:
+        log(f"Falha ao listar objetos no S3: {exc}", "error")
+        return {"sucesso": False, "erro": str(exc)}
+
+    log(f"Encontrados {len(objects)} objetos no S3.")
+
+    db_processos = Processo.objects.all().prefetch_related('analise')
+    db_processos_map = {}
+    for p in db_processos:
+        db_processos_map[(p.numero_processo, _normalize_grau(p.grau))] = p
+
+    log(f"Encontrados {len(db_processos_map)} processos no banco de dados.")
+
+    matched_objects = []
+    orphaned_objects = []
+
+    pattern = re.compile(r"^(\d+)(?:_(\d+))?\.pdf$")
+
+    for obj in objects:
+        filename = obj.object_name
+        match = pattern.match(filename)
+        if not match:
+            orphaned_objects.append((filename, None, None))
+            continue
+
+        numero_processo = match.group(1)
+        grau_suff = match.group(2)
+
+        grau_val = grau_suff if grau_suff else "1"
+        grau_normalized = _normalize_grau(grau_val)
+
+        key = (numero_processo, grau_normalized)
+        if key in db_processos_map:
+            matched_objects.append((filename, numero_processo, grau_normalized))
+        else:
+            orphaned_objects.append((filename, numero_processo, grau_normalized))
+
+    log(f"  -> Objetos correspondidos no banco: {len(matched_objects)}")
+    log(f"  -> Objetos órfãos (apenas no S3): {len(orphaned_objects)}")
+
+    resultado = {
+        "total_s3": len(objects),
+        "total_db": len(db_processos_map),
+        "matched": len(matched_objects),
+        "orphaned": len(orphaned_objects),
+    }
+
+    if modo == "status":
+        return resultado
+
+    if modo == "import":
+        importados = 0
+        tasks_disparadas = 0
+
+        orphaned_nums = list({item[1] for item in orphaned_objects if item[1]})
+        log(f"Iniciando busca em lotes na API DataJud para {len(orphaned_nums)} processos órfãos...")
+
+        datajud_metadata = {}
+        batch_size = 100
+        for i in range(0, len(orphaned_nums), batch_size):
+            batch = orphaned_nums[i : i + batch_size]
+            log(f"  -> Buscando lote {i // batch_size + 1} de {(len(orphaned_nums) - 1) // batch_size + 1} (Tamanho: {len(batch)})...")
+
+            import requests
+            api_url = 'https://api-publica.datajud.cnj.jus.br/api_publica_trt6/_search'
+            public_key = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw=='
+            headers = {'Authorization': f'APIKey {public_key}', 'Content-Type': 'application/json'}
+            query = {
+                'size': len(batch) * 2,
+                'query': {
+                    'terms': {
+                        'numeroProcesso.keyword': batch
+                    }
+                }
+            }
+            try:
+                response = requests.post(api_url, headers=headers, json=query, timeout=20)
+                if response.ok:
+                    hits = response.json().get('hits', {}).get('hits', [])
+                    for h in hits:
+                        source = h.get('_source', {})
+                        num = source.get('numeroProcesso')
+                        if num:
+                            datajud_metadata.setdefault(num, []).append(source)
+            except Exception as e:
+                log(f"Erro ao buscar lote no DataJud: {e}", "warning")
+
+        log(f"Metadados recuperados do DataJud para {len(datajud_metadata)} processos.")
+        log(f"Iniciando importação de processos órfãos (Total: {len(orphaned_objects)})...")
+
+        for filename, num_processo, grau_norm in orphaned_objects:
+            if not num_processo:
+                continue
+
+            grau_db = f"G{grau_norm}" if grau_norm in {"1", "2"} else "G1"
+
+            matched_sources = datajud_metadata.get(num_processo, [])
+            source_meta = None
+            for s in matched_sources:
+                if _normalize_grau(s.get("grau")) == grau_norm:
+                    source_meta = s
+                    break
+            if not source_meta and matched_sources:
+                source_meta = matched_sources[0]
+
+            if source_meta:
+                log(f"Importando processo rico {num_processo} grau {grau_db} (do arquivo {filename})...")
+                classe_data = None
+                if c_raw := source_meta.get("classe"):
+                    classe_data = {"codigo": c_raw.get("codigo"), "nome": c_raw.get("nome")}
+
+                orgao_data = None
+                if o_raw := source_meta.get("orgaoJulgador"):
+                    orgao_data = {
+                        "codigo": o_raw.get("codigo"),
+                        "nome": o_raw.get("nome"),
+                        "codigo_municipio_ibge": o_raw.get("codigoMunicipioIBGE"),
+                    }
+
+                assuntos_data = []
+                for a_raw in source_meta.get("assuntos", []):
+                    if a_raw:
+                        assuntos_data.append({"codigo": a_raw.get("codigo"), "nome": a_raw.get("nome")})
+
+                data_ajuizamento = None
+                if date_ajuiz_raw := source_meta.get("dataAjuizamento"):
+                    try:
+                        data_ajuizamento = parse_date(date_ajuiz_raw).date().isoformat()
+                    except Exception:
+                        pass
+
+                data_att = None
+                if date_att_raw := source_meta.get("dataHoraUltimaAtualizacao"):
+                    try:
+                        data_att = parse_date(date_att_raw).date().isoformat()
+                    except Exception:
+                        pass
+
+                mapped_dict = {
+                    "numero_processo": num_processo,
+                    "grau": grau_db,
+                    "tribunal": source_meta.get("tribunal", "TRT6"),
+                    "data_ajuizamento": data_ajuizamento,
+                    "data_hora_ultima_atualizacao": data_att,
+                    "classe": classe_data,
+                    "orgao_julgador": orgao_data,
+                    "assuntos": assuntos_data,
+                }
+            else:
+                log(f"Importando processo esqueleto {num_processo} grau {grau_db} (do arquivo {filename}) - Sem metadados no DataJud...")
+                mapped_dict = {
+                    "numero_processo": num_processo,
+                    "grau": grau_db,
+                    "tribunal": "TRT6",
+                    "data_ajuizamento": None,
+                    "data_hora_ultima_atualizacao": None,
+                    "classe": None,
+                    "orgao_julgador": None,
+                    "assuntos": [],
+                }
+
+            if not dry_run:
+                try:
+                    Processo.objects.filter(numero_processo=num_processo, grau=grau_db).delete()
+
+                    serializer = ProcessoSerializer()
+                    processo = serializer.create(mapped_dict)
+                    importados += 1
+                except Exception as e:
+                    log(f"Erro ao criar processo rico {num_processo} no banco: {e}", "error")
+                    continue
+            else:
+                importados += 1
+
+            if not no_trigger:
+                log(f"  -> Disparando task worker-llm para {num_processo} grau {grau_db}...")
+                if not dry_run:
+                    try:
+                        celery_app.send_task(
+                            WORKER_LLM_TASK_NAME,
+                            kwargs={
+                                "numero_processo": num_processo,
+                                "grau": grau_db,
+                                "bucket_name": PDF_BUCKET,
+                                "object_name": filename,
+                            },
+                        )
+                        tasks_disparadas += 1
+                    except Exception as e:
+                        log(f"Erro ao disparar task para {num_processo}: {e}", "error")
+                else:
+                    tasks_disparadas += 1
+
+        log(f"Sincronização concluída (import): {importados} processos criados, {tasks_disparadas} tasks de LLM disparadas.")
+        resultado["importados"] = importados
+        resultado["tasks_disparadas"] = tasks_disparadas
+
+    elif modo == "trigger":
+        tasks_disparadas = 0
+        pendentes_analise = []
+        for key, processo in db_processos_map.items():
+            if processo.analise is None:
+                num_processo, grau_norm = key
+                object_name = _s3_object_key(num_processo, grau_norm)
+                exists = any(obj.object_name == object_name for obj in objects)
+                if exists:
+                    pendentes_analise.append((processo, object_name))
+
+        log(f"Encontrados {len(pendentes_analise)} processos no banco com PDF no S3 mas sem análise.")
+
+        for processo, object_name in pendentes_analise:
+            log(f"Disparando task worker-llm para {processo.numero_processo} grau {processo.grau}...")
+            if not dry_run:
+                try:
+                    celery_app.send_task(
+                        WORKER_LLM_TASK_NAME,
+                        kwargs={
+                            "numero_processo": processo.numero_processo,
+                            "grau": processo.grau,
+                            "bucket_name": PDF_BUCKET,
+                            "object_name": object_name,
+                        },
+                    )
+                    tasks_disparadas += 1
+                except Exception as e:
+                    log(f"Erro ao disparar task para {processo.numero_processo}: {e}", "error")
+            else:
+                tasks_disparadas += 1
+
+        log(f"Sincronização concluída (trigger): {tasks_disparadas} tasks de LLM disparadas.")
+        resultado["tasks_disparadas"] = tasks_disparadas
+
+    elif modo == "cleanup":
+        removidos = 0
+        log(f"Iniciando remoção de {len(orphaned_objects)} objetos órfãos no S3...")
+        for filename, _, _ in orphaned_objects:
+            log(f"Removendo objeto {filename} do S3...")
+            if not dry_run:
+                try:
+                    client.delete_object(PDF_BUCKET, filename)
+                    removidos += 1
+                except Exception as e:
+                    log(f"Erro ao remover objeto {filename}: {e}", "error")
+            else:
+                removidos += 1
+
+        log(f"Sincronização concluída (cleanup): {removidos} objetos removidos do S3.")
+        resultado["removidos"] = removidos
+
+    return resultado
+
+
