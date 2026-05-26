@@ -1,43 +1,131 @@
 <script setup lang="ts">
-import BaseCard from '@/shared/components/ui/BaseCard.vue';
-import type { HomeInsightKpis } from '@/shared/types/cases';
-import { formatCurrencyBRL, formatMonthCount } from '@/shared/utils/formatters';
-import { BarChart3, CircleDollarSign, Clock3, Scale, TrendingUp } from 'lucide-vue-next';
+import { BarChart3, CircleDollarSign, Clock3, Gavel, Scale, TrendingUp } from 'lucide-vue-next'
+import { computed } from 'vue'
 
-defineProps<{ kpis: HomeInsightKpis }>()
+import BaseChart from '@/shared/components/ui/charts/BaseChart.vue'
+import BaseCard from '@/shared/components/ui/BaseCard.vue'
+import {
+  CHART_PALETTE_DESFECHO,
+  CHART_PALETTE_RADIAL,
+  CHART_PALETTE_RESULTADO,
+  CHART_PALETTE_STATUS,
+} from '@/shared/constants/charts'
+import type { HomeInsights } from '@/shared/types/cases'
+import { formatCurrencyBRL, formatMonthCount } from '@/shared/utils/formatters'
+
+const props = defineProps<{ insights: HomeInsights }>()
+
+const hasDesfechos = computed(
+  () => props.insights.desfechoSeries.values.length > 0,
+)
+const hasStatus = computed(() => props.insights.statusSeries.values.length > 0)
+const hasResultado = computed(
+  () => props.insights.resultadoSeries.values.length > 0,
+)
+const hasValor = computed(() => props.insights.valorRadial.maximo > 0)
+const hasArgumentos = computed(
+  () => props.insights.kpis.argumentosRelevantes.length > 0,
+)
+
+const COUNT_LABEL = 'casos'
+
+function formatCount(value: number): string {
+  return `${value} ${COUNT_LABEL}`
+}
 </script>
 
 <template>
   <section class="insights-panel">
     <h2>Painel de insights</h2>
+
     <BaseCard>
-      <p class="metric-title"><TrendingUp :size="16" /> Probabilidade de exito</p>
-      <div class="metric-value">{{ kpis.probabilidadeExito }}%</div>
-      <p class="metric-note">Taxa historica para argumentos semelhantes no TRT6.</p>
+      <p class="metric-title"><TrendingUp :size="16" /> Taxa de procedência</p>
+      <div class="metric-value">{{ insights.kpis.taxaProcedencia }}%</div>
+      <p class="metric-note">
+        Calculada a partir dos {{ insights.kpis.totalCases }} processos retornados pela busca semântica.
+      </p>
     </BaseCard>
 
     <BaseCard>
-      <p class="metric-title"><CircleDollarSign :size="16" /> Valor medio</p>
-      <div class="metric-value">{{ formatCurrencyBRL(kpis.valorMedioCondenacao) }}</div>
-      <p class="metric-note">Media estimada de acordo ou condenacao em casos correlatos.</p>
+      <p class="metric-title"><Gavel :size="16" /> Distribuição por desfecho</p>
+      <BaseChart
+        v-if="hasDesfechos"
+        type="donut"
+        :series="insights.desfechoSeries.values"
+        :labels="insights.desfechoSeries.labels"
+        :colors="CHART_PALETTE_DESFECHO"
+        :value-formatter="formatCount"
+      />
+      <p v-else class="metric-note">Sem desfechos registrados nos resultados.</p>
+    </BaseCard>
+
+    <BaseCard>
+      <p class="metric-title"><Scale :size="16" /> Resultado do reclamante</p>
+      <BaseChart
+        v-if="hasResultado"
+        type="bar"
+        :series="[{ name: COUNT_LABEL, data: insights.resultadoSeries.values }]"
+        :labels="insights.resultadoSeries.labels"
+        :colors="CHART_PALETTE_RESULTADO"
+        :value-formatter="formatCount"
+      />
+      <p v-else class="metric-note">Sem dados de resultado disponíveis.</p>
     </BaseCard>
 
     <div class="inline-grid">
       <BaseCard>
-        <p class="metric-title"><Clock3 :size="16" /> Tempo medio</p>
-        <div class="metric-value small">{{ formatMonthCount(kpis.tempoMedioMeses) }}</div>
+        <p class="metric-title"><CircleDollarSign :size="16" /> Valor médio</p>
+        <BaseChart
+          v-if="hasValor"
+          type="radialBar"
+          :series="[insights.valorRadial.percentual]"
+          :colors="CHART_PALETTE_RADIAL"
+          :center-label="formatCurrencyBRL(insights.valorRadial.atual)"
+          :center-value="formatCurrencyBRL(insights.valorRadial.atual)"
+        />
+        <p v-else class="metric-value small">{{ formatCurrencyBRL(insights.kpis.valorMedio) }}</p>
+        <p class="metric-note">
+          Máximo: {{ formatCurrencyBRL(insights.kpis.valorMaximo) }}
+        </p>
       </BaseCard>
+
       <BaseCard>
-        <p class="metric-title"><Scale :size="16" /> Risco de recurso</p>
-        <div class="metric-value small">{{ kpis.riscoRecurso }}%</div>
+        <p class="metric-title"><Clock3 :size="16" /> Tempo médio</p>
+        <div class="metric-value small">
+          {{ formatMonthCount(insights.kpis.tempoMedioMeses) }}
+        </div>
+        <p class="metric-note">
+          Tramitação calculada a partir das datas de ajuizamento e última atualização.
+        </p>
       </BaseCard>
     </div>
 
     <BaseCard>
-      <p class="metric-title"><BarChart3 :size="16" /> Argumentacao relevante</p>
-      <ul>
-        <li v-for="argumento in kpis.argumentosRelevantes" :key="argumento">{{ argumento }}</li>
+      <p class="metric-title"><BarChart3 :size="16" /> Status do processo</p>
+      <BaseChart
+        v-if="hasStatus"
+        type="donut"
+        :series="insights.statusSeries.values"
+        :labels="insights.statusSeries.labels"
+        :colors="CHART_PALETTE_STATUS"
+        :value-formatter="formatCount"
+      />
+      <p v-else class="metric-note">Sem status registrado nos resultados.</p>
+    </BaseCard>
+
+    <BaseCard>
+      <p class="metric-title"><BarChart3 :size="16" /> Argumentação relevante</p>
+      <ul v-if="hasArgumentos">
+        <li
+          v-for="argumento in insights.kpis.argumentosRelevantes"
+          :key="argumento"
+        >
+          {{ argumento }}
+        </li>
       </ul>
+      <p v-else class="metric-note">
+        Nenhuma palavra-chave agregada para os resultados desta busca.
+      </p>
     </BaseCard>
   </section>
 </template>

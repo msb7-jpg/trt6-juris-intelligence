@@ -9,7 +9,7 @@ defineProps<{ items: ProcessCase[] }>()
   <section class="results-list">
     <header>
       <h2>Resultados encontrados ({{ items.length }})</h2>
-      <p>Top 5 casos semanticamente proximos para seu contexto.</p>
+      <p>Casos semanticamente próximos para o seu contexto, ordenados por similaridade.</p>
     </header>
     <div
       v-for="(item, idx) in items"

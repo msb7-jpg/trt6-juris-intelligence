@@ -21,6 +21,7 @@ dependencies = [
     "pytest-django>=4.11.1",
     "psycopg2-binary>=2.9.12",
     "pgvector>=0.2.0",
+    "django-cors-headers>=4.4.0",
 ]
 
 [tool.uv.sources]

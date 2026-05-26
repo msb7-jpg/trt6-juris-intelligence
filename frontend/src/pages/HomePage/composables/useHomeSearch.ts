@@ -1,36 +1,47 @@
-import { applyHomeFilters, rankByQuery } from '@/pages/HomePage/utils/searchMatching'
-import { HOME_INSIGHTS, MOCK_CASES } from '@/shared/constants/mockCases'
 import { computed, ref } from 'vue'
+
+import { useBuscaSemantica } from '@/composables/useBuscaSemantica'
+
+import { useHomeInsights } from './useHomeInsights'
 
 export function useHomeSearch() {
   const query = ref('')
   const hasSearched = ref(false)
-  const activeFilters = ref(new Set<string>())
+  const submittedQuery = ref('')
 
-  function toggleFilter(filterId: string) {
-    const next = new Set(activeFilters.value)
-    if (next.has(filterId)) next.delete(filterId)
-    else next.add(filterId)
-    activeFilters.value = next
-  }
+  const enabled = computed(
+    () => hasSearched.value && submittedQuery.value.trim().length > 0,
+  )
+
+  const {
+    data: cases,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useBuscaSemantica(submittedQuery, enabled)
+
+  const insights = useHomeInsights(cases)
 
   function submitSearch(value: string) {
-    query.value = value
+    const trimmed = value.trim()
+    if (!trimmed) return
+    query.value = trimmed
+    submittedQuery.value = trimmed
     hasSearched.value = true
   }
-
-  const filteredCases = computed(() => {
-    const filtered = applyHomeFilters(MOCK_CASES, activeFilters.value)
-    return rankByQuery(filtered, query.value).slice(0, 5)
-  })
 
   return {
     query,
     hasSearched,
-    activeFilters,
-    filteredCases,
-    insightKpis: HOME_INSIGHTS,
-    toggleFilter,
     submitSearch,
+    cases,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+    insights,
   }
 }

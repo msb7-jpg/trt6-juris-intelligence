@@ -2,14 +2,16 @@
 import { LoaderCircle, Search } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ modelValue: string }>()
+const props = withDefaults(
+  defineProps<{ modelValue: string; loading?: boolean }>(),
+  { loading: false },
+)
 const emit = defineEmits<{
   'update:modelValue': [string]
   submit: [string]
 }>()
 
 const localValue = ref(props.modelValue)
-const isSubmitting = ref(false)
 
 watch(
   () => props.modelValue,
@@ -24,12 +26,9 @@ function updateValue(value: string) {
 }
 
 function onSubmit() {
-  if (!localValue.value.trim()) return
-  isSubmitting.value = true
-  emit('submit', localValue.value)
-  window.setTimeout(() => {
-    isSubmitting.value = false
-  }, 500)
+  const trimmed = localValue.value.trim()
+  if (!trimmed) return
+  emit('submit', trimmed)
 }
 </script>
 
@@ -44,8 +43,8 @@ function onSubmit() {
         @keydown.enter.prevent="onSubmit"
       />
     </label>
-    <button type="button" :disabled="isSubmitting" @click="onSubmit">
-      <LoaderCircle v-if="isSubmitting" :size="16" class="spin" />
+    <button type="button" :disabled="props.loading" @click="onSubmit">
+      <LoaderCircle v-if="props.loading" :size="16" class="spin" />
       <span v-else>Analisar</span>
     </button>
   </div>

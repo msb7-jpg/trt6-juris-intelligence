@@ -1,32 +1,55 @@
+import type {
+  Desfecho,
+  ResultadoReclamante,
+  StatusProcesso,
+} from './api'
+
 export interface ProcessCase {
+  id: number
   numeroProcesso: string
   tribunal: string
   classeNome: string
   orgaoJulgadorNome: string
   dataAjuizamento: string
+  dataUltimaAtualizacao: string
   tempoTramitacaoMeses: number
   resumoCausa: string
   decisaoResumo: string
   palavrasChave: string[]
-  statusProcesso: string
-  desfecho: string
-  resultadoReclamante: string
+  statusProcesso: StatusProcesso | null
+  desfecho: Desfecho | null
+  resultadoReclamante: ResultadoReclamante | null
   valorCausa: number
   custasValorTotal: number
-  custasPercentual: number
   similaridade: number
 }
 
-export interface HomeInsightKpis {
-  probabilidadeExito: number
+export interface InsightKpis {
+  totalCases: number
+  valorMedio: number
+  valorTotal: number
+  valorMaximo: number
   taxaProcedencia: number
-  valorMedioCondenacao: number
+  taxaGanhoReclamante: number
   tempoMedioMeses: number
-  riscoRecurso: number
   argumentosRelevantes: string[]
 }
 
-export interface QuickFilter {
-  id: string
-  label: string
+export interface ChartSeries {
+  labels: string[]
+  values: number[]
+}
+
+export interface ValorRadial {
+  atual: number
+  maximo: number
+  percentual: number
+}
+
+export interface HomeInsights {
+  kpis: InsightKpis
+  desfechoSeries: ChartSeries
+  statusSeries: ChartSeries
+  resultadoSeries: ChartSeries
+  valorRadial: ValorRadial
 }
