@@ -1,0 +1,395 @@
+[
+  {
+    "iterationIndex": 0,
+    "results": [
+      {
+        "test": {
+          "filename": "busca_semantica.bru"
+        },
+        "request": {
+          "method": "POST",
+          "url": "http://localhost:8000/api/processos/busca_semantica/",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "data": "{\n  \"consulta\": \"Carga horária abusiva\",\n  \"top_k\": 3\n}"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK",
+          "headers": {
+            "date": "Tue, 26 May 2026 13:31:11 GMT",
+            "server": "WSGIServer/0.2 CPython/3.13.13",
+            "content-type": "application/json",
+            "vary": "Accept, Cookie",
+            "allow": "POST, OPTIONS",
+            "x-frame-options": "DENY",
+            "content-length": "6925",
+            "x-content-type-options": "nosniff",
+            "referrer-policy": "same-origin",
+            "cross-origin-opener-policy": "same-origin"
+          },
+          "data": {
+            "items": [
+              {
+                "id": 1969,
+                "numero_processo": "00003911620255060121",
+                "classe": {
+                  "codigo": "985",
+                  "nome": "Ação Trabalhista - Rito Ordinário"
+                },
+                "tribunal": "TRT6",
+                "data_hora_ultima_atualizacao": "2026-03-09",
+                "grau": "G1",
+                "data_ajuizamento": "2025-04-10",
+                "orgao_julgador": {
+                  "id": 47,
+                  "codigo_municipio_ibge": 2610707,
+                  "codigo": 20707,
+                  "nome": "PAULISTA  - 01A VARA"
+                },
+                "assuntos": [
+                  {
+                    "id": 52,
+                    "codigo": 12936,
+                    "nome": "Direito Individual do Trabalho "
+                  }
+                ],
+                "analise": {
+                  "id": 1121,
+                  "resumo": "O processo trata de reclamação trabalhista ajuizada por Rebeka Torres de Oliveira Silva em face de Fundação Gestão Hospitalar Martiniano Fernandes e Estado de Pernambuco, focando em doença ocupacional, danos morais e rescisão indireta. O juiz julgou parcialmente procedentes os pedidos formulados em face da Fundação, condenando-a a indenizações e rescisão, enquanto julgou improcedentes os pedidos contra o Estado de Pernambuco.",
+                  "tipo_ato_principal": "sentenca",
+                  "decisao": "O tribunal reconheceu a doença ocupacional e a responsabilidade da Fundação, concedendo indenizações por danos morais, lucros cessantes e rescisão indireta. Contudo, os pedidos de responsabilidade subsidiária contra o Estado de Pernambuco foram indeferidos, não havendo prova de falha na fiscalização da administração pública.",
+                  "palavras_chave": [
+                    {
+                      "id": 121,
+                      "nome": "doença ocupacional"
+                    },
+                    {
+                      "id": 587,
+                      "nome": "danos morais"
+                    },
+                    {
+                      "id": 2007,
+                      "nome": "rescisão indireta"
+                    },
+                    {
+                      "id": 35,
+                      "nome": "FGTS"
+                    },
+                    {
+                      "id": 38,
+                      "nome": "perícia médica"
+                    },
+                    {
+                      "id": 216,
+                      "nome": "Justiça Gratuita"
+                    },
+                    {
+                      "id": 142,
+                      "nome": "honorários sucumbenciais"
+                    },
+                    {
+                      "id": 2049,
+                      "nome": "Estado de Pernambuco"
+                    },
+                    {
+                      "id": 4343,
+                      "nome": "Fundação Hospitalar"
+                    },
+                    {
+                      "id": 4344,
+                      "nome": "nexo de concausa"
+                    },
+                    {
+                      "id": 190,
+                      "nome": "trabalho"
+                    },
+                    {
+                      "id": 1430,
+                      "nome": "laudo pericial"
+                    }
+                  ],
+                  "status": "sentenciado",
+                  "desfecho": "sentenca_parcialmente_procedente",
+                  "resultado_reclamante": "ganhou_parcial",
+                  "valor_causa": "212711.39",
+                  "custas_valor_total": "0.00"
+                },
+                "similaridade": 0.530955361472177
+              },
+              {
+                "id": 2077,
+                "numero_processo": "00004935720235060008",
+                "classe": {
+                  "codigo": "12226",
+                  "nome": "Notificação"
+                },
+                "tribunal": "TRT6",
+                "data_hora_ultima_atualizacao": "2024-07-23",
+                "grau": "G1",
+                "data_ajuizamento": "2023-06-14",
+                "orgao_julgador": {
+                  "id": 38,
+                  "codigo_municipio_ibge": 2611606,
+                  "codigo": 20657,
+                  "nome": "RECIFE  - 08A VARA"
+                },
+                "assuntos": [
+                  {
+                    "id": 29,
+                    "codigo": 14046,
+                    "nome": "Prescrição"
+                  }
+                ],
+                "analise": {
+                  "id": 211,
+                  "resumo": "Processo de contraprotesto judicial contra protesto interruptivo de prescrição ajuizado pelo Sindicato dos Empregados em Estabelecimentos de Crédito em Pernambuco. O Sindicato impugnou sentença de extinção sem resolução de mérito, alegando que o protesto judicial continua válido após a Lei 13.467/2017. A sentença reformou o julgado, reconhecendo a interrupção da prescrição pelo protesto judicial, determinando retorno dos autos ao primeiro grau. Posteriormente, com a conclusão do rito de jurisdição voluntária, os autos foram arquivados.",
+                  "tipo_ato_principal": "despacho",
+                  "decisao": "O processo foi arquivado após a conclusão do procedimento de jurisdição voluntária do contraprotesto judicial, conforme despacho final de 17/10/2023.",
+                  "palavras_chave": [
+                    {
+                      "id": 1283,
+                      "nome": "contraprotesto"
+                    },
+                    {
+                      "id": 501,
+                      "nome": "protesto judicial"
+                    },
+                    {
+                      "id": 502,
+                      "nome": "interrupção prescrição"
+                    },
+                    {
+                      "id": 1091,
+                      "nome": "Lei 13.467/2017"
+                    },
+                    {
+                      "id": 1203,
+                      "nome": "jurisdição voluntária"
+                    },
+                    {
+                      "id": 126,
+                      "nome": "arquivamento"
+                    },
+                    {
+                      "id": 106,
+                      "nome": "prescrição quinquenal"
+                    },
+                    {
+                      "id": 217,
+                      "nome": "TST"
+                    },
+                    {
+                      "id": 178,
+                      "nome": "CLT"
+                    },
+                    {
+                      "id": 1284,
+                      "nome": "artigo 11"
+                    },
+                    {
+                      "id": 965,
+                      "nome": "artigo 485"
+                    },
+                    {
+                      "id": 1285,
+                      "nome": "artigo 202"
+                    },
+                    {
+                      "id": 509,
+                      "nome": "Código Civil"
+                    },
+                    {
+                      "id": 764,
+                      "nome": "Sindicato"
+                    },
+                    {
+                      "id": 1286,
+                      "nome": "Banco"
+                    },
+                    {
+                      "id": 531,
+                      "nome": "recursal"
+                    },
+                    {
+                      "id": 12,
+                      "nome": "sentença"
+                    },
+                    {
+                      "id": 1287,
+                      "nome": "primeiro grau"
+                    },
+                    {
+                      "id": 21,
+                      "nome": "despacho"
+                    }
+                  ],
+                  "status": "arquivado",
+                  "desfecho": "arquivado_sem_decisao",
+                  "resultado_reclamante": "sem_decisao",
+                  "valor_causa": "3000.00",
+                  "custas_valor_total": null
+                },
+                "similaridade": 0.518695539554673
+              },
+              {
+                "id": 2257,
+                "numero_processo": "00006766220185060021",
+                "classe": {
+                  "codigo": "985",
+                  "nome": "Ação Trabalhista - Rito Ordinário"
+                },
+                "tribunal": "TRT6",
+                "data_hora_ultima_atualizacao": "2024-07-24",
+                "grau": "G1",
+                "data_ajuizamento": "2018-06-28",
+                "orgao_julgador": {
+                  "id": 37,
+                  "codigo_municipio_ibge": 2611606,
+                  "codigo": 20670,
+                  "nome": "RECIFE  - 21A VARA"
+                },
+                "assuntos": [
+                  {
+                    "id": 29,
+                    "codigo": 14046,
+                    "nome": "Prescrição"
+                  }
+                ],
+                "analise": {
+                  "id": 471,
+                  "resumo": "Processo de reclamação trabalhista movido por ex-funcionárias da Fundação de Hematologia e Hemoterapia de Pernambuco (HEMOPE), pleiteando depósitos do FGTS. O juízo de primeiro grau julgou procedentes os pedidos de duas autoras, reconhecendo a transmudação do regime celetista para o estatutário via lei estadual e aplicando a prescrição trintenária, condenando o ente público a realizar depósitos faltantes. O recurso ordinário da reclamada foi parcialmente provido pelo TRT6, que reformou a sentença reconhecendo a validade da transmudação de regime, limitando a competência da Justiça do Trabalho ao período celetista e declarando prescritas as pretensões anteriores à publicação da lei instituidora do regime jurídico único.",
+                  "tipo_ato_principal": "sentenca",
+                  "decisao": "O acórdão do TRT6 julgou parcialmente procedente a reclamação trabalhista, reformando a sentença de primeiro grau. Reconheceu-se a validade da transmudação do regime celetista para o estatutário mediante a Lei Complementar Estadual nº 03/90, limitando a competência da Justiça do Trabalho ao período anterior à publicação dessa lei. Foi declarada a prescrição total das pretensões relativas ao período celetista, nos termos da Súmula 382 do TST, extingui-se sem resolução de mérito os pedidos posteriores à transmudação de regime e impor-se-as às autoras a obrigação de pagamento de honorários sucumbenciais, sob condição suspensiva, devido à concessão da justiça gratuita.",
+                  "palavras_chave": [
+                    {
+                      "id": 250,
+                      "nome": "reclamação trabalhista"
+                    },
+                    {
+                      "id": 35,
+                      "nome": "FGTS"
+                    },
+                    {
+                      "id": 2421,
+                      "nome": "depósitos fundiários"
+                    },
+                    {
+                      "id": 2422,
+                      "nome": "transmudação de regime"
+                    },
+                    {
+                      "id": 2423,
+                      "nome": "regime celetista"
+                    },
+                    {
+                      "id": 2424,
+                      "nome": "regime estatutário"
+                    },
+                    {
+                      "id": 2425,
+                      "nome": "prescrição total"
+                    },
+                    {
+                      "id": 2426,
+                      "nome": "Súmula 382 TST"
+                    },
+                    {
+                      "id": 124,
+                      "nome": "justiça gratuita"
+                    },
+                    {
+                      "id": 2427,
+                      "nome": "competência material"
+                    },
+                    {
+                      "id": 2428,
+                      "nome": "Lei Complementar 03/90"
+                    },
+                    {
+                      "id": 2429,
+                      "nome": "incompetência da Justiça do Trabalho"
+                    },
+                    {
+                      "id": 1933,
+                      "nome": "extinção sem resolução de mérito"
+                    },
+                    {
+                      "id": 142,
+                      "nome": "honorários sucumbenciais"
+                    },
+                    {
+                      "id": 1730,
+                      "nome": "servidor público"
+                    },
+                    {
+                      "id": 1087,
+                      "nome": "concurso público"
+                    },
+                    {
+                      "id": 2430,
+                      "nome": "artigo 37 da CF"
+                    },
+                    {
+                      "id": 2431,
+                      "nome": "artigo 114 da CF"
+                    },
+                    {
+                      "id": 2432,
+                      "nome": "artigo 790 da CLT"
+                    },
+                    {
+                      "id": 2433,
+                      "nome": "artigo 791-A da CLT"
+                    }
+                  ],
+                  "status": "sentenciado",
+                  "desfecho": "sentenca_parcialmente_procedente",
+                  "resultado_reclamante": "ganhou_parcial",
+                  "valor_causa": "80000.00",
+                  "custas_valor_total": null
+                },
+                "similaridade": 0.5162993840549988
+              }
+            ]
+          },
+          "url": "http://localhost/api/processos/busca_semantica/",
+          "responseTime": 107,
+          "duration": 107,
+          "size": 6925
+        },
+        "error": null,
+        "status": "pass",
+        "assertionResults": [],
+        "testResults": [],
+        "preRequestTestResults": [],
+        "postResponseTestResults": [],
+        "shouldStopRunnerExecution": false,
+        "runDuration": 0.153472968,
+        "name": "Busca Semântica",
+        "path": "busca_semantica",
+        "iterationIndex": 0
+      }
+    ],
+    "summary": {
+      "totalRequests": 1,
+      "passedRequests": 1,
+      "failedRequests": 0,
+      "errorRequests": 0,
+      "skippedRequests": 0,
+      "totalAssertions": 0,
+      "passedAssertions": 0,
+      "failedAssertions": 0,
+      "totalTests": 0,
+      "passedTests": 0,
+      "failedTests": 0,
+      "totalPreRequestTests": 0,
+      "passedPreRequestTests": 0,
+      "failedPreRequestTests": 0,
+      "totalPostResponseTests": 0,
+      "passedPostResponseTests": 0,
+      "failedPostResponseTests": 0
+    }
+  }
+]
