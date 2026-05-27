@@ -6,7 +6,6 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             refetchOnWindowFocus: false,
-            refetchOnMount: false, // do not refetch when component remounts (e.g. route change)
             refetchOnReconnect: false,
             staleTime: 1000 * 60 * 60 * 24, // 24 horas
         },

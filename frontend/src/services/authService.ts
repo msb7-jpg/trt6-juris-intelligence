@@ -27,4 +27,9 @@ export class AuthService {
     const { data } = await httpClient.get<UserDTO>(API_ENDPOINTS.authMe)
     return data
   }
+
+  static async updateMe(payload: { name: string }): Promise<UserDTO> {
+    const { data } = await httpClient.patch<UserDTO>(API_ENDPOINTS.authMe, payload)
+    return data
+  }
 }

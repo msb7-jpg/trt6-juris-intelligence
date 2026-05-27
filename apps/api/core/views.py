@@ -271,6 +271,15 @@ class UserMeView(APIView):
     def get(self, request: Request):
         return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
 
+    def patch(self, request: Request):
+        user = request.user
+        name = request.data.get('name')
+        if name is not None:
+            user.first_name = name
+            user.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+
+
 
 class SavedSearchViewSet(viewsets.ModelViewSet):
     """CRUD das buscas salvas, restrito ao usuario autenticado."""

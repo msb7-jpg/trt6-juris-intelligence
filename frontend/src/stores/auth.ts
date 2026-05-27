@@ -65,6 +65,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateProfile(name: string) {
+    const updatedUser = await AuthService.updateMe({ name })
+    user.value = updatedUser
+    localStorage.setItem(AUTH_STORAGE_KEYS.user, JSON.stringify(updatedUser))
+  }
+
   /** Revalida o token persistido contra a API ao iniciar a aplicação. */
   async function initialize() {
     if (!token.value) return
@@ -87,6 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
+    updateProfile,
     initialize,
   }
 })

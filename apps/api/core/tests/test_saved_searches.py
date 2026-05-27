@@ -1,94 +1,82 @@
-import os
-
-import pytest
 from rest_framework import status
-from rest_framework.test import APIClient
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "api.settings")
-
-import django
-
-django.setup()
-
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 
 from core.models.busca_salva import BuscaSalva
+from core.tests.base import BaseAPITestCase
+from core.tests.helpers import DataSetup
 
 SAVED_SEARCHES_ENDPOINT = "/api/saved-searches/"
 
-pytestmark = pytest.mark.django_db
 
+class TestSavedSearchesPermissions(BaseAPITestCase):
+    def test_given_no_token_when_list_then_returns_401(self) -> None:
+        response = self.client.get(SAVED_SEARCHES_ENDPOINT)
+        self.assert_response_unauthorized(response)
 
-def _auth_client(email: str, password: str = "senha-segura-123") -> APIClient:
-    user = User.objects.create_user(username=email, email=email, password=password)
-    token = Token.objects.create(user=user)
-    client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
-    return client
-
-
-class TestSavedSearchesPermissions:
-    def test_given_no_token_when_list_then_returns_401(self):
-        response = APIClient().get(SAVED_SEARCHES_ENDPOINT)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_given_no_token_when_create_then_returns_401(self):
-        response = APIClient().post(
+    def test_given_no_token_when_create_then_returns_401(self) -> None:
+        response = self.client.post(
             SAVED_SEARCHES_ENDPOINT, {"title": "x", "query": "y"}, format="json"
         )
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        self.assert_response_unauthorized(response)
 
 
-class TestSavedSearchesCrud:
-    def test_given_authenticated_user_when_create_then_associates_to_user(self):
-        client = _auth_client("dono@example.com")
+class TestSavedSearchesCrud(BaseAPITestCase):
+    def test_given_authenticated_user_when_create_then_associates_to_user(self) -> None:
+        user = DataSetup.create_user(email="dono@example.com")
+        token = DataSetup.create_token(user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
 
-        response = client.post(
+        response = self.client.post(
             SAVED_SEARCHES_ENDPOINT,
             {"title": "Escala 12x36", "query": "trabalhei 12h sem intervalo"},
             format="json",
         )
 
-        assert response.status_code == status.HTTP_201_CREATED
+        self.assert_response_success(response, status.HTTP_201_CREATED)
         data = response.json()
-        assert data["title"] == "Escala 12x36"
+        self.assertEqual(data["title"], "Escala 12x36")
 
         busca = BuscaSalva.objects.get(id=data["id"])
-        assert busca.user.email == "dono@example.com"
+        self.assertEqual(busca.user.email, "dono@example.com")
 
-    def test_given_searches_from_two_users_when_list_then_returns_only_own(self):
-        client_a = _auth_client("a@example.com")
-        client_b = _auth_client("b@example.com")
+    def test_given_searches_from_two_users_when_list_then_returns_only_own(self) -> None:
+        user_a = DataSetup.create_user(email="a@example.com")
+        token_a = DataSetup.create_token(user_a)
 
-        client_a.post(SAVED_SEARCHES_ENDPOINT, {"title": "A", "query": "qa"}, format="json")
-        client_b.post(SAVED_SEARCHES_ENDPOINT, {"title": "B", "query": "qb"}, format="json")
+        user_b = DataSetup.create_user(email="b@example.com")
+        DataSetup.create_token(user_b)
 
-        response = client_a.get(SAVED_SEARCHES_ENDPOINT)
+        # Create saved searches via data factory
+        DataSetup.create_busca_salva(user_a, title="A", query="qa")
+        DataSetup.create_busca_salva(user_b, title="B", query="qb")
 
-        assert response.status_code == status.HTTP_200_OK
+        # Authenticate client as user_a
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token_a.key}")
+        response = self.client.get(SAVED_SEARCHES_ENDPOINT)
+
+        self.assert_response_success(response, status.HTTP_200_OK)
         titles = [item["title"] for item in response.json()["results"]]
-        assert titles == ["A"]
+        self.assertEqual(titles, ["A"])
 
-    def test_given_owned_search_when_delete_then_removes_it(self):
-        client = _auth_client("dono@example.com")
-        created = client.post(
-            SAVED_SEARCHES_ENDPOINT, {"title": "Apagar", "query": "q"}, format="json"
-        ).json()
+    def test_given_owned_search_when_delete_then_removes_it(self) -> None:
+        user = DataSetup.create_user(email="dono@example.com")
+        token = DataSetup.create_token(user)
+        busca = DataSetup.create_busca_salva(user, title="Apagar", query="q")
 
-        response = client.delete(f"{SAVED_SEARCHES_ENDPOINT}{created['id']}/")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
+        response = self.client.delete(f"{SAVED_SEARCHES_ENDPOINT}{busca.id}/")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not BuscaSalva.objects.filter(id=created["id"]).exists()
+        self.assert_response_success(response, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(BuscaSalva.objects.filter(id=busca.id).exists())
 
-    def test_given_other_users_search_when_delete_then_returns_404(self):
-        client_a = _auth_client("a@example.com")
-        client_b = _auth_client("b@example.com")
-        created = client_a.post(
-            SAVED_SEARCHES_ENDPOINT, {"title": "A", "query": "qa"}, format="json"
-        ).json()
+    def test_given_other_users_search_when_delete_then_returns_404(self) -> None:
+        user_a = DataSetup.create_user(email="a@example.com")
+        busca = DataSetup.create_busca_salva(user_a, title="A", query="qa")
 
-        response = client_b.delete(f"{SAVED_SEARCHES_ENDPOINT}{created['id']}/")
+        user_b = DataSetup.create_user(email="b@example.com")
+        token_b = DataSetup.create_token(user_b)
 
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert BuscaSalva.objects.filter(id=created["id"]).exists()
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token_b.key}")
+        response = self.client.delete(f"{SAVED_SEARCHES_ENDPOINT}{busca.id}/")
+
+        self.assert_response_not_found(response)
+        self.assertTrue(BuscaSalva.objects.filter(id=busca.id).exists())
