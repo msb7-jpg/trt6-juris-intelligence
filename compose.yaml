@@ -133,6 +133,28 @@ services:
       minio:
         condition: service_started
 
+  search-notifier:
+    build:
+      context: .
+      dockerfile: apps/search-notifier/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: trt6
+      POSTGRES_USER: trt6
+      POSTGRES_PASSWORD: trt6
+      POSTGRES_PORT: "5432"
+      API_BASE_URL: http://api:8000
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SENDER: ${SMTP_SENDER:-}
+    depends_on:
+      api:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   minio_data:

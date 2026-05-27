@@ -18,6 +18,7 @@ shared = { workspace = true }
 worker-llm = { workspace = true }
 ingestion = { workspace = true }
 worker-scrapper = { workspace = true }
+search-notifier = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -26,6 +27,7 @@ members = [
     "apps/worker-llm",
     "apps/worker-scrapper",
     "apps/api",
+    "apps/search-notifier",
 ]
 
 [tool.ruff]

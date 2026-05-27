@@ -34,3 +34,35 @@ class EnviromentManager:
                 .strip()
                 .lower() in {"1", "true", "yes", "on"}
         )
+
+    # Database configuration helper methods
+    def get_postgres_host(self) -> str:
+        return self.get_with_default("POSTGRES_HOST", "localhost")
+
+    def get_postgres_db(self) -> str:
+        return self.get_with_default("POSTGRES_DB", "trt6")
+
+    def get_postgres_user(self) -> str:
+        return self.get_with_default("POSTGRES_USER", "trt6")
+
+    def get_postgres_password(self) -> str:
+        return self.get_with_default("POSTGRES_PASSWORD", "trt6")
+
+    def get_postgres_port(self) -> str:
+        return self.get_with_default("POSTGRES_PORT", "5432")
+
+    # SMTP configuration helper methods
+    def get_smtp_host(self) -> str:
+        return self.get_with_default("SMTP_HOST", "smtp.gmail.com")
+
+    def get_smtp_port(self) -> int:
+        return int(self.get_with_default("SMTP_PORT", "587"))
+
+    def get_smtp_user(self) -> str:
+        return self.get_with_default("SMTP_USER", "")
+
+    def get_smtp_password(self) -> str:
+        return self.get_with_default("SMTP_PASSWORD", "")
+
+    def get_smtp_sender(self) -> str:
+        return self.get_with_default("SMTP_SENDER", self.get_smtp_user())
