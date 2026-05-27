@@ -1,7 +1,9 @@
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { flushPromises, mount } from '@vue/test-utils'
 import { MotionPlugin } from '@vueuse/motion'
+import { createPinia } from 'pinia'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createMemoryHistory, createRouter } from 'vue-router'
 
 import type { BuscaSemanticaResponse } from '@/shared/types/api'
 
@@ -49,10 +51,23 @@ function buildResponse(): BuscaSemanticaResponse {
   }
 }
 
+function buildRouter() {
+  const blank = { template: '<div />' }
+  return createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      { path: '/', component: blank },
+      { path: '/login', component: blank },
+    ],
+  })
+}
+
 function mountPage() {
   return mount(HomePage, {
     global: {
       plugins: [
+        createPinia(),
+        buildRouter(),
         [
           VueQueryPlugin,
           {

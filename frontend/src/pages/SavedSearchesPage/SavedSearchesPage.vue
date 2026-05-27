@@ -1,33 +1,40 @@
 <script setup lang="ts">
+import { SavedSearchesService } from '@/services/savedSearchesService'
+import { queryKeys } from '@/services/queryKeys'
 import BaseCard from '@/shared/components/ui/BaseCard.vue'
 import EmptyPanel from '@/shared/components/ui/EmptyPanel.vue'
-import { Clock3, ExternalLink, Trash2 } from 'lucide-vue-next'
-import { ref } from 'vue'
+import type { SavedSearchDTO } from '@/shared/types/api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { Clock3, ExternalLink, Loader2, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
 
-interface SavedSearch {
-  id: string
-  title: string
-  updatedAt: string
-  query: string
+const router = useRouter()
+const queryClient = useQueryClient()
+
+const {
+  data: savedSearches,
+  isLoading,
+  isError,
+} = useQuery({
+  queryKey: queryKeys.savedSearches(),
+  queryFn: SavedSearchesService.listar,
+})
+
+const { mutate: removeSearch, isPending: isRemoving } = useMutation({
+  mutationFn: (id: number) => SavedSearchesService.deletar(id),
+  onSuccess: () => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.savedSearches() })
+  },
+})
+
+function openSearch(item: SavedSearchDTO) {
+  router.push({ path: '/', query: { consulta: item.query } })
 }
 
-const savedSearches = ref<SavedSearch[]>([
-  {
-    id: 's-1',
-    title: 'Escala 12x36 sem intervalo',
-    updatedAt: 'Atualizada hoje',
-    query: 'trabalhei 12h sem intervalo e sem pagamento de horas extras',
-  },
-  {
-    id: 's-2',
-    title: 'Horas in itinere',
-    updatedAt: 'Atualizada ha 2 dias',
-    query: 'empresa fornecia transporte em trajeto sem transporte publico regular',
-  },
-])
-
-function removeSearch(id: string) {
-  savedSearches.value = savedSearches.value.filter((item) => item.id !== id)
+function formatUpdatedAt(value: string): string {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return `Atualizada em ${date.toLocaleDateString('pt-BR')}`
 }
 </script>
 
@@ -38,17 +45,38 @@ function removeSearch(id: string) {
       <p>Retome pesquisas recentes e acompanhe os insights sem repetir a consulta.</p>
     </header>
 
-    <div v-if="savedSearches.length" class="list">
+    <EmptyPanel
+      v-if="isLoading"
+      title="Carregando suas buscas…"
+      description="Buscando as consultas que você salvou."
+    />
+
+    <EmptyPanel
+      v-else-if="isError"
+      title="Não foi possível carregar"
+      description="Tente novamente em instantes."
+    />
+
+    <div v-else-if="savedSearches && savedSearches.length" class="list">
       <BaseCard v-for="item in savedSearches" :key="item.id">
         <div class="item-head">
           <div>
             <h2>{{ item.title }}</h2>
-            <p><Clock3 :size="14" /> {{ item.updatedAt }}</p>
+            <p><Clock3 :size="14" /> {{ formatUpdatedAt(item.updated_at) }}</p>
           </div>
           <div class="actions">
-            <button type="button" class="ghost"><ExternalLink :size="15" /> Abrir</button>
-            <button type="button" class="ghost danger" @click="removeSearch(item.id)">
-              <Trash2 :size="15" /> Remover
+            <button type="button" class="ghost" @click="openSearch(item)">
+              <ExternalLink :size="15" /> Abrir
+            </button>
+            <button
+              type="button"
+              class="ghost danger"
+              :disabled="isRemoving"
+              @click="removeSearch(item.id)"
+            >
+              <Loader2 v-if="isRemoving" :size="15" class="spin" />
+              <Trash2 v-else :size="15" />
+              Remover
             </button>
           </div>
         </div>
@@ -128,9 +156,24 @@ h2 {
   cursor: pointer;
 }
 
+.ghost:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .danger {
   color: #8a2334;
   border-color: #e7bcc5;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 740px) {

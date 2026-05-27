@@ -14,7 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from core.views import ProcessoViewset
+from core.views import (
+    LoginView,
+    LogoutView,
+    ProcessoViewset,
+    RegisterView,
+    SavedSearchViewSet,
+    UserMeView,
+)
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
@@ -22,7 +29,15 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'processos', ProcessoViewset, basename='document')
+router.register(r'saved-searches', SavedSearchViewSet, basename='saved-search')
 
+
+auth_urlpatterns = [
+    path('auth/register/', RegisterView.as_view(), name='auth-register'),
+    path('auth/login/', LoginView.as_view(), name='auth-login'),
+    path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
+    path('auth/me/', UserMeView.as_view(), name='auth-me'),
+]
 
 
 def health(request):
@@ -30,6 +45,7 @@ def health(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(auth_urlpatterns)),
     path('api/', include(router.urls)),
 ]
 

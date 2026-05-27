@@ -6,6 +6,16 @@ export const API_ENDPOINTS = {
   adicionarAnalise: '/processos/adicionar_analise/',
   processoDetalhe: '/processos/detalhe/',
   health: '/health/',
+  authRegister: '/auth/register/',
+  authLogin: '/auth/login/',
+  authLogout: '/auth/logout/',
+  authMe: '/auth/me/',
+  savedSearches: '/saved-searches/',
+} as const
+
+export const AUTH_STORAGE_KEYS = {
+  token: 'justrt6.auth.token',
+  user: 'justrt6.auth.user',
 } as const
 
 export const DEFAULT_TOP_K = 10
@@ -21,6 +31,7 @@ export const QUERY_KEYS = {
   naoPossuemAnalise: 'nao-possuem-analise',
   naoPossuemPdf: 'nao-possuem-pdf',
   processoDetalhe: 'processo-detalhe',
+  savedSearches: 'saved-searches',
 } as const
 
 export const ERROR_MESSAGES = {

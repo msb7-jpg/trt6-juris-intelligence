@@ -1,18 +1,37 @@
 <script setup lang="ts">
-import { BookmarkCheck, Home, Settings, UserRound } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/auth'
+import { BookmarkCheck, Home, LogIn, LogOut, Settings, UserRound } from 'lucide-vue-next'
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 
-const links = [
+interface NavLink {
+  to: string
+  label: string
+  icon: typeof Home
+  requiresAuth?: boolean
+}
+
+const allLinks: NavLink[] = [
   { to: '/', label: 'Principal', icon: Home },
-  { to: '/buscas-salvas', label: 'Buscas salvas', icon: BookmarkCheck },
-  { to: '/perfil', label: 'Perfil', icon: UserRound },
+  { to: '/buscas-salvas', label: 'Minhas buscas', icon: BookmarkCheck, requiresAuth: true },
+  { to: '/perfil', label: 'Perfil', icon: UserRound, requiresAuth: true },
   { to: '/configuracoes', label: 'Configuracoes', icon: Settings },
 ]
 
+const links = computed(() =>
+  allLinks.filter((link) => !link.requiresAuth || authStore.isAuthenticated),
+)
+
 const activePath = computed(() => route.path)
+
+async function handleLogout() {
+  await authStore.logout()
+  await router.push('/login')
+}
 </script>
 
 <template>
@@ -29,6 +48,25 @@ const activePath = computed(() => route.path)
         <component :is="link.icon" :size="16" />
         <span>{{ link.label }}</span>
       </RouterLink>
+
+      <div class="auth-slot">
+        <template v-if="authStore.isAuthenticated">
+          <span class="avatar" :title="authStore.displayName">{{ authStore.initials }}</span>
+          <button type="button" class="nav-link logout" @click="handleLogout">
+            <LogOut :size="16" />
+            <span>Sair</span>
+          </button>
+        </template>
+        <RouterLink
+          v-else
+          to="/login"
+          class="nav-link login"
+          :class="{ 'is-active': activePath === '/login' }"
+        >
+          <LogIn :size="16" />
+          <span>Entrar</span>
+        </RouterLink>
+      </div>
     </nav>
   </header>
 </template>
@@ -90,6 +128,42 @@ const activePath = computed(() => route.path)
   color: var(--brand-strong);
 }
 
+.auth-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0.5rem;
+  margin-left: 0.25rem;
+  border-left: 1px solid var(--line);
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #002045;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-link.logout,
+.nav-link.login {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.nav-link.logout:hover {
+  color: #8a2334;
+  background: #fdecef;
+}
+
 @media (max-width: 840px) {
   .navbar {
     width: calc(100% - 1.4rem);
@@ -109,6 +183,11 @@ const activePath = computed(() => route.path)
     justify-content: center;
     flex: 1 1 auto;
     min-width: 120px;
+  }
+
+  .auth-slot {
+    border-left: none;
+    padding-left: 0;
   }
 }
 </style>

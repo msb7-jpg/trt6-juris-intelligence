@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import AppShell from '@/shared/components/layout/AppShell.vue';
+import { useAuthStore } from '@/stores/auth';
+
+// Revalida o token persistido (se houver) ao montar a aplicação.
+useAuthStore().initialize()
 </script>
 
 <template>

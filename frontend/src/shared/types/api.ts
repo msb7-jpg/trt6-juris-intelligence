@@ -96,3 +96,41 @@ export interface BuscaSemanticaPayload {
 export interface BuscaSemanticaResponse {
   items: ProcessoDTO[]
 }
+
+export interface UserDTO {
+  id: number
+  name: string
+  email: string
+}
+
+export interface AuthResponse {
+  token: string
+  user: UserDTO
+}
+
+export interface RegisterPayload {
+  name: string
+  email: string
+  password: string
+}
+
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+export interface SavedSearchDTO {
+  id: number
+  title: string
+  query: string
+  created_at: string
+  updated_at: string
+}
+
+/** Resposta paginada padrão do DRF (PageNumberPagination). */
+export interface PaginatedResponse<T> {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
+}

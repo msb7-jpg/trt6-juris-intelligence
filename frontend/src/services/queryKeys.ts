@@ -7,4 +7,5 @@ export const queryKeys = {
   naoPossuemPdf: () => [QUERY_KEYS.naoPossuemPdf] as const,
   processoDetalhe: (numeroProcesso: string, grau: string) =>
     [QUERY_KEYS.processoDetalhe, { numeroProcesso, grau }] as const,
+  savedSearches: () => [QUERY_KEYS.savedSearches] as const,
 }

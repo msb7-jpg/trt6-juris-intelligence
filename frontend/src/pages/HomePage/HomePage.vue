@@ -5,6 +5,8 @@ import InsightsPanel from './components/InsightsPanel.vue'
 import ResultsList from './components/ResultsList.vue'
 import SearchBar from './components/SearchBar/SearchBar.vue'
 import { useHomeSearch } from './composables/useHomeSearch'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 const EMPTY_TITLE = 'Faça uma busca para iniciar'
 const EMPTY_DESCRIPTION =
@@ -28,6 +30,15 @@ const {
   error,
   insights,
 } = useHomeSearch()
+
+// Permite retomar uma busca salva via /?consulta=...
+const route = useRoute()
+onMounted(() => {
+  const consulta = route.query.consulta
+  if (typeof consulta === 'string' && consulta.trim()) {
+    submitSearch(consulta)
+  }
+})
 </script>
 
 <template>
@@ -87,7 +98,7 @@ const {
       :initial="{ opacity: 0, y: 14 }"
       :enter="{ opacity: 1, y: 0, transition: { delay: 120 } }"
     >
-      <ResultsList :items="cases" />
+      <ResultsList :items="cases" :query="query" />
       <InsightsPanel :insights="insights" />
     </div>
   </section>

@@ -25,16 +25,27 @@ Endpoint: POST /processos/adicionar-analise
 
 # Endpoint: POST /processos/adicionar-analise
 
+from django.contrib.auth import authenticate
 from django.db import IntegrityError, transaction
 from rest_framework import status, viewsets
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from shared.logger import get_logger
 
 logger = get_logger("core.views")
 
+from core.models.busca_salva import BuscaSalva
+from core.serializers.auth_serializer import (
+    LoginSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
+from core.serializers.busca_salva_serializer import BuscaSalvaSerializer
 from core.serializers.busca_semantica_serializer import (
     BuscaSemanticaEntradaSerializer,
     ProcessoBuscaSemanticaSaidaSerializer,
@@ -194,4 +205,82 @@ class ProcessoViewset(viewsets.ViewSet):
 
         output_serializer = ProcessoDetalheSerializer(processo)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
+
+
+def _auth_payload(user, token: Token) -> dict:
+    """Resposta padrao apos login/registro: token + dados do usuario."""
+    return {
+        "token": token.key,
+        "user": UserSerializer(user).data,
+    }
+
+
+class RegisterView(APIView):
+    """POST /api/auth/register/ — cria o usuario (username=email) e ja devolve o token."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+
+    def post(self, request: Request):
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(_auth_payload(user, token), status=status.HTTP_201_CREATED)
+
+
+class LoginView(APIView):
+    """POST /api/auth/login/ — autentica por email/senha e devolve o token."""
+
+    authentication_classes: list = []
+    permission_classes: list = []
+
+    def post(self, request: Request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            return Response(
+                {"mensagem": "E-mail ou senha invalidos."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response(_auth_payload(user, token), status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    """POST /api/auth/logout/ — revoga o token ativo do usuario."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request):
+        Token.objects.filter(user=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserMeView(APIView):
+    """GET /api/auth/me/ — perfil do usuario logado."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request):
+        return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
+
+
+class SavedSearchViewSet(viewsets.ModelViewSet):
+    """CRUD das buscas salvas, restrito ao usuario autenticado."""
+
+    serializer_class = BuscaSalvaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.buscas_salvas.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
