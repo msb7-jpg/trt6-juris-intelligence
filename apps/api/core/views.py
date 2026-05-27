@@ -42,6 +42,7 @@ from core.serializers.busca_semantica_serializer import (
 from core.serializers.processo_serializer import (
     ProcessoAdicionarAnaliseEntradaSerializer,
     ProcessoDeduplicarEntradaSerializer,
+    ProcessoDetalheSerializer,
     ProcessoResumoSerializer,
     ProcessoSemPdfResumoSerializer,
     ProcessoSerializer,
@@ -54,6 +55,7 @@ from core.services import (
     filtrar_processos_faltantes,
     listar_processos_nao_possuem_analise,
     listar_processos_nao_possuem_pdf,
+    obter_processo_por_numero_grau,
 )
 
 
@@ -163,4 +165,33 @@ class ProcessoViewset(viewsets.ViewSet):
 
         output_serializer = ProcessoBuscaSemanticaSaidaSerializer(resultados, many=True)
         return Response({"items": output_serializer.data}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def detalhe(self, request: Request):
+        numero_processo = (request.query_params.get("numero_processo") or "").strip()
+        grau = (request.query_params.get("grau") or "").strip()
+
+        if not numero_processo or not grau:
+            raise ValidationError(
+                {
+                    "mensagem": "Parametros obrigatorios ausentes.",
+                    "detalhes": {"numero_processo": numero_processo, "grau": grau},
+                }
+            )
+
+        processo = obter_processo_por_numero_grau(numero_processo=numero_processo, grau=grau)
+        if processo is None:
+            return Response(
+                {
+                    "mensagem": "Processo nao encontrado.",
+                    "detalhes": {
+                        "numero_processo": numero_processo,
+                        "grau": grau,
+                    },
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        output_serializer = ProcessoDetalheSerializer(processo)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
 

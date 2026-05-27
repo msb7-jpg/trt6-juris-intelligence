@@ -26,6 +26,7 @@ export function mapProcessoDTOToProcessCase(dto: ProcessoDTO): ProcessCase {
   return {
     id: dto.id,
     numeroProcesso: dto.numero_processo,
+    grau: dto.grau,
     tribunal: dto.tribunal,
     classeNome: dto.classe?.nome ?? '',
     orgaoJulgadorNome: dto.orgao_julgador?.nome ?? '',
@@ -47,4 +48,5 @@ export function mapProcessoDTOToProcessCase(dto: ProcessoDTO): ProcessCase {
   }
 }
 
-export { MONTHS_PER_YEAR, DAYS_PER_MONTH, MS_PER_DAY }
+export { DAYS_PER_MONTH, MONTHS_PER_YEAR, MS_PER_DAY }
+

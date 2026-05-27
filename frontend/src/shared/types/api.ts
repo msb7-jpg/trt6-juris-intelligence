@@ -76,6 +76,18 @@ export interface ProcessoDTO {
   similaridade: number
 }
 
+export interface MovimentoDTO {
+  codigo: number
+  nome: string
+  data_hora: string
+  orgao_julgador: OrgaoJulgadorDTO | null
+}
+
+export interface ProcessoDetalheDTO extends ProcessoDTO {
+  movimentos: MovimentoDTO[]
+  em_andamento: boolean
+}
+
 export interface BuscaSemanticaPayload {
   consulta: string
   top_k: number

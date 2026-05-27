@@ -3,7 +3,7 @@ import axios, { AxiosError, type AxiosInstance } from 'axios'
 import { ERROR_MESSAGES, HTTP_TIMEOUT_MS } from '@/shared/constants/api'
 
 function resolveBaseURL(): string {
-  const fromEnv = import.meta.env.VITE_API_BASE_URL
+  const fromEnv = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api"
   if (!fromEnv) {
     throw new Error('VITE_API_BASE_URL não está definida. Verifique o arquivo .env.')
   }

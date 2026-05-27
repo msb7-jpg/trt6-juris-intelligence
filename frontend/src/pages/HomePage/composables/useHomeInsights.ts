@@ -78,7 +78,7 @@ function buildKpis(items: ProcessCase[]): InsightKpis {
       taxaProcedencia: 0,
       taxaGanhoReclamante: 0,
       tempoMedioMeses: 0,
-      argumentosRelevantes: [],
+      palavrasChavesRelevantes: [],
     }
   }
 
@@ -113,7 +113,7 @@ function buildKpis(items: ProcessCase[]): InsightKpis {
         ? 0
         : Math.round((ganhos / resultadosValidos.length) * 100),
     tempoMedioMeses: Math.round(average(tempos)),
-    argumentosRelevantes: topKeywords(items, TOP_PALAVRAS_CHAVE_LIMIT),
+    palavrasChavesRelevantes: topKeywords(items, TOP_PALAVRAS_CHAVE_LIMIT),
   }
 }
 

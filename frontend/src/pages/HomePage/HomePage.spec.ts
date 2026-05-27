@@ -1,6 +1,6 @@
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { MotionPlugin } from '@vueuse/motion'
 import { flushPromises, mount } from '@vue/test-utils'
+import { MotionPlugin } from '@vueuse/motion'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { BuscaSemanticaResponse } from '@/shared/types/api'
@@ -89,7 +89,8 @@ describe('HomePage', () => {
     await flushPromises()
 
     expect(buscaSemanticaSpy).toHaveBeenCalledTimes(1)
-    expect(buscaSemanticaSpy.mock.calls[0][0].consulta).toBe('horas extras')
+    const firstCall = buscaSemanticaSpy.mock.calls[0]
+    expect(firstCall?.[0].consulta).toBe('horas extras')
 
     expect(wrapper.findComponent({ name: 'ResultsList' }).exists()).toBe(true)
     expect(wrapper.findComponent({ name: 'InsightsPanel' }).exists()).toBe(true)

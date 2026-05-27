@@ -227,6 +227,17 @@ def adicionar_analise_ao_processo(numero_processo: str, grau: str, analise_data:
     return processo
 
 
+def obter_processo_por_numero_grau(numero_processo: str, grau: str) -> Processo | None:
+    graus = _normalize_grau_for_query(grau)
+    return (
+        Processo.objects.select_related("classe", "orgao_julgador", "analise")
+        .prefetch_related("assuntos", "analise__palavras_chave")
+        .filter(numero_processo=numero_processo)
+        .filter(Q(grau__in=graus))
+        .first()
+    )
+
+
 def buscar_processos_semanticos(consulta: str, top_k: int = 5) -> list[Processo]:
     """Realiza a busca vetorial por similaridade de cosseno direto no banco de dados."""
     from pgvector.django import CosineDistance
@@ -562,5 +573,130 @@ def sincronizar_processos_minio(
         resultado["removidos"] = removidos
 
     return resultado
+
+
+def atualizar_movimentos_processos(stdout_writer=None) -> dict:
+    """
+    Queries all processes in the database, batches their process numbers,
+    fetches their movements from the DataJud API (TRT6), normalizes the payload,
+    and updates each process's movimientos field (which automatically compresses it using zlib).
+    """
+    def log(msg, style=None):
+        if stdout_writer:
+            stdout_writer(msg, style)
+        else:
+            if style == "error":
+                logger.error(msg)
+            elif style == "warning":
+                logger.warning(msg)
+            else:
+                logger.info(msg)
+
+    log("=== Iniciando atualização de movimentos dos processos ===")
+
+    # 1. Obter todos os processos do banco de dados
+    processos = Processo.objects.all()
+    total_processos = processos.count()
+    log(f"Encontrados {total_processos} processos no banco de dados.")
+
+    if total_processos == 0:
+        return {"total": 0, "atualizados": 0, "erros": 0}
+
+    # Agrupa os processos por numero para buscar em lotes no DataJud
+    processos_por_numero = {}
+    for p in processos:
+        processos_por_numero.setdefault(p.numero_processo, []).append(p)
+
+    numeros_processos = list(processos_por_numero.keys())
+
+    atualizados = 0
+    erros = 0
+
+    batch_size = 100
+    for i in range(0, len(numeros_processos), batch_size):
+        batch = numeros_processos[i : i + batch_size]
+        log(f"Buscando movimentos para lote {i // batch_size + 1} de {(len(numeros_processos) - 1) // batch_size + 1} (tamanho do lote: {len(batch)})...")
+
+        import requests
+        api_url = 'https://api-publica.datajud.cnj.jus.br/api_publica_trt6/_search'
+        public_key = 'cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw=='
+        headers = {'Authorization': f'APIKey {public_key}', 'Content-Type': 'application/json'}
+        query = {
+            'size': len(batch) * 2,
+            'query': {
+                'terms': {
+                    'numeroProcesso.keyword': batch
+                }
+            }
+        }
+
+        datajud_hits = []
+        try:
+            response = requests.post(api_url, headers=headers, json=query, timeout=20)
+            if response.ok:
+                datajud_hits = response.json().get('hits', {}).get('hits', [])
+            else:
+                log(f"Erro na resposta da API DataJud para o lote: status_code={response.status_code}, body={response.text}", "warning")
+                erros += len(batch)
+                continue
+        except Exception as e:
+            log(f"Erro ao consultar a API DataJud: {e}", "error")
+            erros += len(batch)
+            continue
+
+        # Cria um mapeamento de (numeroProcesso, grau_norm) -> movimentos do DataJud
+        movimentos_map = {}
+        for h in datajud_hits:
+            source = h.get('_source', {})
+            num = source.get('numeroProcesso')
+            grau_raw = source.get('grau')
+            movs = source.get('movimentos', [])
+            if num:
+                grau_norm = _normalize_grau(grau_raw)
+                movimentos_map[(num, grau_norm)] = movs
+
+        # Atualiza os processos do lote no banco de dados
+        for num_processo in batch:
+            db_processos = processos_por_numero.get(num_processo, [])
+            for p in db_processos:
+                grau_norm = _normalize_grau(p.grau)
+
+                # Procura os movimentos correspondentes ao numero e grau
+                movs_datajud = movimentos_map.get((num_processo, grau_norm))
+
+                # Se não achou com o grau exato, mas existe apenas uma entrada para o processo no DataJud, podemos tentar usar como fallback
+                if movs_datajud is None:
+                    fallback_movs = [movs for (num, gr), movs in movimentos_map.items() if num == num_processo]
+                    if len(fallback_movs) == 1:
+                        movs_datajud = fallback_movs[0]
+
+                if movs_datajud is not None:
+                    # Mapeia os movimentos para o formato esperado pelo front
+                    mapped_movs = []
+                    for m in movs_datajud:
+                        orgao_raw = m.get("orgaoJulgador") or m.get("orgao_julgador")
+                        orgao = None
+                        if orgao_raw:
+                            orgao = {
+                                "codigo": orgao_raw.get("codigo"),
+                                "nome": orgao_raw.get("nome"),
+                            }
+                        mapped_movs.append({
+                            "codigo": m.get("codigo"),
+                            "nome": m.get("nome"),
+                            "data_hora": m.get("dataHora") or m.get("data_hora"),
+                            "orgao_julgador": orgao,
+                        })
+
+                    p.movimentos = mapped_movs
+                    p.save(update_fields=["movimentos"])
+                    atualizados += 1
+                else:
+                    log(f"Movimentos não encontrados no DataJud para o processo {num_processo} grau {p.grau}", "warning")
+                    erros += 1
+
+    log(f"=== Sincronização concluída: {atualizados} processos atualizados, {erros} erros/não encontrados ===", "success")
+    return {"total": total_processos, "atualizados": atualizados, "erros": erros}
+
 
 

@@ -15,7 +15,7 @@ function buildInsights(overrides: Partial<HomeInsights> = {}): HomeInsights {
       taxaProcedencia: 67,
       taxaGanhoReclamante: 67,
       tempoMedioMeses: 12,
-      argumentosRelevantes: ['horas_extras', 'jornada'],
+      palavrasChavesRelevantes: ['horas_extras', 'jornada'],
     },
     desfechoSeries: {
       labels: ['Procedente', 'Improcedente'],

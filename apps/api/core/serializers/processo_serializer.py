@@ -124,6 +124,19 @@ class ProcessoSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ProcessoDetalheSerializer(ProcessoSerializer):
+    movimentos = serializers.JSONField(read_only=True)
+    em_andamento = serializers.SerializerMethodField()
+
+    class Meta(ProcessoSerializer.Meta):
+        fields = ProcessoSerializer.Meta.fields + ["movimentos", "em_andamento"]
+
+    def get_em_andamento(self, obj: Processo) -> bool:
+        if obj.analise is None:
+            return True
+        return getattr(obj.analise, "status", None) == StatusProcesso.EM_ANDAMENTO
+
+
 class ProcessoDeduplicarEntradaSerializer(ProcessoSerializer):
     class Meta(ProcessoSerializer.Meta):
         validators = []

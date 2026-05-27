@@ -56,4 +56,38 @@ describe('BaseChart', () => {
     const options = apex.props('options') as { labels: string[] }
     expect(options.labels).toEqual(['Valor médio'])
   })
+
+  it('nao inclui tooltip y quando valueFormatter nao e informado', () => {
+    const wrapper = mount(BaseChart, {
+      props: {
+        type: 'radialBar',
+        series: [67],
+      },
+    })
+
+    const apex = wrapper.findComponent({ name: 'ApexchartStub' })
+    const options = apex.props('options') as {
+      tooltip: { theme: string; y?: { formatter: (value: number) => string } }
+    }
+    expect(options.tooltip.theme).toBe('light')
+    expect(options.tooltip.y).toBeUndefined()
+  })
+
+  it('inclui tooltip y.formatter quando valueFormatter e informado', () => {
+    const wrapper = mount(BaseChart, {
+      props: {
+        type: 'bar',
+        series: [{ name: 'casos', data: [1] }],
+        labels: ['A'],
+        valueFormatter: (value: number) => `${value} casos`,
+      },
+    })
+
+    const apex = wrapper.findComponent({ name: 'ApexchartStub' })
+    const options = apex.props('options') as {
+      tooltip: { y?: { formatter: (value: number) => string } }
+    }
+    expect(options.tooltip.y).toBeDefined()
+    expect(options.tooltip.y?.formatter(2)).toBe('2 casos')
+  })
 })

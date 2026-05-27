@@ -8,6 +8,7 @@ function buildCase(overrides: Partial<ProcessCase> = {}): ProcessCase {
   return {
     id: 1,
     numeroProcesso: '0001',
+    grau: 'G1',
     tribunal: 'TRT6',
     classeNome: 'Reclamação',
     orgaoJulgadorNome: '5ª JCJ',
@@ -79,9 +80,9 @@ describe('buildHomeInsights', () => {
 
     const result = buildHomeInsights(items)
 
-    expect(result.kpis.argumentosRelevantes[0]).toBe('horas_extras')
-    expect(result.kpis.argumentosRelevantes).toContain('jornada')
-    expect(result.kpis.argumentosRelevantes).toContain('multa')
+    expect(result.kpis.palavrasChavesRelevantes[0]).toBe('horas_extras')
+    expect(result.kpis.palavrasChavesRelevantes).toContain('jornada')
+    expect(result.kpis.palavrasChavesRelevantes).toContain('multa')
   })
 
   it('calcula valorRadial com percentual proporcional ao máximo', () => {

@@ -5,7 +5,7 @@ import type {
 } from '@/shared/types/api'
 
 export const CHART_HEIGHT = {
-  donut: 220,
+  donut: 300,
   bar: 220,
   radial: 220,
 } as const

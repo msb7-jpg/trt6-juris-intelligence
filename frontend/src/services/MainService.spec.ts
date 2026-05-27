@@ -44,7 +44,7 @@ describe('MainService', () => {
 
     expect(mockGet).toHaveBeenCalledWith(API_ENDPOINTS.naoPossuemAnalise)
     expect(result).toHaveLength(1)
-    expect(result[0].numero_processo).toBe('ABC')
+    expect(result[0]?.numero_processo).toBe('ABC')
   })
 
   it('lista processos sem PDF via GET no endpoint correto', async () => {
@@ -53,5 +53,38 @@ describe('MainService', () => {
     await MainService.listarProcessosSemPdf()
 
     expect(mockGet).toHaveBeenCalledWith(API_ENDPOINTS.naoPossuemPdf)
+  })
+
+  it('busca o detalhe do processo via GET com query params', async () => {
+    mockGet.mockResolvedValueOnce({
+      data: {
+        id: 1,
+        numero_processo: '0001',
+        classe: { codigo: '1', nome: 'Classe' },
+        tribunal: 'TRT6',
+        data_hora_ultima_atualizacao: '2025-01-01',
+        grau: 'G1',
+        data_ajuizamento: '2024-01-01',
+        orgao_julgador: { codigo: 1, nome: 'Vara', codigo_municipio_ibge: null },
+        assuntos: [],
+        analise: null,
+        similaridade: 0,
+        movimentos: [],
+        em_andamento: true,
+      },
+    })
+
+    const result = await MainService.obterProcessoDetalhe('0001', 'G1')
+
+    expect(mockGet).toHaveBeenCalledWith(
+      API_ENDPOINTS.processoDetalhe,
+      {
+        params: {
+          numero_processo: '0001',
+          grau: 'G1',
+        },
+      },
+    )
+    expect(result.em_andamento).toBe(true)
   })
 })

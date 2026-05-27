@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import VueApexCharts from 'vue3-apexcharts'
 import { computed } from 'vue'
+import VueApexCharts from 'vue3-apexcharts'
 
 import {
   CHART_FONT_FAMILY,
@@ -45,6 +45,14 @@ function resolveHeight(): number {
 }
 
 const chartOptions = computed<Record<string, unknown>>(() => {
+  const tooltipOptions: Record<string, unknown> = {
+    theme: 'light',
+  }
+
+  if (props.valueFormatter) {
+    tooltipOptions.y = { formatter: props.valueFormatter }
+  }
+
   const baseOptions: Record<string, unknown> = {
     chart: {
       type: props.type,
@@ -66,16 +74,14 @@ const chartOptions = computed<Record<string, unknown>>(() => {
       enabled: props.type === 'donut' || props.type === 'pie' || props.type === 'radialBar',
       style: { fontSize: '11px', fontWeight: 600 },
     },
-    tooltip: {
-      theme: 'light',
-      y: props.valueFormatter
-        ? { formatter: props.valueFormatter }
-        : undefined,
-    },
-    grid: {
+    tooltip: tooltipOptions,
+  }
+
+  if (props.type !== 'radialBar') {
+    baseOptions.grid = {
       borderColor: '#e5ebf5',
       strokeDashArray: 4,
-    },
+    }
   }
 
   if (props.type === 'bar') {
@@ -123,7 +129,17 @@ const chartOptions = computed<Record<string, unknown>>(() => {
   if (props.type === 'radialBar') {
     baseOptions.plotOptions = {
       radialBar: {
-        hollow: { size: '60%' },
+        startAngle: -135,
+        endAngle: 135,
+        hollow: { size: '58%' },
+        track: {
+          background: '#dbe7ff',
+          strokeWidth: '100%',
+          margin: 0,
+        },
+        stroke: {
+          lineCap: 'round',
+        },
         dataLabels: {
           name: {
             show: true,
@@ -136,7 +152,7 @@ const chartOptions = computed<Record<string, unknown>>(() => {
             fontSize: '18px',
             fontWeight: 700,
             color: '#0f2d57',
-            offsetY: 6,
+            offsetY: 8,
             formatter: (val: number) =>
               props.centerValue ?? `${Math.round(val)}%`,
           },

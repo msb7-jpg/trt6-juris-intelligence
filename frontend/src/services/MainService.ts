@@ -1,7 +1,8 @@
 import { API_ENDPOINTS } from '@/shared/constants/api'
 import type {
-  BuscaSemanticaPayload,
-  BuscaSemanticaResponse,
+    BuscaSemanticaPayload,
+    BuscaSemanticaResponse,
+    ProcessoDetalheDTO,
 } from '@/shared/types/api'
 
 import { httpClient } from './httpClient'
@@ -33,6 +34,19 @@ export class MainService {
     const { data } = await httpClient.get<ProcessoResumo[]>(
       API_ENDPOINTS.naoPossuemPdf,
     )
+    return data
+  }
+
+  static async obterProcessoDetalhe(
+    numero_processo: string,
+    grau: string,
+  ): Promise<ProcessoDetalheDTO> {
+    const { data } = await httpClient.get<ProcessoDetalheDTO>(API_ENDPOINTS.processoDetalhe, {
+      params: {
+        numero_processo,
+        grau,
+      },
+    })
     return data
   }
 }

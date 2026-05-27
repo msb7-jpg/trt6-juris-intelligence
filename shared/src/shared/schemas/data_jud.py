@@ -39,7 +39,7 @@ class Processo(BaseModel):
     data_hora_ultima_atualizacao: str = Field(..., alias="dataHoraUltimaAtualizacao")
     grau: str
     id: str
-    # movimentos: list[Movimento]
+    movimentos: list[Movimento] = Field(default_factory=list)
     numero_processo: str = Field(..., alias="numeroProcesso")
     orgao_julgador: OrgaoJulgador = Field(..., alias="orgaoJulgador")
     timestamp: str = Field(..., alias='@timestamp')

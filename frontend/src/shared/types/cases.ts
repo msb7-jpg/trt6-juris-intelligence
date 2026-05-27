@@ -1,12 +1,13 @@
 import type {
-  Desfecho,
-  ResultadoReclamante,
-  StatusProcesso,
+    Desfecho,
+    ResultadoReclamante,
+    StatusProcesso,
 } from './api'
 
 export interface ProcessCase {
   id: number
   numeroProcesso: string
+  grau: string
   tribunal: string
   classeNome: string
   orgaoJulgadorNome: string
@@ -32,7 +33,7 @@ export interface InsightKpis {
   taxaProcedencia: number
   taxaGanhoReclamante: number
   tempoMedioMeses: number
-  argumentosRelevantes: string[]
+  palavrasChavesRelevantes: string[]
 }
 
 export interface ChartSeries {

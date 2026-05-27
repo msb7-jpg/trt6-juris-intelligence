@@ -5,4 +5,6 @@ export const queryKeys = {
     [QUERY_KEYS.buscaSemantica, { consulta, topK }] as const,
   naoPossuemAnalise: () => [QUERY_KEYS.naoPossuemAnalise] as const,
   naoPossuemPdf: () => [QUERY_KEYS.naoPossuemPdf] as const,
+  processoDetalhe: (numeroProcesso: string, grau: string) =>
+    [QUERY_KEYS.processoDetalhe, { numeroProcesso, grau }] as const,
 }

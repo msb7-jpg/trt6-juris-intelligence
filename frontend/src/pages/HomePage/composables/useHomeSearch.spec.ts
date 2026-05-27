@@ -97,8 +97,9 @@ describe('useHomeSearch', () => {
     await flushPromises()
 
     expect(buscaSemanticaSpy).toHaveBeenCalledTimes(1)
-    expect(buscaSemanticaSpy.mock.calls[0][0].consulta).toBe('horas extras')
-    expect(buscaSemanticaSpy.mock.calls[0][0].top_k).toBe(10)
+    const firstCall = buscaSemanticaSpy.mock.calls[0]
+    expect(firstCall?.[0].consulta).toBe('horas extras')
+    expect(firstCall?.[0].top_k).toBe(10)
   })
 
   it('ignora submitSearch com query vazia', () => {

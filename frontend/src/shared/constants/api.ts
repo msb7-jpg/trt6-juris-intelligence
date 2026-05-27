@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
   naoPossuemPdf: '/processos/nao_possuem_pdf/',
   deduplicar: '/processos/deduplicar/',
   adicionarAnalise: '/processos/adicionar_analise/',
+  processoDetalhe: '/processos/detalhe/',
   health: '/health/',
 } as const
 
@@ -19,6 +20,7 @@ export const QUERY_KEYS = {
   buscaSemantica: 'busca-semantica',
   naoPossuemAnalise: 'nao-possuem-analise',
   naoPossuemPdf: 'nao-possuem-pdf',
+  processoDetalhe: 'processo-detalhe',
 } as const
 
 export const ERROR_MESSAGES = {

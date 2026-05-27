@@ -60,6 +60,7 @@ class DataSetup:
         tribunal: str = TRIBUNAL_TRT6,
         grau: str = GRAU_G1,
         pdf_url: str | None = None,
+        movimentos: list[dict] | None = None,
     ) -> Processo:
         return Processo.objects.create(
             numero_processo=numero_processo,
@@ -67,4 +68,5 @@ class DataSetup:
             grau=grau,
             data_hora_ultima_atualizacao=data_hora_ultima_atualizacao,
             pdf_url=pdf_url,
+            movimentos=movimentos or [],
         )
