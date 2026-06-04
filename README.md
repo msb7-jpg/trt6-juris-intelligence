@@ -4,6 +4,52 @@ REST API built with Django + Django REST Framework exposing the [LeandroRibeiro/
 
 ---
 
+## Definição formal do problema de Machine Learning
+
+> Mapeamento completo dos entregáveis da disciplina (Projetos 6 CC) em
+> [docs/Requisitos_Projetos6_CC.md](docs/Requisitos_Projetos6_CC.md).
+
+O produto coleta processos trabalhistas do **TRT-6 / DataJud (CNJ)**, extrai uma
+análise estruturada da íntegra via LLM e gera embeddings para busca semântica.
+Sobre esse acervo definimos **dois problemas de aprendizado de máquina**
+complementares:
+
+### Classificação supervisionada (modelo principal)
+
+- **Tipo:** classificação multiclasse.
+- **Variável-alvo:** `resultado_reclamante` ∈ {`ganhou`, `ganhou_parcial`,
+  `perdeu`, `sem_decisao`}, definida em
+  [resumo_ia.py](shared/src/shared/schemas/resumo_ia.py#L37-L41). Alvo
+  alternativo: `desfecho` (7 classes).
+- **Estrutura dos dados de entrada (features):** atributos relacionais do
+  `Processo` — `classe`, `orgao_julgador`, `assuntos` (multirrótulo),
+  `valor_causa`, `custas_valor_total` — combinados ao **embedding denso de 384
+  dimensões** do texto canônico do processo (`montar_texto_indexacao` +
+  `embed_text`). Cada amostra é um processo com análise concluída.
+- **Métrica de avaliação:** **F1 macro** como métrica primária (as classes são
+  desbalanceadas), acompanhada de *accuracy*, matriz de confusão e ROC/AUC
+  (one-vs-rest) por classe.
+- **Justificativa de valor:** estimar a chance de êxito do reclamante a partir
+  das características iniciais do processo apoia advogados e partes na decisão de
+  litigar ou acordar, e enriquece o ranqueamento da busca com um sinal preditivo
+  de resultado provável.
+
+### Recuperação semântica por similaridade (já em produção)
+
+- **Tipo:** recuperação/ranqueamento não supervisionado (vizinhança por cosseno,
+  estilo KNN).
+- **Variável-alvo:** não há rótulo; o objetivo é ordenar processos por
+  similaridade à consulta em linguagem natural.
+- **Estrutura dos dados de entrada:** consulta textual do usuário → vetor de 384
+  dimensões; base de embeddings dos processos em `pgvector`.
+- **Métrica de avaliação:** similaridade de cosseno e precisão no top-k.
+- **Justificativa de valor:** localizar jurisprudência relevante sem depender de
+  correspondência exata de palavras. Implementado em
+  `buscar_processos_semanticos` e exposto via
+  `POST /api/processos/busca_semantica/`.
+
+---
+
 ## Requirements
 
 - Python 3.13+
