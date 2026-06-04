@@ -1,6 +1,10 @@
 from copy import deepcopy
 from datetime import date
 
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
+from core.models.busca_salva import BuscaSalva
 from core.models.processo import Processo
 from core.tests.constants import (
     DATA_BASE,
@@ -69,4 +73,35 @@ class DataSetup:
             data_hora_ultima_atualizacao=data_hora_ultima_atualizacao,
             pdf_url=pdf_url,
             movimentos=movimentos or [],
+        )
+
+    @staticmethod
+    def create_user(
+        email: str = "user@example.com",
+        password: str = "senha-do-user-321",  # noqa: S107
+        name: str = "User"
+    ) -> User:
+        # Usernames are lowercase email strings in this system
+        username = email.strip().lower()
+        return User.objects.create_user(
+            username=username,
+            email=username,
+            password=password,
+            first_name=name
+        )
+
+    @staticmethod
+    def create_token(user: User) -> Token:
+        return Token.objects.create(user=user)
+
+    @staticmethod
+    def create_busca_salva(
+        user: User,
+        title: str = "Busca Teste",
+        query: str = "teste"
+    ) -> BuscaSalva:
+        return BuscaSalva.objects.create(
+            user=user,
+            title=title,
+            query=query
         )

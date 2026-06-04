@@ -73,6 +73,21 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/api
+          target: /app/apps/api
+          ignore:
+            - "**/__pycache__/"
+            - "**/.venv/"
+            - "**/migrations/"
+        - action: rebuild
+          path: ./shared
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
 
   worker-scrapper:
     build:
@@ -93,6 +108,20 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./apps/worker-scrapper
+          target: /app/apps/worker-scrapper
+          ignore:
+            - "**/__pycache__/"
+            - "**/.venv/"
+        - action: rebuild
+          path: ./shared
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
 
   worker-llm:
     build:
@@ -114,6 +143,20 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./apps/worker-llm
+          target: /app/apps/worker-llm
+          ignore:
+            - "**/__pycache__/"
+            - "**/.venv/"
+        - action: rebuild
+          path: ./shared
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
 
   ingestion:
     build:
@@ -132,6 +175,22 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./apps/ingestion
+          target: /app/apps/ingestion
+          ignore:
+            - "**/__pycache__/"
+            - "**/.venv/"
+        - action: rebuild
+          path: ./docker/cron/ingestion.crontab
+        - action: rebuild
+          path: ./shared
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
 
   search-notifier:
     build:
