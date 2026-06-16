@@ -6,6 +6,7 @@ import { useHomeInsights } from './useHomeInsights'
 
 export function useHomeSearch() {
   const query = ref('')
+  const metrica = ref('cosseno')
   const hasSearched = ref(false)
   const submittedQuery = ref('')
 
@@ -20,7 +21,7 @@ export function useHomeSearch() {
     isError,
     error,
     refetch,
-  } = useBuscaSemantica(submittedQuery, enabled)
+  } = useBuscaSemantica(submittedQuery, enabled, { metrica })
 
   const insights = useHomeInsights(cases)
 
@@ -34,6 +35,7 @@ export function useHomeSearch() {
 
   return {
     query,
+    metrica,
     hasSearched,
     submitSearch,
     cases,

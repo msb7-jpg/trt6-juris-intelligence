@@ -91,6 +91,7 @@ export interface ProcessoDetalheDTO extends ProcessoDTO {
 export interface BuscaSemanticaPayload {
   consulta: string
   top_k: number
+  metrica?: string
 }
 
 export interface BuscaSemanticaResponse {

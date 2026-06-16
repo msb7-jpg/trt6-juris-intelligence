@@ -21,6 +21,7 @@ const NO_RESULTS_DESCRIPTION =
 
 const {
   query,
+  metrica,
   hasSearched,
   submitSearch,
   cases,
@@ -45,11 +46,22 @@ onMounted(() => {
   <section class="home-page">
     <div v-motion :initial="{ opacity: 0, y: 12 }" :enter="{ opacity: 1, y: 0 }">
       <HomeHero />
-      <SearchBar
-        v-model="query"
-        :loading="isFetching"
-        @submit="submitSearch"
-      />
+      <div class="search-container">
+        <div class="search-bar-wrapper">
+          <SearchBar
+            v-model="query"
+            :loading="isFetching"
+            @submit="submitSearch"
+          />
+        </div>
+        <select v-model="metrica" class="metric-select">
+          <option value="cosseno">Cosseno (Padrão)</option>
+          <option value="euclidiana">Euclidiana</option>
+          <option value="manhattan">Manhattan</option>
+          <option value="jaccard">Jaccard (Texto)</option>
+          <option value="levenshtein">Levenshtein (Texto)</option>
+        </select>
+      </div>
     </div>
 
     <div
@@ -108,6 +120,36 @@ onMounted(() => {
 .home-page {
   display: grid;
   gap: 1.2rem;
+}
+
+.search-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.search-bar-wrapper {
+  flex: 1;
+  min-width: 300px;
+}
+
+.metric-select {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border, #c4c6cf);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  color: var(--color-on-surface, #161c22);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.metric-select:focus {
+  border-color: var(--color-primary, #002045);
 }
 
 .results-grid {
