@@ -12,6 +12,11 @@ class BuscaSemanticaEntradaSerializer(serializers.Serializer):
         error_messages={"required": "O campo 'consulta' é obrigatório.", "blank": "A consulta não pode estar vazia."},
     )
     top_k = serializers.IntegerField(required=False, default=5, min_value=1, max_value=50)
+    metrica = serializers.ChoiceField(
+        choices=["cosseno", "euclidiana", "manhattan", "jaccard", "levenshtein"],
+        required=False,
+        default="cosseno",
+    )
 
 
 class ProcessoBuscaSemanticaSaidaSerializer(ProcessoSerializer):

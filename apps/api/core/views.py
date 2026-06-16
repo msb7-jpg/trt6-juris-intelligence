@@ -161,9 +161,10 @@ class ProcessoViewset(viewsets.ViewSet):
         payload = input_serializer.validated_data
         consulta = payload["consulta"]
         top_k = payload.get("top_k", 5)
+        metrica = payload.get("metrica", "cosseno")
 
         try:
-            resultados = buscar_processos_semanticos(consulta=consulta, top_k=top_k)
+            resultados = buscar_processos_semanticos(consulta=consulta, top_k=top_k, metrica=metrica)
         except Exception as exc:
             logger.exception("Falha ao executar busca semântica.")
             return Response(

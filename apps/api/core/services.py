@@ -238,21 +238,80 @@ def obter_processo_por_numero_grau(numero_processo: str, grau: str) -> Processo 
     )
 
 
-def buscar_processos_semanticos(consulta: str, top_k: int = 5) -> list[Processo]:
-    """Realiza a busca vetorial por similaridade de cosseno direto no banco de dados."""
-    from pgvector.django import CosineDistance
+def levenshtein_distance(s1: str, s2: str) -> int:
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
+
+def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "cosseno") -> list[Processo]:
+    """Realiza a busca vetorial por similaridade ou texto (Cosseno, Euclidiana, Manhattan, Jaccard, Levenshtein)."""
+    from pgvector.django import CosineDistance, L2Distance, L1Distance
     from shared.embeddings import embed_text
 
-    logger.info(f"Iniciando busca semântica para consulta: '{consulta}' | top_k={top_k}")
-    query_embedding = embed_text(consulta)
+    logger.info(f"Iniciando busca semântica para consulta: '{consulta}' | top_k={top_k} | metrica={metrica}")
 
-    processos = Processo.objects.filter(analise__embedding__isnull=False) \
-        .select_related("classe", "orgao_julgador", "analise") \
-        .prefetch_related("assuntos", "analise__palavras_chave") \
-        .annotate(similaridade=1 - CosineDistance("analise__embedding", query_embedding)) \
-        .order_by("-similaridade")[:top_k]
+    if metrica in ["cosseno", "euclidiana", "manhattan"]:
+        query_embedding = embed_text(consulta)
+        qs = Processo.objects.filter(analise__embedding__isnull=False) \
+            .select_related("classe", "orgao_julgador", "analise") \
+            .prefetch_related("assuntos", "analise__palavras_chave")
 
-    return list(processos)
+        if metrica == "cosseno":
+            qs = qs.annotate(similaridade=1 - CosineDistance("analise__embedding", query_embedding)).order_by("-similaridade")
+        elif metrica == "euclidiana":
+            qs = qs.annotate(distancia=L2Distance("analise__embedding", query_embedding)) \
+                   .annotate(similaridade=1.0 / (1.0 + L2Distance("analise__embedding", query_embedding))) \
+                   .order_by("distancia")
+        elif metrica == "manhattan":
+            qs = qs.annotate(distancia=L1Distance("analise__embedding", query_embedding)) \
+                   .annotate(similaridade=1.0 / (1.0 + L1Distance("analise__embedding", query_embedding))) \
+                   .order_by("distancia")
+        
+        return list(qs[:top_k])
+        
+    elif metrica in ["jaccard", "levenshtein"]:
+        qs = Processo.objects.filter(analise__isnull=False) \
+            .select_related("classe", "orgao_julgador", "analise") \
+            .prefetch_related("assuntos", "analise__palavras_chave")
+            
+        resultados = []
+        for p in qs:
+            texto_p = p.analise.resumo or ""
+            if not texto_p:
+                p.similaridade = 0.0
+                resultados.append(p)
+                continue
+                
+            if metrica == "jaccard":
+                set1 = set(consulta.lower().split())
+                set2 = set(texto_p.lower().split())
+                if not set1 and not set2:
+                    sim = 1.0
+                else:
+                    sim = len(set1.intersection(set2)) / len(set1.union(set2))
+            else: # levenshtein
+                dist = levenshtein_distance(consulta.lower(), texto_p.lower())
+                max_len = max(len(consulta), len(texto_p))
+                sim = 1.0 - (dist / max_len) if max_len > 0 else 1.0
+                
+            p.similaridade = sim
+            resultados.append(p)
+            
+        resultados.sort(key=lambda x: getattr(x, 'similaridade', 0.0), reverse=True)
+        return resultados[:top_k]
+    
+    return []
 
 
 def reindexar_processos_sem_embedding() -> int:
