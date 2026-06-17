@@ -82,9 +82,14 @@
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
         }
         
-        /* Caixa de Diálogo Customizada acima do Nó */
-        .above-dialog {
-            transition: opacity 0.2s ease, transform 0.2s ease;
+        /* Info cards na sidebar */
+        .info-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .info-card.highlighted {
+            border-color: rgba(99, 102, 241, 0.7) !important;
+            background-color: rgba(99, 102, 241, 0.08);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
     </style>
 </head>
@@ -127,28 +132,13 @@
         </div>
     </header>
 
-    <main class="flex-1 flex overflow-hidden relative justify-center items-center">
+    <main class="flex-1 flex overflow-hidden relative">
         
         <!-- Painel Centralizado: O Canvas de SVG e Elementos de Diagrama -->
         <div class="flex-1 overflow-auto p-6 flex items-center justify-center relative min-w-[800px] h-full">
             <div class="relative w-[1150px] h-[680px] bg-slate-950/60 rounded-2xl border border-slate-800/80 p-4 shadow-2xl backdrop-blur-sm">
                 
-                <!-- Caixa de Diálogo Dinâmica (Acima do Nó selecionado) -->
-                <div id="node-dialog" class="above-dialog absolute hidden bg-slate-900/95 border border-indigo-500/50 p-4 rounded-xl shadow-2xl w-[320px] z-50 text-xs backdrop-blur-md">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-800">
-                        <span id="dialog-title" class="font-bold text-white text-sm"></span>
-                        <span id="dialog-tech" class="text-[9px] bg-indigo-500/20 text-indigo-300 font-mono px-1.5 py-0.5 rounded border border-indigo-500/30"></span>
-                    </div>
-                    <p id="dialog-desc" class="text-slate-300 leading-relaxed mb-3"></p>
-                    <div class="flex items-center justify-between text-[10px] text-slate-400">
-                        <span>Canal: <strong id="dialog-channel" class="text-indigo-400 font-mono"></strong></span>
-                        <button onclick="closeDialog()" class="text-slate-400 hover:text-white transition-colors flex items-center gap-1">
-                            <i class="fa-solid fa-circle-xmark"></i> Fechar
-                        </button>
-                    </div>
-                    <!-- Seta apontando para baixo -->
-                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-slate-900 border-r border-b border-indigo-500/50 rotate-45"></div>
-                </div>
+
 
                 <!-- SVG de Conexões de Fundo -->
                 <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="svg-canvas" viewBox="0 0 1150 680">
@@ -171,19 +161,19 @@
                     <path id="path-api-to-ingest" d="M 240,200 Q 310,360 240,520" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
 
                     <!-- Ingest-worker -> Broker (Publish do Evento de Scrap) -->
-                    <path id="path-ingest-to-broker" d="M 270,540 C 350,540 400,420 480,400" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
+                    <path id="path-ingest-to-broker" d="M 270,560 L 460,560" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
 
                     <!-- Broker -> Scrapper-worker (Consumo do Evento) -->
-                    <path id="path-broker-to-scrapper" d="M 680,400 C 760,420 810,540 880,540" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
+                    <path id="path-broker-to-scrapper" d="M 680,560 L 860,560" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
 
                     <!-- Scrapper-worker -> S3 (Upload de PDF bruto) -->
                     <path id="path-scrapper-to-s3" d="M 990,520 L 990,410" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
 
                     <!-- Scrapper-worker -> Broker (Publish LLM Input Event) -->
-                    <path id="path-scrapper-to-broker" d="M 880,570 C 730,620 620,530 580,450" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
+                    <path id="path-scrapper-to-broker" d="M 880,600 C 880,655 480,655 480,600" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
 
                     <!-- Broker -> LLM-worker (Consumo do Input Event) -->
-                    <path id="path-broker-to-llm" d="M 580,350 C 620,270 730,180 880,180" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
+                    <path id="path-broker-to-llm" d="M 680,520 C 780,380 850,230 880,190" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
 
                     <!-- LLM-worker -> S3 (Download PDF) -->
                     <path id="path-llm-to-s3" d="M 990,200 L 990,310" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
@@ -240,7 +230,7 @@
                 </div>
 
                 <!-- Broker (RabbitMQ/Kafka) -->
-                <div class="absolute cursor-pointer node-card bg-slate-900 border border-purple-500/50 hover:border-purple-400 p-4 rounded-xl w-[220px] z-10 text-center select-none" style="left: 460px; top: 310px;" onclick="inspectNode('broker', this)" id="card-broker">
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-purple-500/50 hover:border-purple-400 p-4 rounded-xl w-[220px] z-10 text-center select-none" style="left: 460px; top: 510px;" onclick="inspectNode('broker', this)" id="card-broker">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
                             <i class="fa-solid fa-shuffle text-purple-400"></i>
@@ -326,19 +316,19 @@
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 235px; top: 360px;">
                     Cria inexistentes
                 </div>
-                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 290px; top: 440px;">
+                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 330px; top: 535px;">
                     Scrap PDF Event
                 </div>
-                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 670px; top: 480px;">
+                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 720px; top: 535px;">
                     Deliver Scrap Event
                 </div>
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 920px; top: 450px;">
                     Upload PDF
                 </div>
-                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 670px; top: 580px;">
+                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 580px; top: 648px;">
                     LLM Input Event
                 </div>
-                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 690px; top: 220px;">
+                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 730px; top: 380px;">
                     Deliver LLM Event
                 </div>
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 935px; top: 245px;">
@@ -347,21 +337,94 @@
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 720px; top: 125px;">
                     Local Inference
                 </div>
-                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 450px; top: 125px;">
-                    Merge Results
-                </div>
 
-                <!-- Painel Inferior Explicativo Compacto -->
-                <div class="absolute bottom-4 left-4 right-4 bg-slate-900/40 border border-slate-800/60 rounded-xl p-3 flex items-center justify-between text-xs z-10">
-                    <div class="flex items-center gap-3">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                        <span class="text-slate-400 font-medium">Instruções:</span>
-                        <span class="text-slate-300">Clique em qualquer container/nó acima para abrir a caixa de diálogo informativa correspondente.</span>
-                    </div>
-                </div>
+
+
 
             </div>
         </div>
+
+        <!-- Sidebar permanente de informações dos módulos -->
+        <aside class="w-72 flex-shrink-0 overflow-y-auto bg-slate-900/60 border-l border-slate-800 p-4 flex flex-col gap-3">
+            <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1 px-1">Módulos do Sistema</div>
+
+            <div id="info-django-api" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-server text-pink-400"></i> Django Rest API
+                    </div>
+                    <span class="text-[9px] bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded font-mono border border-pink-500/20">Python / Django</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Serviço central responsável por registrar novos processos, salvar metadados no banco de dados relacional e realizar o merge dos dados retornados pelo pipeline de IA.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">REST HTTP (Sync)</span></div>
+            </div>
+
+            <div id="info-ingest-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-gears text-pink-400"></i> Ingest Worker
+                    </div>
+                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Celery / Redis</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Worker baseado em tarefas periódicas (cron) responsável por monitorar tribunais, identificar processos novos e disparar eventos na fila para processamento assíncrono.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP Publish (Async)</span></div>
+            </div>
+
+            <div id="info-broker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-shuffle text-purple-400"></i> Message Broker
+                    </div>
+                    <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">RabbitMQ</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Garante o desacoplamento do Django API com workers de background. Mantém integridade das filas no disco caso algum worker perca conexão.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP Queue Routing</span></div>
+            </div>
+
+            <div id="info-scrapper-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-robot text-pink-400"></i> Scrapper Worker
+                    </div>
+                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Puppeteer / BS4</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Trabalhador assíncrono que simula ações humanas e passa por firewalls de tribunais para consolidar PDFs das peças dos processos.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP & AWS SDK Upload</span></div>
+            </div>
+
+            <div id="info-s3-storage" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-box-archive text-amber-500"></i> S3 Storage
+                    </div>
+                    <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/20">AWS S3 API</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Data lake de objetos altamente disponível e durável. Armazena as peças judiciais em PDF de forma consistente para auditoria técnica.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">Boto3 / AWS SDK</span></div>
+            </div>
+
+            <div id="info-llm-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-microchip text-pink-400"></i> LLM Worker
+                    </div>
+                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">LangChain</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Consome eventos de extração, baixa o PDF bruto do S3, processa a quebra inteligente de texto em chunks e orquestra a chamada de inferência no modelo local.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP & HTTP Post</span></div>
+            </div>
+
+            <div id="info-gemma-model" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
+                        <i class="fa-solid fa-brain text-violet-400"></i> Gemma 3 Model
+                    </div>
+                    <span class="text-[9px] bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded font-mono border border-violet-500/20">Ollama / vLLM</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Instância offline local do modelo Gemma 3 da Google, rodando em GPU dedicada e configurada para retornar extração de texto estritamente estruturada em JSON.</p>
+                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">HTTP POST (Inference)</span></div>
+            </div>
+        </aside>
     </main>
 
     <script>
@@ -540,6 +603,14 @@
                 }
             });
 
+            // Destacar info cards na sidebar
+            document.querySelectorAll('.info-card').forEach(c => c.classList.remove('highlighted'));
+            step.activeCards.forEach(id => {
+                const nodeKey = id.replace('card-', '');
+                const infoCard = document.getElementById('info-' + nodeKey);
+                if (infoCard) infoCard.classList.add('highlighted');
+            });
+
             // 3. Ativar animação de fluxo no SVG
             const activePulse = document.getElementById(step.pulseId);
             if (activePulse) activePulse.classList.remove('hidden');
@@ -624,37 +695,19 @@
         }
 
         function inspectNode(nodeKey, element) {
-            const spec = nodeSpecs[nodeKey];
-            if (!spec) return;
-
-            const dialog = document.getElementById('node-dialog');
-            
-            // Injeta os dados correspondentes na caixa de diálogo do topo
-            document.getElementById('dialog-title').innerText = spec.name;
-            document.getElementById('dialog-tech').innerText = spec.tech;
-            document.getElementById('dialog-desc').innerText = spec.desc;
-            document.getElementById('dialog-channel').innerText = spec.event;
-
-            // Mostra a caixa de diálogo
-            dialog.classList.remove('hidden');
-
-            // Posiciona dinamicamente a caixa acima do elemento clicado
-            const targetLeft = (element.offsetLeft + (element.offsetWidth / 2)) - (dialog.offsetWidth / 2);
-            const targetTop = element.offsetTop - dialog.offsetHeight - 18; // 18px offset acima
-
-            dialog.style.left = `${targetLeft}px`;
-            dialog.style.top = `${targetTop}px`;
-
-            // Pequeno feedback de clique nos cartões
+            document.querySelectorAll('.info-card').forEach(c => c.classList.remove('highlighted'));
+            const infoCard = document.getElementById('info-' + nodeKey);
+            if (infoCard) {
+                infoCard.classList.add('highlighted');
+                infoCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
             element.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
             setTimeout(() => {
                 element.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
             }, 800);
         }
 
-        function closeDialog() {
-            document.getElementById('node-dialog').classList.add('hidden');
-        }
+        function closeDialog() {}
 
         window.onload = function() {
             // Executa o primeiro passo do diagrama imediatamente
