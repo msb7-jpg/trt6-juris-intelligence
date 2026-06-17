@@ -136,6 +136,13 @@ O sistema foi projetado com foco em **Privacidade por Design**:
 
 ---
 
+### 11. Artefatos Visuais
+Além da documentação técnica, o projeto conta com um **Canvas Interativo de Arquitetura** (`arquitetura.html`):
+- **Funcionalidade**: Simulação animada do fluxo de dados (Ingestão -> Broker -> Scrapers -> S3 -> LLM -> API).
+- **Utilidade**: Facilita a visualização do comportamento assíncrono do sistema e a identificação de gargalos no pipeline.
+
+---
+
 ### 10. Conclusão e Próximos Passos
 O **JusTRT6 Search** deixa de ser um protótipo para se tornar uma plataforma de inteligência jurídica de nível industrial. A união entre busca semântica, análise preditiva e governança de ML provê uma ferramenta indispensável para a advocacia moderna no TRT6.
 

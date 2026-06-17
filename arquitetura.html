@@ -95,48 +95,11 @@
 </head>
 <body class="h-full flex flex-col overflow-hidden tech-grid">
 
-    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 z-20">
-        <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-tr from-pink-500 to-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
-                <i class="fa-solid fa-network-wired text-xl"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-lg text-white flex items-center gap-2">
-                    Canvas Interativo de Arquitetura 
-                    <span class="text-xs bg-slate-800 text-pink-400 font-semibold px-2 py-0.5 rounded-full border border-pink-500/20">v1.2.0-Alpha</span>
-                </h1>
-                <p class="text-xs text-slate-400">Fluxo Assíncrono de Ingestão de PDFs & Enriquecimento via LLM Local (Gemma 3)</p>
-            </div>
-        </div>
-
-        <!-- Controles Globais da Simulação -->
-        <div class="flex items-center gap-4">
-            <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-3 text-sm">
-                <span class="text-slate-400">Simulação:</span>
-                <span class="flex items-center gap-1.5 font-semibold text-emerald-400" id="simulation-status">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Ativa (Contínua)
-                </span>
-            </div>
-            <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <button onclick="toggleSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-850 hover:bg-slate-800 text-slate-200 transition-colors flex items-center gap-1.5" id="btn-pause">
-                    <i class="fa-solid fa-pause"></i> Pausar
-                </button>
-                <button onclick="stepSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-850 hover:bg-slate-800 text-slate-200 transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-forward-step"></i> Passo a Passo
-                </button>
-                <button onclick="resetSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-950/40 hover:bg-red-900/40 border border-red-900/30 text-red-300 transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-left"></i> Resetar
-                </button>
-            </div>
-        </div>
-    </header>
-
     <main class="flex-1 flex overflow-hidden relative">
         
         <!-- Painel Centralizado: O Canvas de SVG e Elementos de Diagrama -->
-        <div class="flex-1 overflow-auto p-6 flex items-center justify-center relative min-w-[800px] h-full">
-            <div class="relative w-[1150px] h-[680px] bg-slate-950/60 rounded-2xl border border-slate-800/80 p-4 shadow-2xl backdrop-blur-sm">
+        <div class="flex-1 overflow-auto p-0 flex items-center justify-center relative w-full h-full">
+            <div class="relative w-[1150px] h-[680px] bg-slate-950/60 rounded-2xl border border-slate-800/80 p-4 shadow-2xl backdrop-blur-sm scale-90 lg:scale-100">
                 
 
 
@@ -344,87 +307,6 @@
             </div>
         </div>
 
-        <!-- Sidebar permanente de informações dos módulos -->
-        <aside class="w-72 flex-shrink-0 overflow-y-auto bg-slate-900/60 border-l border-slate-800 p-4 flex flex-col gap-3">
-            <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1 px-1">Módulos do Sistema</div>
-
-            <div id="info-django-api" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-server text-pink-400"></i> Django Rest API
-                    </div>
-                    <span class="text-[9px] bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded font-mono border border-pink-500/20">Python / Django</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Serviço central responsável por registrar novos processos, salvar metadados no banco de dados relacional e realizar o merge dos dados retornados pelo pipeline de IA.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">REST HTTP (Sync)</span></div>
-            </div>
-
-            <div id="info-ingest-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-gears text-pink-400"></i> Ingest Worker
-                    </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Celery / Redis</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Worker baseado em tarefas periódicas (cron) responsável por monitorar tribunais, identificar processos novos e disparar eventos na fila para processamento assíncrono.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP Publish (Async)</span></div>
-            </div>
-
-            <div id="info-broker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-shuffle text-purple-400"></i> Message Broker
-                    </div>
-                    <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">RabbitMQ</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Garante o desacoplamento do Django API com workers de background. Mantém integridade das filas no disco caso algum worker perca conexão.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP Queue Routing</span></div>
-            </div>
-
-            <div id="info-scrapper-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-robot text-pink-400"></i> Scrapper Worker
-                    </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Puppeteer / BS4</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Trabalhador assíncrono que simula ações humanas e passa por firewalls de tribunais para consolidar PDFs das peças dos processos.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP & AWS SDK Upload</span></div>
-            </div>
-
-            <div id="info-s3-storage" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-box-archive text-amber-500"></i> S3 Storage
-                    </div>
-                    <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/20">AWS S3 API</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Data lake de objetos altamente disponível e durável. Armazena as peças judiciais em PDF de forma consistente para auditoria técnica.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">Boto3 / AWS SDK</span></div>
-            </div>
-
-            <div id="info-llm-worker" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-microchip text-pink-400"></i> LLM Worker
-                    </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">LangChain</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Consome eventos de extração, baixa o PDF bruto do S3, processa a quebra inteligente de texto em chunks e orquestra a chamada de inferência no modelo local.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">AMQP & HTTP Post</span></div>
-            </div>
-
-            <div id="info-gemma-model" class="info-card bg-slate-950/80 border border-slate-800 rounded-xl p-3 cursor-default">
-                <div class="flex items-center justify-between mb-1.5">
-                    <div class="flex items-center gap-2 text-slate-200 font-semibold text-xs">
-                        <i class="fa-solid fa-brain text-violet-400"></i> Gemma 3 Model
-                    </div>
-                    <span class="text-[9px] bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded font-mono border border-violet-500/20">Ollama / vLLM</span>
-                </div>
-                <p class="text-[11px] text-slate-400 leading-relaxed mb-2">Instância offline local do modelo Gemma 3 da Google, rodando em GPU dedicada e configurada para retornar extração de texto estritamente estruturada em JSON.</p>
-                <div class="text-[10px] text-slate-500 border-t border-slate-800 pt-1.5">Canal: <span class="text-indigo-400 font-mono">HTTP POST (Inference)</span></div>
-            </div>
-        </aside>
     </main>
 
     <script>
@@ -603,14 +485,6 @@
                 }
             });
 
-            // Destacar info cards na sidebar
-            document.querySelectorAll('.info-card').forEach(c => c.classList.remove('highlighted'));
-            step.activeCards.forEach(id => {
-                const nodeKey = id.replace('card-', '');
-                const infoCard = document.getElementById('info-' + nodeKey);
-                if (infoCard) infoCard.classList.add('highlighted');
-            });
-
             // 3. Ativar animação de fluxo no SVG
             const activePulse = document.getElementById(step.pulseId);
             if (activePulse) activePulse.classList.remove('hidden');
@@ -657,50 +531,11 @@
             currentStep = (currentStep + 1) % simulationSteps.length;
         }
 
-        function toggleSimulation() {
-            const btn = document.getElementById('btn-pause');
-            const statusIndicator = document.getElementById('simulation-status');
-            
-            if (isRunning) {
-                clearInterval(simulationInterval);
-                isRunning = false;
-                btn.innerHTML = '<i class="fa-solid fa-play"></i> Continuar';
-                statusIndicator.innerText = 'Pausado';
-                statusIndicator.className = 'flex items-center gap-1.5 font-semibold text-amber-500';
-                statusIndicator.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500';
-            } else {
-                isRunning = true;
-                simulationInterval = setInterval(runSimulationStep, 4000);
-                btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pausar';
-                statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Ativa (Contínua)';
-                statusIndicator.className = 'flex items-center gap-1.5 font-semibold text-emerald-400';
-                runSimulationStep();
-            }
-        }
-
-        function stepSimulation() {
-            if (isRunning) {
-                toggleSimulation();
-            }
-            runSimulationStep();
-        }
-
-        function resetSimulation() {
-            currentStep = 0;
-            if (isRunning) {
-                clearInterval(simulationInterval);
-                simulationInterval = setInterval(runSimulationStep, 4000);
-            }
-            runSimulationStep();
-        }
+        function toggleSimulation() {}
+        function stepSimulation() {}
+        function resetSimulation() {}
 
         function inspectNode(nodeKey, element) {
-            document.querySelectorAll('.info-card').forEach(c => c.classList.remove('highlighted'));
-            const infoCard = document.getElementById('info-' + nodeKey);
-            if (infoCard) {
-                infoCard.classList.add('highlighted');
-                infoCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
             element.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
             setTimeout(() => {
                 element.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
