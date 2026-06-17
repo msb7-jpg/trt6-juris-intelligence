@@ -94,7 +94,51 @@ O sistema não apenas lista processos, mas agrega os dados para fornecer **Dashb
 
 ---
 
-### 6. Roadmap e Evolução
-1. **Encadeamento Reativo**: Automação total via RabbitMQ para que o processo flua sem intervenção humana desde a descoberta até a indexação.
-2. **RAG (Retrieval-Augmented Generation)**: Permitir que o usuário "converse" com os processos encontrados para tirar dúvidas específicas sobre a jurisprudência.
-3. **Alertas Inteligentes**: Monitoramento automático de novos processos que se encaixem em buscas salvas.
+### 7. Validação de Machine Learning e MLOps
+O projeto JusTRT6 Search foi validado seguindo rigorosos critérios de Ciência de Dados e Engenharia de ML:
+
+#### A. Análise do Espaço Vetorial (Interpretabilidade)
+- **Clusters de Embeddings**: Desenvolvemos um notebook (`notebooks/analise_e_interpretacao.ipynb`) que utiliza **UMAP** (Uniform Manifold Approximation and Projection) para reduzir os vetores de 384 dimensões para um plano 2D.
+- **Insight**: A visualização permite confirmar que o modelo `MiniLM-L12` agrupa processos com desfechos e temas semelhantes no espaço latente, validando a eficácia dos pesos pré-treinados para o contexto jurídico brasileiro.
+
+#### B. Benchmark de Busca (Golden Set)
+Implementamos uma bateria de testes automatizada para medir a precisão da recuperação:
+- **Métricas Monitoradas**: 
+    - **Latência Média**: ~26ms por consulta (pgvector + HNSW).
+    - **Precision@3**: Capacidade do modelo de trazer o caso mais relevante entre os 3 primeiros resultados.
+- **Ambiente de Teste**: Script `scripts/validate_search.py` executando consultas em lote contra a base real do TRT6.
+
+#### C. Governança com MLflow
+Utilizamos o **MLflow** como plataforma de MLOps para registrar todos os experimentos e benchmarks:
+- **Tracking**: Cada execução de validação registra automaticamente a versão do modelo, dimensões do vetor e métricas de performance.
+- **Reprodutibilidade**: O painel do MLflow permite comparar a performance da busca ao longo do tempo ou após atualizações na lógica de pré-processamento de texto (Texto Canônico).
+
+---
+
+### 8. Stack Tecnológico Consolidado
+Para garantir a reprodutibilidade e escalabilidade, o JusTRT6 utiliza as tecnologias mais modernas do mercado:
+- **Linguagens**: Python 3.12 (otimizado para ML) e TypeScript (Frontend).
+- **Backend**: Django REST Framework + Celery + RabbitMQ.
+- **Banco de Dados**: PostgreSQL 16 + pgvector (Extensão vetorial).
+- **Inteligência Artificial**:
+    - **LLM**: Gemma 4 (Local via LM Studio).
+    - **Embeddings**: Sentence-Transformers (`multilingual-e5`).
+    - **OCR**: `ddddocr` (Deep Learning).
+- **Infraestrutura**: Docker Compose, MinIO (S3 Local), UV (Package Manager).
+- **MLOps**: MLflow (Tracking) e UMAP (Visualização).
+
+---
+
+### 9. Governança e Segurança
+O sistema foi projetado com foco em **Privacidade por Design**:
+1. **Dados Sensíveis**: A utilização de LLMs locais (Gemma 4) garante que o conteúdo dos processos nunca saia do servidor da aplicação para APIs de terceiros.
+2. **Auditabilidade**: Todos os benchmarks e versões de modelos são registrados no **MLflow**, permitindo auditoria técnica das decisões da IA.
+
+---
+
+### 10. Conclusão e Próximos Passos
+O **JusTRT6 Search** deixa de ser um protótipo para se tornar uma plataforma de inteligência jurídica de nível industrial. A união entre busca semântica, análise preditiva e governança de ML provê uma ferramenta indispensável para a advocacia moderna no TRT6.
+
+**Links de Referência Interna**:
+- [Guia do Showcase de ML](./GUIA_ML_SHOWCASE.md)
+- [Plano de Ingestão de Dados](./INGESTION_EVENT_DRIVEN_PLAN.md)

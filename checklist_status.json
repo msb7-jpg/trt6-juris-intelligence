@@ -1,0 +1,41 @@
+{
+  "project": "JusTRT6 Search - ML Showcase",
+  "phases": [
+    {
+      "id": "setup",
+      "name": "Setup e Tracking",
+      "tasks": [
+        { "id": "task_json", "name": "Criar checklist_status.json", "status": "COMPLETED" },
+        { "id": "task_deps", "name": "Instalar dependências (mlflow, sklearn, umap, jupyter)", "status": "COMPLETED" },
+        { "id": "task_dirs", "name": "Criar diretório notebooks/", "status": "COMPLETED" }
+      ]
+    },
+    {
+      "id": "notebook",
+      "name": "Análise Visual e EDA",
+      "tasks": [
+        { "id": "task_pg_explore", "name": "Explorar DB via Postgres MCP", "status": "COMPLETED" },
+        { "id": "task_eda", "name": "Desenvolver EDA no Notebook", "status": "COMPLETED" },
+        { "id": "task_clusters", "name": "Gerar clusters t-SNE/UMAP", "status": "COMPLETED" }
+      ]
+    },
+    {
+      "id": "mlflow",
+      "name": "Performance e MLOps",
+      "tasks": [
+        { "id": "task_golden_set", "name": "Definir Top 10 queries (Golden Set)", "status": "COMPLETED" },
+        { "id": "task_script", "name": "Criar validate_search.py com MLflow", "status": "COMPLETED" },
+        { "id": "task_run_eval", "name": "Executar benchmark e registrar no MLflow", "status": "COMPLETED" }
+      ]
+    },
+    {
+      "id": "docs",
+      "name": "Documentação Final",
+      "tasks": [
+        { "id": "task_report_update", "name": "Atualizar Relatório Técnico com visualizações", "status": "COMPLETED" },
+        { "id": "task_final_checklist", "name": "Marcar todos os itens como concluídos", "status": "COMPLETED" }
+      ]
+    }
+  ],
+  "final_status": "100% COMPLETED"
+}

@@ -3,7 +3,7 @@ name = "api"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "shared", # Para usar os Schemas ao validar o que recebe dos Workers e para salvar o caminho do PDF no S3.
     "datasets>=4.6.1",
@@ -11,7 +11,7 @@ dependencies = [
     "django-filter",
     "djangorestframework>=3.16.1",
     "hf>=1.5.0",
-    "pandas>=3.0.1",
+    "pandas>=2.2.0,<3.1.0",
     "pypdf>=6.9.1",
     "django-stubs>=6.0.1",
     "djangorestframework-stubs>=3.16.8",

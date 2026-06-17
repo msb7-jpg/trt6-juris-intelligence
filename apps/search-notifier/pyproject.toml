@@ -6,7 +6,7 @@ name = "search-notifier"
 version = "0.1.0"
 description = "Microserviço cron que notifica usuários sobre novos resultados de buscas salvas."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "shared", # Logger e EnviromentManager compartilhados do monorepo.
     "requests>=2.33.0",

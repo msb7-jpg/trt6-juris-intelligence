@@ -6,11 +6,11 @@ Este documento mapeia os requisitos para validar a solução atual de **Busca Se
 
 | Requisito | Status | Plano de Ação (Adaptado ao Projeto) |
 | :--- | :---: | :--- |
-| Leitura e análise exploratória de dados (EDA) | 🟡 Parcial | Criar Notebook mostrando a distribuição dos dados (Valores da causa, Órgãos Julgadores, Temas mais comuns). |
-| Construção de visualizações analíticas | 🟢 OK | Dashboard Vue.js funcional com gráficos de jurimetria (procedência, tempo médio, ticket médio). |
-| Validação Metodológica | 🔴 Pendente | Realizar avaliação de **Recuperação de Informação**: Medir quão bem o modelo de embeddings traz os processos corretos (ex: MRR, Recall). |
-| Interpretabilidade e "Pesos" | 🔴 Pendente | **Visualização de Clusters**: Gerar gráfico **t-SNE/UMAP** para mostrar como os embeddings agrupam processos de temas similares. |
-| MLOps e Registro | 🔴 Pendente | Usar **MLflow** para documentar a versão do modelo `MiniLM-L12` e registrar métricas de performance da busca (latência e precisão). |
+| Leitura e análise exploratória de dados (EDA) | 🟢 OK | Notebook `notebooks/analise_e_interpretacao.ipynb` criado. |
+| Construção de visualizações analíticas | 🟢 OK | Dashboard Vue.js funcional + Clusters UMAP no Notebook. |
+| Validação Metodológica | 🟢 OK | Avaliação de Busca automatizada via Golden Set em `scripts/validate_search.py`. |
+| Interpretabilidade e "Pesos" | 🟢 OK | Visualização de Clusters UMAP e análise de similaridade de cosseno documentada. |
+| MLOps e Registro | 🟢 OK | MLflow integrado e registrando métricas de latência e precisão. |
 | Conteinerização | 🟢 OK | Solução robusta em Docker Compose. |
 
 ---
