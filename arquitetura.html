@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas de Arquitetura - Ingestão & Enriquecimento AI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones premium -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+
+        /* Estilização para barra de rolagem customizada */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Efeitos de Glow */
+        .glow-green { filter: drop-shadow(0 0 8px rgba(57, 153, 75, 0.6)); }
+        .glow-blue { filter: drop-shadow(0 0 8px rgba(86, 162, 232, 0.6)); }
+        .glow-pink { filter: drop-shadow(0 0 8px rgba(255, 141, 188, 0.6)); }
+        .glow-orange { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6)); }
+        .glow-purple { filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6)); }
+
+        /* Animações CSS para os caminhos SVG */
+        .flow-path {
+            stroke-dasharray: 8 8;
+            animation: flow-dash 30s linear infinite;
+        }
+        
+        .flow-path-active {
+            stroke-dasharray: 6 6;
+            animation: flow-dash-fast 2s linear infinite;
+        }
+
+        @keyframes flow-dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        @keyframes flow-dash-fast {
+            to { stroke-dashoffset: -100; }
+        }
+
+        /* Estilo da bolinha (pulsos de evento) que percorre o caminho */
+        .pulse-ball {
+            animation: move-along 3s linear infinite;
+        }
+
+        /* Grid de background tecnológico */
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+        }
+
+        /* Cartões de nós que brilham de acordo com o estado */
+        .node-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .node-card.active {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Caixa de Diálogo Customizada acima do Nó */
+        .above-dialog {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden tech-grid">
+
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 z-20">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-tr from-pink-500 to-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-network-wired text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-white flex items-center gap-2">
+                    Canvas Interativo de Arquitetura 
+                    <span class="text-xs bg-slate-800 text-pink-400 font-semibold px-2 py-0.5 rounded-full border border-pink-500/20">v1.2.0-Alpha</span>
+                </h1>
+                <p class="text-xs text-slate-400">Fluxo Assíncrono de Ingestão de PDFs & Enriquecimento via LLM Local (Gemma 3)</p>
+            </div>
+        </div>
+
+        <!-- Controles Globais da Simulação -->
+        <div class="flex items-center gap-4">
+            <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-3 text-sm">
+                <span class="text-slate-400">Simulação:</span>
+                <span class="flex items-center gap-1.5 font-semibold text-emerald-400" id="simulation-status">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Ativa (Contínua)
+                </span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                <button onclick="toggleSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-850 hover:bg-slate-800 text-slate-200 transition-colors flex items-center gap-1.5" id="btn-pause">
+                    <i class="fa-solid fa-pause"></i> Pausar
+                </button>
+                <button onclick="stepSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-850 hover:bg-slate-800 text-slate-200 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-forward-step"></i> Passo a Passo
+                </button>
+                <button onclick="resetSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-950/40 hover:bg-red-900/40 border border-red-900/30 text-red-300 transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left"></i> Resetar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden relative justify-center items-center">
+        
+        <!-- Painel Centralizado: O Canvas de SVG e Elementos de Diagrama -->
+        <div class="flex-1 overflow-auto p-6 flex items-center justify-center relative min-w-[800px] h-full">
+            <div class="relative w-[1150px] h-[680px] bg-slate-950/60 rounded-2xl border border-slate-800/80 p-4 shadow-2xl backdrop-blur-sm">
+                
+                <!-- Caixa de Diálogo Dinâmica (Acima do Nó selecionado) -->
+                <div id="node-dialog" class="above-dialog absolute hidden bg-slate-900/95 border border-indigo-500/50 p-4 rounded-xl shadow-2xl w-[320px] z-50 text-xs backdrop-blur-md">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-800">
+                        <span id="dialog-title" class="font-bold text-white text-sm"></span>
+                        <span id="dialog-tech" class="text-[9px] bg-indigo-500/20 text-indigo-300 font-mono px-1.5 py-0.5 rounded border border-indigo-500/30"></span>
+                    </div>
+                    <p id="dialog-desc" class="text-slate-300 leading-relaxed mb-3"></p>
+                    <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <span>Canal: <strong id="dialog-channel" class="text-indigo-400 font-mono"></strong></span>
+                        <button onclick="closeDialog()" class="text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-circle-xmark"></i> Fechar
+                        </button>
+                    </div>
+                    <!-- Seta apontando para baixo -->
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-slate-900 border-r border-b border-indigo-500/50 rotate-45"></div>
+                </div>
+
+                <!-- SVG de Conexões de Fundo -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="svg-canvas" viewBox="0 0 1150 680">
+                    <!-- Definições para Marcadores de Setas -->
+                    <defs>
+                        <marker id="arrow-green" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#39994b"/>
+                        </marker>
+                        <marker id="arrow-blue" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#56a2e8"/>
+                        </marker>
+                        <marker id="arrow-standard" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+                        </marker>
+                    </defs>
+
+                    <!-- CAMINHOS DAS LINHAS DE FLUXO -->
+                    <!-- Ingest-worker -> Django API (Sincronização de Processos Existentes) -->
+                    <path id="path-ingest-to-api" d="M 210,520 Q 140,360 210,200" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
+                    <path id="path-api-to-ingest" d="M 240,200 Q 310,360 240,520" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
+
+                    <!-- Ingest-worker -> Broker (Publish do Evento de Scrap) -->
+                    <path id="path-ingest-to-broker" d="M 270,540 C 350,540 400,420 480,400" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
+
+                    <!-- Broker -> Scrapper-worker (Consumo do Evento) -->
+                    <path id="path-broker-to-scrapper" d="M 680,400 C 760,420 810,540 880,540" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
+
+                    <!-- Scrapper-worker -> S3 (Upload de PDF bruto) -->
+                    <path id="path-scrapper-to-s3" d="M 990,520 L 990,410" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
+
+                    <!-- Scrapper-worker -> Broker (Publish LLM Input Event) -->
+                    <path id="path-scrapper-to-broker" d="M 880,570 C 730,620 620,530 580,450" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
+
+                    <!-- Broker -> LLM-worker (Consumo do Input Event) -->
+                    <path id="path-broker-to-llm" d="M 580,350 C 620,270 730,180 880,180" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
+
+                    <!-- LLM-worker -> S3 (Download PDF) -->
+                    <path id="path-llm-to-s3" d="M 990,200 L 990,310" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
+
+                    <!-- LLM-worker -> Gemma 3 Model (API Local Inference) -->
+                    <path id="path-llm-to-gemma" d="M 880,150 L 680,150" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
+
+                    <!-- LLM-worker -> Django API (Sync processed data) -->
+                    <path id="path-llm-to-api" d="M 880,120 L 270,120" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
+
+                    <!-- CIRCLES PULSANTES (Simulação de Tráfego de Mensagem) -->
+                    <circle id="pulse-ingest-to-api" r="6" fill="#cbd5e1" class="hidden" style="motion-path: url(#path-ingest-to-api); fill-opacity: 0.9; filter: drop-shadow(0 0 4px #fff)"></circle>
+                    <circle id="pulse-api-to-ingest" r="6" fill="#cbd5e1" class="hidden" style="motion-path: url(#path-api-to-ingest); fill-opacity: 0.9; filter: drop-shadow(0 0 4px #fff)"></circle>
+                    <circle id="pulse-ingest-to-broker" r="6" fill="#39994b" class="hidden" style="motion-path: url(#path-ingest-to-broker); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #39994b)"></circle>
+                    <circle id="pulse-broker-to-scrapper" r="6" fill="#39994b" class="hidden" style="motion-path: url(#path-broker-to-scrapper); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #39994b)"></circle>
+                    <circle id="pulse-scrapper-to-s3" r="6" fill="#e2e8f0" class="hidden" style="motion-path: url(#path-scrapper-to-s3); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #fff)"></circle>
+                    <circle id="pulse-scrapper-to-broker" r="6" fill="#56a2e8" class="hidden" style="motion-path: url(#path-scrapper-to-broker); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #56a2e8)"></circle>
+                    <circle id="pulse-broker-to-llm" r="6" fill="#56a2e8" class="hidden" style="motion-path: url(#path-broker-to-llm); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #56a2e8)"></circle>
+                    <circle id="pulse-llm-to-s3" r="6" fill="#e2e8f0" class="hidden" style="motion-path: url(#path-llm-to-s3); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #fff)"></circle>
+                    <circle id="pulse-llm-to-gemma" r="6" fill="#e2e8f0" class="hidden" style="motion-path: url(#path-llm-to-gemma); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #fff)"></circle>
+                    <circle id="pulse-llm-to-api" r="6" fill="#56a2e8" class="hidden" style="motion-path: url(#path-llm-to-api); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #56a2e8)"></circle>
+                </svg>
+
+                <!-- Django API -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-slate-700/60 hover:border-pink-500/80 p-4 rounded-xl w-[210px] z-10 select-none" style="left: 60px; top: 90px;" onclick="inspectNode('django-api', this)" id="card-django-api">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-server text-pink-400"></i>
+                            <span>Django API</span>
+                        </div>
+                        <span class="text-[9px] bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded font-mono border border-pink-500/20">PORT 8000</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">Cérebro principal, validação e persistência do banco.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Status:</span>
+                        <span class="text-emerald-400 font-medium" id="status-django-api">Ocioso</span>
+                    </div>
+                </div>
+
+                <!-- Ingest-worker -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-slate-700/60 hover:border-pink-500/80 p-4 rounded-xl w-[210px] z-10 select-none" style="left: 60px; top: 510px;" onclick="inspectNode('ingest-worker', this)" id="card-ingest-worker">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-gears text-pink-400"></i>
+                            <span>Ingest-worker</span>
+                        </div>
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">Varre novos processos e notifica API. Cron/Schedules.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Status:</span>
+                        <span class="text-emerald-400 font-medium" id="status-ingest-worker">Ocioso</span>
+                    </div>
+                </div>
+
+                <!-- Broker (RabbitMQ/Kafka) -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-purple-500/50 hover:border-purple-400 p-4 rounded-xl w-[220px] z-10 text-center select-none" style="left: 460px; top: 310px;" onclick="inspectNode('broker', this)" id="card-broker">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-shuffle text-purple-400"></i>
+                            <span>Message Broker</span>
+                        </div>
+                        <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">AMQP</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2 text-left">Orquestrador de mensagens assíncronas do sistema.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px] text-left">
+                        <span class="text-slate-500">Filas Ativas:</span>
+                        <span class="text-purple-400 font-mono" id="status-broker">0 msg/s</span>
+                    </div>
+                </div>
+
+                <!-- Gemma 3 Model Local -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-violet-500/50 hover:border-violet-400 p-4 rounded-xl w-[220px] z-10 select-none" style="left: 460px; top: 90px;" onclick="inspectNode('gemma-model', this)" id="card-gemma-model">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-brain text-violet-400"></i>
+                            <span>Gemma 3 Model</span>
+                        </div>
+                        <span class="text-[9px] bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded font-mono border border-violet-500/20">PORT 1234</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">LLM Local executando tarefas estruturadas offline.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Modelo:</span>
+                        <span class="text-violet-400 font-medium" id="status-gemma-model">Local/Inference</span>
+                    </div>
+                </div>
+
+                <!-- scrapper-worker -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-slate-700/60 hover:border-pink-500/80 p-4 rounded-xl w-[220px] z-10 select-none" style="left: 860px; top: 510px;" onclick="inspectNode('scrapper-worker', this)" id="card-scrapper-worker">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-robot text-pink-400"></i>
+                            <span>scrapper-worker</span>
+                        </div>
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">Faz download do HTML do tribunal, gera o PDF e salva no S3.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Status:</span>
+                        <span class="text-emerald-400 font-medium" id="status-scrapper-worker">Ocioso</span>
+                    </div>
+                </div>
+
+                <!-- LLM-worker -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-slate-700/60 hover:border-pink-500/80 p-4 rounded-xl w-[220px] z-10 select-none" style="left: 860px; top: 90px;" onclick="inspectNode('llm-worker', this)" id="card-llm-worker">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-microchip text-pink-400"></i>
+                            <span>llm-worker</span>
+                        </div>
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">Lê PDF do S3, processa chunks, envia para Gemma.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Status:</span>
+                        <span class="text-emerald-400 font-medium" id="status-llm-worker">Ocioso</span>
+                    </div>
+                </div>
+
+                <!-- Amazon S3 Storage -->
+                <div class="absolute cursor-pointer node-card bg-slate-900 border border-amber-600/50 hover:border-amber-400 p-4 rounded-xl w-[220px] z-10 select-none" style="left: 860px; top: 310px;" onclick="inspectNode('s3-storage', this)" id="card-s3-storage">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2 text-slate-300 font-semibold text-sm">
+                            <i class="fa-solid fa-box-archive text-amber-500"></i>
+                            <span>S3 Storage</span>
+                        </div>
+                        <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/20">AWS S3</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 mb-2">Storage central de PDFs baixados pelos scrappers.</div>
+                    <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
+                        <span class="text-slate-500">Capacidade:</span>
+                        <span class="text-amber-400 font-medium" id="status-s3-storage">Ativo</span>
+                    </div>
+                </div>
+
+                <!-- RÓTULOS DE FLUXO INTERATIVOS -->
+                <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 175px; top: 320px;">
+                    Lista processos
+                </div>
+                <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 235px; top: 360px;">
+                    Cria inexistentes
+                </div>
+                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 290px; top: 440px;">
+                    Scrap PDF Event
+                </div>
+                <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 670px; top: 480px;">
+                    Deliver Scrap Event
+                </div>
+                <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 920px; top: 450px;">
+                    Upload PDF
+                </div>
+                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 670px; top: 580px;">
+                    LLM Input Event
+                </div>
+                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 690px; top: 220px;">
+                    Deliver LLM Event
+                </div>
+                <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 935px; top: 245px;">
+                    Download PDF
+                </div>
+                <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 720px; top: 125px;">
+                    Local Inference
+                </div>
+                <div class="absolute text-[10px] bg-sky-950/90 text-sky-400 px-2 py-1 rounded border border-sky-800/60 z-10 select-none font-mono font-medium" style="left: 450px; top: 125px;">
+                    Merge Results
+                </div>
+
+                <!-- Painel Inferior Explicativo Compacto -->
+                <div class="absolute bottom-4 left-4 right-4 bg-slate-900/40 border border-slate-800/60 rounded-xl p-3 flex items-center justify-between text-xs z-10">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <span class="text-slate-400 font-medium">Instruções:</span>
+                        <span class="text-slate-300">Clique em qualquer container/nó acima para abrir a caixa de diálogo informativa correspondente.</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dados de configuração de cada nó para renderizar no inspetor
+        const nodeSpecs = {
+            'django-api': {
+                name: 'Django Rest API',
+                desc: 'Serviço central responsável por registrar novos processos, salvar metadados consolidados no banco de dados relacional e realizar o merge/saneamento dos dados retornados pelo pipeline de IA.',
+                tech: 'Python / Django REST',
+                event: 'REST HTTP (Sync)'
+            },
+            'ingest-worker': {
+                name: 'Ingest Worker (Schedules)',
+                desc: 'Worker baseado em tarefas periódicas (cron) responsável por monitorar tribunais, identificar processos novos e disparar eventos na fila para processamento assíncrono.',
+                tech: 'Celery / Redis',
+                event: 'AMQP Publish (Async)'
+            },
+            'broker': {
+                name: 'RabbitMQ Message Broker',
+                desc: 'Garante o desacoplamento do Django API com workers de background. Mantém integridade das filas no disco caso algum worker perca conexão.',
+                tech: 'RabbitMQ / AMQP',
+                event: 'AMQP Queue Routing'
+            },
+            'gemma-model': {
+                name: 'Gemma 3 LLM Model',
+                desc: 'Instância offline local do modelo Gemma 3 da Google, rodando em GPU dedicada e configurada para retornar extração de texto estritamente estruturada em JSON.',
+                tech: 'Ollama / vLLM',
+                event: 'HTTP POST (Inference)'
+            },
+            'scrapper-worker': {
+                name: 'Scrapper Worker',
+                desc: 'Trabalhador assíncrono que simula ações humanas e passa por firewalls de tribunais para consolidar PDFs das peças dos processos.',
+                tech: 'Puppeteer / BeautifulSoup',
+                event: 'AMQP & AWS SDK Upload'
+            },
+            'llm-worker': {
+                name: 'LLM Worker pipeline',
+                desc: 'Consome eventos de extração, baixa o PDF bruto do S3, processa a quebra inteligente de texto em chunks e orquestra a chamada de inferência no modelo local.',
+                tech: 'LangChain / PyPDF2',
+                event: 'AMQP & HTTP Post'
+            },
+            's3-storage': {
+                name: 'Amazon S3 Document Storage',
+                desc: 'Data lake de objetos altamente disponível e durável. Armazena as peças judiciais em PDF de forma consistente para auditoria técnica.',
+                tech: 'AWS S3 API',
+                event: 'Boto3 / AWS SDK Interface'
+            }
+        };
+
+        // Estado do simulador
+        let simulationInterval = null;
+        let isRunning = true;
+        let currentStep = 0;
+        let hardwareTimer = null;
+
+        // Passos ordenados do pipeline de simulação
+        const simulationSteps = [
+            {
+                name: 'Checagem Ingestão',
+                desc: 'Ingest-worker consulta Django API para ver se existem novos processos que não estão gravados no banco de dados local.',
+                pulseId: 'pulse-ingest-to-api',
+                activeCards: ['card-ingest-worker', 'card-django-api'],
+                nodeStatus: { 'django-api': 'Processando...', 'ingest-worker': 'Buscando pendentes...' },
+                logs: []
+            },
+            {
+                name: 'Resposta da API',
+                desc: 'Django API retorna com a lista dos processos que precisam de extração. O Ingest-worker consolida as informações locais.',
+                pulseId: 'pulse-api-to-ingest',
+                activeCards: ['card-django-api', 'card-ingest-worker'],
+                nodeStatus: { 'django-api': 'Enviando resposta...', 'ingest-worker': 'Sincronizando...' },
+                logs: []
+            },
+            {
+                name: 'Publicação de Evento',
+                desc: 'Ingest-worker gera uma mensagem na fila do Broker com os dados do processo pendente para disparar o scraping.',
+                pulseId: 'pulse-ingest-to-broker',
+                activeCards: ['card-ingest-worker', 'card-broker'],
+                nodeStatus: { 'ingest-worker': 'Ocioso', 'broker': 'Mensagem Recebida!' },
+                logs: []
+            },
+            {
+                name: 'Consumo do Evento',
+                desc: 'O Scrapper-worker puxa a mensagem da fila para iniciar o crawler judicial em segundo plano.',
+                pulseId: 'pulse-broker-to-scrapper',
+                activeCards: ['card-broker', 'card-scrapper-worker'],
+                nodeStatus: { 'broker': 'Mensagem consumida', 'scrapper-worker': 'Varrendo tribunal...' },
+                logs: []
+            },
+            {
+                name: 'Salvando Arquivo no S3',
+                desc: 'Scrapper-worker baixa todos os PDFs do processo, junta tudo em um único arquivo PDF consolidado e faz upload no bucket Amazon S3.',
+                pulseId: 'pulse-scrapper-to-s3',
+                activeCards: ['card-scrapper-worker', 'card-s3-storage'],
+                nodeStatus: { 'scrapper-worker': 'Fazendo upload S3...', 's3-storage': 'Armazenando PDF...' },
+                logs: []
+            },
+            {
+                name: 'Publicando Processamento IA',
+                desc: 'Com o PDF a salvo no S3, o Scrapper-worker publica um evento "LLM Input Ready" no broker para disparar a IA.',
+                pulseId: 'pulse-scrapper-to-broker',
+                activeCards: ['card-scrapper-worker', 'card-broker'],
+                nodeStatus: { 'scrapper-worker': 'Ocioso', 'broker': 'Recebendo Evento IA...' },
+                logs: []
+            },
+            {
+                name: 'Consumo do Evento IA',
+                desc: 'O LLM-worker consome o evento e baixa o PDF bruto armazenado no bucket Amazon S3 para leitura de texto.',
+                pulseId: 'pulse-broker-to-llm',
+                activeCards: ['card-broker', 'card-llm-worker'],
+                nodeStatus: { 'broker': 'Mensagem consumida', 'llm-worker': 'Preparando Chunks...' },
+                logs: []
+            },
+            {
+                name: 'Leitura de Arquivo S3',
+                desc: 'O LLM-worker estabelece uma conexão de stream com o S3 para carregar as páginas do PDF e segmentar o texto em partes.',
+                pulseId: 'pulse-llm-to-s3',
+                activeCards: ['card-llm-worker', 'card-s3-storage'],
+                nodeStatus: { 'llm-worker': 'Processando chunks...', 's3-storage': 'Servindo PDF...' },
+                logs: []
+            },
+            {
+                name: 'Inferencia de Modelo Local',
+                desc: 'O LLM-worker envia as partes estruturadas com instruções restritas (Structured JSON output) via API HTTP local para o modelo Gemma 3 rodando em porta 1234.',
+                pulseId: 'pulse-llm-to-gemma',
+                activeCards: ['card-llm-worker', 'card-gemma-model'],
+                nodeStatus: { 'llm-worker': 'Aguardando IA...', 'gemma-model': 'GPU Ativa/Inferencia' },
+                logs: []
+            },
+            {
+                name: 'Fusão de Dados e Merge',
+                desc: 'O modelo retorna com o JSON e o LLM-worker manda para a Django API sincronizar e realizar o merge com os dados que já estavam na base de dados.',
+                pulseId: 'pulse-llm-to-api',
+                activeCards: ['card-llm-worker', 'card-django-api'],
+                nodeStatus: { 'llm-worker': 'Ocioso', 'django-api': 'Fazendo Merge...' },
+                logs: []
+            }
+        ];
+
+        function runSimulationStep() {
+            const step = simulationSteps[currentStep];
+
+            // 1. Resetar estados visuais antigos
+            document.querySelectorAll('.node-card').forEach(card => {
+                card.classList.remove('active', 'border-pink-500', 'border-purple-400', 'border-violet-500', 'border-amber-500');
+                card.classList.add('border-slate-700/60');
+            });
+            
+            // Oculta todos os pulsos SVG
+            simulationSteps.forEach(s => {
+                const pulse = document.getElementById(s.pulseId);
+                if (pulse) pulse.classList.add('hidden');
+                
+                const pathEl = document.getElementById(s.pulseId.replace('pulse-', 'path-'));
+                if (pathEl) {
+                    pathEl.classList.remove('flow-path-active');
+                    pathEl.setAttribute('stroke-width', '2.5');
+                }
+            });
+
+            // 2. Destacar cartões ativos no passo atual
+            step.activeCards.forEach(id => {
+                const card = document.getElementById(id);
+                if (card) {
+                    card.classList.add('active');
+                    card.classList.remove('border-slate-700/60');
+                    if (id.includes('django') || id.includes('worker')) {
+                        card.classList.add('border-pink-500');
+                    } else if (id.includes('broker')) {
+                        card.classList.add('border-purple-400');
+                    } else if (id.includes('gemma')) {
+                        card.classList.add('border-violet-500');
+                    } else if (id.includes('s3')) {
+                        card.classList.add('border-amber-500');
+                    }
+                }
+            });
+
+            // 3. Ativar animação de fluxo no SVG
+            const activePulse = document.getElementById(step.pulseId);
+            if (activePulse) activePulse.classList.remove('hidden');
+            
+            const activePath = document.getElementById(step.pulseId.replace('pulse-', 'path-'));
+            if (activePath) {
+                activePath.classList.add('flow-path-active');
+                activePath.setAttribute('stroke-width', '4');
+            }
+
+            // 4. Atualizar Status nos Cartões de nós
+            Object.keys(step.nodeStatus).forEach(nodeId => {
+                const statusEl = document.getElementById(`status-${nodeId}`);
+                if (statusEl) {
+                    statusEl.innerText = step.nodeStatus[nodeId];
+                    statusEl.className = 'text-pink-400 font-semibold animate-pulse';
+                }
+            });
+
+            // Resetar status dos nós ociosos
+            const allNodeIds = ['django-api', 'ingest-worker', 'broker', 'gemma-model', 'scrapper-worker', 'llm-worker', 's3-storage'];
+            allNodeIds.forEach(nodeId => {
+                if (!Object.keys(step.nodeStatus).includes(nodeId)) {
+                    const statusEl = document.getElementById(`status-${nodeId}`);
+                    if (statusEl) {
+                        if (nodeId === 'broker') {
+                            statusEl.innerText = '0 msg/s';
+                            statusEl.className = 'text-purple-400 font-mono';
+                        } else if (nodeId === 's3-storage') {
+                            statusEl.innerText = 'Ativo';
+                            statusEl.className = 'text-amber-400 font-medium';
+                        } else if (nodeId === 'gemma-model') {
+                            statusEl.innerText = 'Local/Inference';
+                            statusEl.className = 'text-violet-400 font-medium';
+                        } else {
+                            statusEl.innerText = 'Ocioso';
+                            statusEl.className = 'text-emerald-400 font-medium';
+                        }
+                    }
+                }
+            });
+
+            // Avançar para o próximo passo no pipeline
+            currentStep = (currentStep + 1) % simulationSteps.length;
+        }
+
+        function toggleSimulation() {
+            const btn = document.getElementById('btn-pause');
+            const statusIndicator = document.getElementById('simulation-status');
+            
+            if (isRunning) {
+                clearInterval(simulationInterval);
+                isRunning = false;
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> Continuar';
+                statusIndicator.innerText = 'Pausado';
+                statusIndicator.className = 'flex items-center gap-1.5 font-semibold text-amber-500';
+                statusIndicator.querySelector('span').className = 'w-2 h-2 rounded-full bg-amber-500';
+            } else {
+                isRunning = true;
+                simulationInterval = setInterval(runSimulationStep, 4000);
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pausar';
+                statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Ativa (Contínua)';
+                statusIndicator.className = 'flex items-center gap-1.5 font-semibold text-emerald-400';
+                runSimulationStep();
+            }
+        }
+
+        function stepSimulation() {
+            if (isRunning) {
+                toggleSimulation();
+            }
+            runSimulationStep();
+        }
+
+        function resetSimulation() {
+            currentStep = 0;
+            if (isRunning) {
+                clearInterval(simulationInterval);
+                simulationInterval = setInterval(runSimulationStep, 4000);
+            }
+            runSimulationStep();
+        }
+
+        function inspectNode(nodeKey, element) {
+            const spec = nodeSpecs[nodeKey];
+            if (!spec) return;
+
+            const dialog = document.getElementById('node-dialog');
+            
+            // Injeta os dados correspondentes na caixa de diálogo do topo
+            document.getElementById('dialog-title').innerText = spec.name;
+            document.getElementById('dialog-tech').innerText = spec.tech;
+            document.getElementById('dialog-desc').innerText = spec.desc;
+            document.getElementById('dialog-channel').innerText = spec.event;
+
+            // Mostra a caixa de diálogo
+            dialog.classList.remove('hidden');
+
+            // Posiciona dinamicamente a caixa acima do elemento clicado
+            const targetLeft = (element.offsetLeft + (element.offsetWidth / 2)) - (dialog.offsetWidth / 2);
+            const targetTop = element.offsetTop - dialog.offsetHeight - 18; // 18px offset acima
+
+            dialog.style.left = `${targetLeft}px`;
+            dialog.style.top = `${targetTop}px`;
+
+            // Pequeno feedback de clique nos cartões
+            element.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
+            setTimeout(() => {
+                element.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-2', 'ring-offset-slate-950');
+            }, 800);
+        }
+
+        function closeDialog() {
+            document.getElementById('node-dialog').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            // Executa o primeiro passo do diagrama imediatamente
+            runSimulationStep();
+            
+            // Configura o intervalo automático padrão para 4 segundos
+            simulationInterval = setInterval(runSimulationStep, 4000);
+        };
+    </script>
+</body>
+</html>

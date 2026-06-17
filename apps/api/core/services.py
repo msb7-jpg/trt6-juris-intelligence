@@ -256,7 +256,7 @@ def levenshtein_distance(s1: str, s2: str) -> int:
 
 def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "cosseno") -> list[Processo]:
     """Realiza a busca vetorial por similaridade ou texto (Cosseno, Euclidiana, Manhattan, Jaccard, Levenshtein)."""
-    from pgvector.django import CosineDistance, L2Distance, L1Distance
+    from pgvector.django import CosineDistance, L1Distance, L2Distance
     from shared.embeddings import embed_text
 
     logger.info(f"Iniciando busca semântica para consulta: '{consulta}' | top_k={top_k} | metrica={metrica}")
@@ -277,14 +277,14 @@ def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "c
             qs = qs.annotate(distancia=L1Distance("analise__embedding", query_embedding)) \
                    .annotate(similaridade=1.0 / (1.0 + L1Distance("analise__embedding", query_embedding))) \
                    .order_by("distancia")
-        
+
         return list(qs[:top_k])
-        
+
     elif metrica in ["jaccard", "levenshtein"]:
         qs = Processo.objects.filter(analise__isnull=False) \
             .select_related("classe", "orgao_julgador", "analise") \
             .prefetch_related("assuntos", "analise__palavras_chave")
-            
+
         resultados = []
         for p in qs:
             texto_p = p.analise.resumo or ""
@@ -292,7 +292,7 @@ def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "c
                 p.similaridade = 0.0
                 resultados.append(p)
                 continue
-                
+
             if metrica == "jaccard":
                 set1 = set(consulta.lower().split())
                 set2 = set(texto_p.lower().split())
@@ -304,13 +304,13 @@ def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "c
                 dist = levenshtein_distance(consulta.lower(), texto_p.lower())
                 max_len = max(len(consulta), len(texto_p))
                 sim = 1.0 - (dist / max_len) if max_len > 0 else 1.0
-                
+
             p.similaridade = sim
             resultados.append(p)
-            
+
         resultados.sort(key=lambda x: getattr(x, 'similaridade', 0.0), reverse=True)
         return resultados[:top_k]
-    
+
     return []
 
 
