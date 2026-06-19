@@ -1,6 +1,7 @@
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createPinia } from 'pinia'
 import { defineComponent, h } from 'vue'
 
 import type { BuscaSemanticaResponse } from '@/shared/types/api'
@@ -57,6 +58,7 @@ function mountWithQuery(setup: () => unknown) {
   return mount(Wrapper, {
     global: {
       plugins: [
+        createPinia(),
         [
           VueQueryPlugin,
           {

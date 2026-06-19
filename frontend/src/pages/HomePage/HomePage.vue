@@ -21,7 +21,6 @@ const NO_RESULTS_DESCRIPTION =
 
 const {
   query,
-  metrica,
   hasSearched,
   submitSearch,
   cases,
@@ -54,13 +53,6 @@ onMounted(() => {
             @submit="submitSearch"
           />
         </div>
-        <select v-model="metrica" class="metric-select">
-          <option value="cosseno">Cosseno (Padrão)</option>
-          <option value="euclidiana">Euclidiana</option>
-          <option value="manhattan">Manhattan</option>
-          <option value="jaccard">Jaccard (Texto)</option>
-          <option value="levenshtein">Levenshtein (Texto)</option>
-        </select>
       </div>
     </div>
 
@@ -135,23 +127,6 @@ onMounted(() => {
   min-width: 300px;
 }
 
-.metric-select {
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--color-border, #c4c6cf);
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  color: var(--color-on-surface, #161c22);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.metric-select:focus {
-  border-color: var(--color-primary, #002045);
-}
-
 .results-grid {
   display: grid;
   gap: 0.9rem;
@@ -165,3 +140,4 @@ onMounted(() => {
   }
 }
 </style>
+

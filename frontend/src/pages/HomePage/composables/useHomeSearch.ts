@@ -1,12 +1,16 @@
+import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
 import { useBuscaSemantica } from '@/composables/useBuscaSemantica'
+import { useSettingsStore } from '@/stores/settings'
 
 import { useHomeInsights } from './useHomeInsights'
 
 export function useHomeSearch() {
+  const settingsStore = useSettingsStore()
+  const { metrica } = storeToRefs(settingsStore)
+
   const query = ref('')
-  const metrica = ref('cosseno')
   const hasSearched = ref(false)
   const submittedQuery = ref('')
 
@@ -47,3 +51,4 @@ export function useHomeSearch() {
     insights,
   }
 }
+

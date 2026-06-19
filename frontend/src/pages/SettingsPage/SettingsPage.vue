@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import BaseCard from '@/shared/components/ui/BaseCard.vue'
-import { Bell, Globe2, ShieldCheck } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+import { Bell, Globe2, Scale, ShieldCheck } from 'lucide-vue-next'
 
-const language = ref('pt-BR')
-const notifications = ref(true)
-const highContrast = ref(false)
+const settings = useSettingsStore()
 </script>
 
 <template>
@@ -17,16 +15,28 @@ const highContrast = ref(false)
 
     <BaseCard>
       <h2><Globe2 :size="16" /> Idioma</h2>
-      <select v-model="language">
+      <select v-model="settings.language">
         <option value="pt-BR">Portugues (Brasil)</option>
         <option value="en-US">English (US)</option>
       </select>
     </BaseCard>
 
     <BaseCard>
+      <h2><Scale :size="16" /> Métrica de Similaridade</h2>
+      <p class="description-text">Selecione o algoritmo para cálculo de similaridade entre petições e processos.</p>
+      <select v-model="settings.metrica">
+        <option value="cosseno">Cosseno (Padrão)</option>
+        <option value="euclidiana">Euclidiana</option>
+        <option value="manhattan">Manhattan</option>
+        <option value="jaccard">Jaccard (Texto)</option>
+        <option value="levenshtein">Levenshtein (Texto)</option>
+      </select>
+    </BaseCard>
+
+    <BaseCard>
       <h2><Bell :size="16" /> Notificacoes</h2>
       <label>
-        <input v-model="notifications" type="checkbox" />
+        <input v-model="settings.notifications" type="checkbox" />
         Receber alertas de mudanca jurisprudencial nas buscas salvas.
       </label>
     </BaseCard>
@@ -34,7 +44,7 @@ const highContrast = ref(false)
     <BaseCard>
       <h2><ShieldCheck :size="16" /> Privacidade visual</h2>
       <label>
-        <input v-model="highContrast" type="checkbox" />
+        <input v-model="settings.highContrast" type="checkbox" />
         Ativar contraste elevado para leitura de documentos extensos.
       </label>
     </BaseCard>
@@ -66,6 +76,12 @@ h2 {
   font-size: 1rem;
 }
 
+.description-text {
+  margin: 0.25rem 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
 select {
   margin-top: 0.65rem;
   min-width: 240px;
@@ -83,3 +99,4 @@ label {
   color: var(--text-body);
 }
 </style>
+

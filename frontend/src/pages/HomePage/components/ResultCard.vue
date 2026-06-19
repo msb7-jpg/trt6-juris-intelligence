@@ -51,7 +51,7 @@ function buildProcessoDetalheTo(item: ProcessCase) {
 
     <p class="summary">
       <strong>Síntese:</strong>
-      {{ item.decisaoResumo }}
+      {{ item.resumoCausa }}
     </p>
 
     <div class="tags">
