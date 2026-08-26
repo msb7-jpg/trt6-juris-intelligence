@@ -1,9 +1,0 @@
-{
-  "name": "TRT6 Processos API",
-  "version": "1",
-  "type": "collection",
-  "ignore": [
-    "node_modules",
-    ".git"
-  ]
-}

@@ -1,8 +1,7 @@
-import { describe, expect, it } from 'vitest'
-
 import type { ProcessCase } from '@/shared/types/cases'
-
+import { describe, expect, it } from 'vitest'
 import { buildHomeInsights } from './useHomeInsights'
+
 
 function buildCase(overrides: Partial<ProcessCase> = {}): ProcessCase {
   return {
