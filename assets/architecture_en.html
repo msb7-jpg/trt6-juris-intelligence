@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas de Arquitetura - Ingestão & Enriquecimento AI</title>
+    <title>Architecture Canvas - Ingestion & AI Enrichment</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome para ícones premium -->
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -18,7 +18,7 @@
             color: #e2e8f0;
         }
 
-        /* Estilização para barra de rolagem customizada */
+        /* Custom scrollbar styling */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -34,14 +34,14 @@
             background: #475569;
         }
 
-        /* Efeitos de Glow */
+        /* Glow effects */
         .glow-green { filter: drop-shadow(0 0 8px rgba(57, 153, 75, 0.6)); }
         .glow-blue { filter: drop-shadow(0 0 8px rgba(86, 162, 232, 0.6)); }
         .glow-pink { filter: drop-shadow(0 0 8px rgba(255, 141, 188, 0.6)); }
         .glow-orange { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6)); }
         .glow-purple { filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6)); }
 
-        /* Animações CSS para os caminhos SVG */
+        /* CSS animations for SVG paths */
         .flow-path {
             stroke-dasharray: 8 8;
             animation: flow-dash 30s linear infinite;
@@ -60,12 +60,12 @@
             to { stroke-dashoffset: -100; }
         }
 
-        /* Estilo da bolinha (pulsos de evento) que percorre o caminho */
+        /* Moving pulse circle style */
         .pulse-ball {
             animation: move-along 3s linear infinite;
         }
 
-        /* Grid de background tecnológico */
+        /* Tech background grid */
         .tech-grid {
             background-size: 40px 40px;
             background-image: 
@@ -73,7 +73,7 @@
                 linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
         }
 
-        /* Cartões de nós que brilham de acordo com o estado */
+        /* Node cards */
         .node-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -82,7 +82,7 @@
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
         }
         
-        /* Info cards na sidebar */
+        /* Info cards in sidebar */
         .info-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -97,15 +97,15 @@
 
     <main class="flex-1 flex overflow-hidden relative">
         
-        <!-- Painel Centralizado: O Canvas de SVG e Elementos de Diagrama -->
+        <!-- Central Panel: SVG Canvas & Diagram Elements -->
         <div class="flex-1 overflow-auto p-0 flex items-center justify-center relative w-full h-full">
             <div class="relative w-[1150px] h-[680px] bg-slate-950/60 rounded-2xl border border-slate-800/80 p-4 shadow-2xl backdrop-blur-sm scale-90 lg:scale-100">
                 
 
 
-                <!-- SVG de Conexões de Fundo -->
+                <!-- SVG Background Connections -->
                 <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" id="svg-canvas" viewBox="0 0 1150 680">
-                    <!-- Definições para Marcadores de Setas -->
+                    <!-- Marker Definitions -->
                     <defs>
                         <marker id="arrow-green" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                             <path d="M0,0 L10,5 L0,10 z" fill="#39994b"/>
@@ -118,24 +118,24 @@
                         </marker>
                     </defs>
 
-                    <!-- CAMINHOS DAS LINHAS DE FLUXO -->
-                    <!-- Ingest-worker -> Django API (Sincronização de Processos Existentes) -->
+                    <!-- Flow Paths -->
+                    <!-- Ingest-worker -> Django API (Sync Existing Lawsuits/Records) -->
                     <path id="path-ingest-to-api" d="M 210,520 Q 140,360 210,200" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
                     <path id="path-api-to-ingest" d="M 240,200 Q 310,360 240,520" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
 
-                    <!-- Ingest-worker -> Broker (Publish do Evento de Scrap) -->
+                    <!-- Ingest-worker -> Broker (Publish Scraping Event) -->
                     <path id="path-ingest-to-broker" d="M 270,560 L 460,560" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
 
-                    <!-- Broker -> Scrapper-worker (Consumo do Evento) -->
+                    <!-- Broker -> Scrapper-worker (Consume Scraping Event) -->
                     <path id="path-broker-to-scrapper" d="M 680,560 L 860,560" fill="none" stroke="#39994b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-green)"/>
 
-                    <!-- Scrapper-worker -> S3 (Upload de PDF bruto) -->
+                    <!-- Scrapper-worker -> S3 (Upload Raw PDF) -->
                     <path id="path-scrapper-to-s3" d="M 990,520 L 990,410" fill="none" stroke="#64748b" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-standard)"/>
 
                     <!-- Scrapper-worker -> Broker (Publish LLM Input Event) -->
                     <path id="path-scrapper-to-broker" d="M 880,600 C 880,655 480,655 480,600" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
 
-                    <!-- Broker -> LLM-worker (Consumo do Input Event) -->
+                    <!-- Broker -> LLM-worker (Consume LLM Input Event) -->
                     <path id="path-broker-to-llm" d="M 680,520 C 780,380 850,230 880,190" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
 
                     <!-- LLM-worker -> S3 (Download PDF) -->
@@ -147,7 +147,7 @@
                     <!-- LLM-worker -> Django API (Sync processed data) -->
                     <path id="path-llm-to-api" d="M 880,120 L 270,120" fill="none" stroke="#56a2e8" stroke-width="2.5" class="flow-path" marker-end="url(#arrow-blue)"/>
 
-                    <!-- CIRCLES PULSANTES (Simulação de Tráfego de Mensagem) -->
+                    <!-- Pulsing Circles (Simulation of message traffic) -->
                     <circle id="pulse-ingest-to-api" r="6" fill="#cbd5e1" class="hidden" style="motion-path: url(#path-ingest-to-api); fill-opacity: 0.9; filter: drop-shadow(0 0 4px #fff)"></circle>
                     <circle id="pulse-api-to-ingest" r="6" fill="#cbd5e1" class="hidden" style="motion-path: url(#path-api-to-ingest); fill-opacity: 0.9; filter: drop-shadow(0 0 4px #fff)"></circle>
                     <circle id="pulse-ingest-to-broker" r="6" fill="#39994b" class="hidden" style="motion-path: url(#path-ingest-to-broker); fill-opacity: 0.9; filter: drop-shadow(0 0 6px #39994b)"></circle>
@@ -169,10 +169,10 @@
                         </div>
                         <span class="text-[9px] bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded font-mono border border-pink-500/20">PORT 8000</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">Cérebro principal, validação e persistência do banco.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Main brain, validation, and database persistence.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
                         <span class="text-slate-500">Status:</span>
-                        <span class="text-emerald-400 font-medium" id="status-django-api">Ocioso</span>
+                        <span class="text-emerald-400 font-medium" id="status-django-api">Idle</span>
                     </div>
                 </div>
 
@@ -185,10 +185,10 @@
                         </div>
                         <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">Varre novos processos e notifica API. Cron/Schedules.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Scans new court records and notifies API. Cron/Schedules.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
                         <span class="text-slate-500">Status:</span>
-                        <span class="text-emerald-400 font-medium" id="status-ingest-worker">Ocioso</span>
+                        <span class="text-emerald-400 font-medium" id="status-ingest-worker">Idle</span>
                     </div>
                 </div>
 
@@ -201,9 +201,9 @@
                         </div>
                         <span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-mono border border-purple-500/20">AMQP</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2 text-left">Orquestrador de mensagens assíncronas do sistema.</div>
+                    <div class="text-[11px] text-slate-400 mb-2 text-left">Asynchronous message orchestrator for the system.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px] text-left">
-                        <span class="text-slate-500">Filas Ativas:</span>
+                        <span class="text-slate-500">Active Queues:</span>
                         <span class="text-purple-400 font-mono" id="status-broker">0 msg/s</span>
                     </div>
                 </div>
@@ -217,9 +217,9 @@
                         </div>
                         <span class="text-[9px] bg-violet-500/10 text-violet-300 px-1.5 py-0.5 rounded font-mono border border-violet-500/20">PORT 1234</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">LLM Local executando tarefas estruturadas offline.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Local LLM performing structured extraction offline.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
-                        <span class="text-slate-500">Modelo:</span>
+                        <span class="text-slate-500">Model:</span>
                         <span class="text-violet-400 font-medium" id="status-gemma-model">Local/Inference</span>
                     </div>
                 </div>
@@ -233,10 +233,10 @@
                         </div>
                         <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">Faz download do HTML do tribunal, gera o PDF e salva no S3.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Downloads court HTML, compiles PDF, and saves to S3.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
                         <span class="text-slate-500">Status:</span>
-                        <span class="text-emerald-400 font-medium" id="status-scrapper-worker">Ocioso</span>
+                        <span class="text-emerald-400 font-medium" id="status-scrapper-worker">Idle</span>
                     </div>
                 </div>
 
@@ -249,10 +249,10 @@
                         </div>
                         <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Docker</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">Lê PDF do S3, processa chunks, envia para Gemma.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Fetches PDF from S3, splits chunks, feeds to Gemma.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
                         <span class="text-slate-500">Status:</span>
-                        <span class="text-emerald-400 font-medium" id="status-llm-worker">Ocioso</span>
+                        <span class="text-emerald-400 font-medium" id="status-llm-worker">Idle</span>
                     </div>
                 </div>
 
@@ -265,19 +265,19 @@
                         </div>
                         <span class="text-[9px] bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/20">AWS S3</span>
                     </div>
-                    <div class="text-[11px] text-slate-400 mb-2">Storage central de PDFs baixados pelos scrappers.</div>
+                    <div class="text-[11px] text-slate-400 mb-2">Central object storage for PDFs downloaded by scrappers.</div>
                     <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-800 text-[10px]">
-                        <span class="text-slate-500">Capacidade:</span>
-                        <span class="text-amber-400 font-medium" id="status-s3-storage">Ativo</span>
+                        <span class="text-slate-500">Capacity:</span>
+                        <span class="text-amber-400 font-medium" id="status-s3-storage">Active</span>
                     </div>
                 </div>
 
-                <!-- RÓTULOS DE FLUXO INTERATIVOS -->
+                <!-- Flow Labels -->
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 175px; top: 320px;">
-                    Lista processos
+                    List records
                 </div>
                 <div class="absolute text-[10px] bg-slate-950/90 text-slate-400 px-2 py-1 rounded border border-slate-800 z-10 select-none font-mono" style="left: 235px; top: 360px;">
-                    Cria inexistentes
+                    Create missing
                 </div>
                 <div class="absolute text-[10px] bg-emerald-950/90 text-emerald-400 px-2 py-1 rounded border border-emerald-800/60 z-10 select-none font-mono font-medium" style="left: 330px; top: 535px;">
                     Scrap PDF Event
@@ -310,138 +310,138 @@
     </main>
 
     <script>
-        // Dados de configuração de cada nó para renderizar no inspetor
+        // Node configuration metadata for inspection
         const nodeSpecs = {
             'django-api': {
                 name: 'Django Rest API',
-                desc: 'Serviço central responsável por registrar novos processos, salvar metadados consolidados no banco de dados relacional e realizar o merge/saneamento dos dados retornados pelo pipeline de IA.',
+                desc: 'Central backend service responsible for registering new court records, saving consolidated metadata to relational database, and sanitizing/merging AI pipeline output.',
                 tech: 'Python / Django REST',
                 event: 'REST HTTP (Sync)'
             },
             'ingest-worker': {
                 name: 'Ingest Worker (Schedules)',
-                desc: 'Worker baseado em tarefas periódicas (cron) responsável por monitorar tribunais, identificar processos novos e disparar eventos na fila para processamento assíncrono.',
+                desc: 'Periodic cron-based worker monitoring court portals, discovering newly filed records, and dispatching queue events for asynchronous processing.',
                 tech: 'Celery / Redis',
                 event: 'AMQP Publish (Async)'
             },
             'broker': {
                 name: 'RabbitMQ Message Broker',
-                desc: 'Garante o desacoplamento do Django API com workers de background. Mantém integridade das filas no disco caso algum worker perca conexão.',
+                desc: 'Decouples Django API from background workers. Persists queue state to disk in case workers disconnect.',
                 tech: 'RabbitMQ / AMQP',
                 event: 'AMQP Queue Routing'
             },
             'gemma-model': {
                 name: 'Gemma 3 LLM Model',
-                desc: 'Instância offline local do modelo Gemma 3 da Google, rodando em GPU dedicada e configurada para retornar extração de texto estritamente estruturada em JSON.',
+                desc: 'Dedicated local offline Google Gemma 3 model instance running on GPU, constrained to return strictly structured JSON output.',
                 tech: 'Ollama / vLLM',
                 event: 'HTTP POST (Inference)'
             },
             'scrapper-worker': {
                 name: 'Scrapper Worker',
-                desc: 'Trabalhador assíncrono que simula ações humanas e passa por firewalls de tribunais para consolidar PDFs das peças dos processos.',
+                desc: 'Asynchronous crawler simulating user browsing, navigating court firewalls, and bundling lawsuit PDFs.',
                 tech: 'Puppeteer / BeautifulSoup',
                 event: 'AMQP & AWS SDK Upload'
             },
             'llm-worker': {
                 name: 'LLM Worker pipeline',
-                desc: 'Consome eventos de extração, baixa o PDF bruto do S3, processa a quebra inteligente de texto em chunks e orquestra a chamada de inferência no modelo local.',
+                desc: 'Consumes extraction tasks, downloads raw PDFs from S3, orchestrates text chunking, and triggers local inference calls.',
                 tech: 'LangChain / PyPDF2',
                 event: 'AMQP & HTTP Post'
             },
             's3-storage': {
                 name: 'Amazon S3 Document Storage',
-                desc: 'Data lake de objetos altamente disponível e durável. Armazena as peças judiciais em PDF de forma consistente para auditoria técnica.',
+                desc: 'Highly available and durable object store keeping legal PDF documents for auditability and downstream analysis.',
                 tech: 'AWS S3 API',
                 event: 'Boto3 / AWS SDK Interface'
             }
         };
 
-        // Estado do simulador
+        // Simulator state
         let simulationInterval = null;
         let isRunning = true;
         let currentStep = 0;
         let hardwareTimer = null;
 
-        // Passos ordenados do pipeline de simulação
+        // Ordered simulation pipeline steps
         const simulationSteps = [
             {
-                name: 'Checagem Ingestão',
-                desc: 'Ingest-worker consulta Django API para ver se existem novos processos que não estão gravados no banco de dados local.',
+                name: 'Ingestion Check',
+                desc: 'Ingest-worker queries Django API to check for new records missing in the local database.',
                 pulseId: 'pulse-ingest-to-api',
                 activeCards: ['card-ingest-worker', 'card-django-api'],
-                nodeStatus: { 'django-api': 'Processando...', 'ingest-worker': 'Buscando pendentes...' },
+                nodeStatus: { 'django-api': 'Processing...', 'ingest-worker': 'Querying pending...' },
                 logs: []
             },
             {
-                name: 'Resposta da API',
-                desc: 'Django API retorna com a lista dos processos que precisam de extração. O Ingest-worker consolida as informações locais.',
+                name: 'API Response',
+                desc: 'Django API responds with records needing extraction. Ingest-worker consolidates local entries.',
                 pulseId: 'pulse-api-to-ingest',
                 activeCards: ['card-django-api', 'card-ingest-worker'],
-                nodeStatus: { 'django-api': 'Enviando resposta...', 'ingest-worker': 'Sincronizando...' },
+                nodeStatus: { 'django-api': 'Sending response...', 'ingest-worker': 'Syncing...' },
                 logs: []
             },
             {
-                name: 'Publicação de Evento',
-                desc: 'Ingest-worker gera uma mensagem na fila do Broker com os dados do processo pendente para disparar o scraping.',
+                name: 'Event Publishing',
+                desc: 'Ingest-worker publishes a broker message with record identifiers to trigger scraping.',
                 pulseId: 'pulse-ingest-to-broker',
                 activeCards: ['card-ingest-worker', 'card-broker'],
-                nodeStatus: { 'ingest-worker': 'Ocioso', 'broker': 'Mensagem Recebida!' },
+                nodeStatus: { 'ingest-worker': 'Idle', 'broker': 'Message Received!' },
                 logs: []
             },
             {
-                name: 'Consumo do Evento',
-                desc: 'O Scrapper-worker puxa a mensagem da fila para iniciar o crawler judicial em segundo plano.',
+                name: 'Consume Scraping Event',
+                desc: 'Scrapper-worker consumes the message to begin court crawler job in the background.',
                 pulseId: 'pulse-broker-to-scrapper',
                 activeCards: ['card-broker', 'card-scrapper-worker'],
-                nodeStatus: { 'broker': 'Mensagem consumida', 'scrapper-worker': 'Varrendo tribunal...' },
+                nodeStatus: { 'broker': 'Message consumed', 'scrapper-worker': 'Crawling court...' },
                 logs: []
             },
             {
-                name: 'Salvando Arquivo no S3',
-                desc: 'Scrapper-worker baixa todos os PDFs do processo, junta tudo em um único arquivo PDF consolidado e faz upload no bucket Amazon S3.',
+                name: 'Saving to S3',
+                desc: 'Scrapper-worker downloads all documents, merges into a consolidated PDF, and uploads to Amazon S3.',
                 pulseId: 'pulse-scrapper-to-s3',
                 activeCards: ['card-scrapper-worker', 'card-s3-storage'],
-                nodeStatus: { 'scrapper-worker': 'Fazendo upload S3...', 's3-storage': 'Armazenando PDF...' },
+                nodeStatus: { 'scrapper-worker': 'Uploading to S3...', 's3-storage': 'Storing PDF...' },
                 logs: []
             },
             {
-                name: 'Publicando Processamento IA',
-                desc: 'Com o PDF a salvo no S3, o Scrapper-worker publica um evento "LLM Input Ready" no broker para disparar a IA.',
+                name: 'Publishing AI Job',
+                desc: 'With the PDF safely in S3, Scrapper-worker publishes an "LLM Input Ready" event to the broker.',
                 pulseId: 'pulse-scrapper-to-broker',
                 activeCards: ['card-scrapper-worker', 'card-broker'],
-                nodeStatus: { 'scrapper-worker': 'Ocioso', 'broker': 'Recebendo Evento IA...' },
+                nodeStatus: { 'scrapper-worker': 'Idle', 'broker': 'Receiving AI Event...' },
                 logs: []
             },
             {
-                name: 'Consumo do Evento IA',
-                desc: 'O LLM-worker consome o evento e baixa o PDF bruto armazenado no bucket Amazon S3 para leitura de texto.',
+                name: 'Consume Scraping Event IA',
+                desc: 'LLM-worker consumes the event and prepares to download the raw PDF stored in S3.',
                 pulseId: 'pulse-broker-to-llm',
                 activeCards: ['card-broker', 'card-llm-worker'],
-                nodeStatus: { 'broker': 'Mensagem consumida', 'llm-worker': 'Preparando Chunks...' },
+                nodeStatus: { 'broker': 'Message consumed', 'llm-worker': 'Preparing Chunks...' },
                 logs: []
             },
             {
-                name: 'Leitura de Arquivo S3',
-                desc: 'O LLM-worker estabelece uma conexão de stream com o S3 para carregar as páginas do PDF e segmentar o texto em partes.',
+                name: 'Reading S3 Document',
+                desc: 'LLM-worker streams the PDF from S3 and segments text into token-optimized chunks.',
                 pulseId: 'pulse-llm-to-s3',
                 activeCards: ['card-llm-worker', 'card-s3-storage'],
-                nodeStatus: { 'llm-worker': 'Processando chunks...', 's3-storage': 'Servindo PDF...' },
+                nodeStatus: { 'llm-worker': 'Processing chunks...', 's3-storage': 'Streaming PDF...' },
                 logs: []
             },
             {
-                name: 'Inferencia de Modelo Local',
-                desc: 'O LLM-worker envia as partes estruturadas com instruções restritas (Structured JSON output) via API HTTP local para o modelo Gemma 3 rodando em porta 1234.',
+                name: 'Local Model Inference',
+                desc: 'LLM-worker submits structured prompt chunks to Gemma 3 on port 1234 for JSON entity extraction.',
                 pulseId: 'pulse-llm-to-gemma',
                 activeCards: ['card-llm-worker', 'card-gemma-model'],
-                nodeStatus: { 'llm-worker': 'Aguardando IA...', 'gemma-model': 'GPU Ativa/Inferencia' },
+                nodeStatus: { 'llm-worker': 'Awaiting AI...', 'gemma-model': 'GPU Active/Inference' },
                 logs: []
             },
             {
-                name: 'Fusão de Dados e Merge',
-                desc: 'O modelo retorna com o JSON e o LLM-worker manda para a Django API sincronizar e realizar o merge com os dados que já estavam na base de dados.',
+                name: 'Data Consolidation & Merge',
+                desc: 'Gemma 3 returns structured JSON. LLM-worker calls Django API to reconcile and merge into database.',
                 pulseId: 'pulse-llm-to-api',
                 activeCards: ['card-llm-worker', 'card-django-api'],
-                nodeStatus: { 'llm-worker': 'Ocioso', 'django-api': 'Fazendo Merge...' },
+                nodeStatus: { 'llm-worker': 'Idle', 'django-api': 'Merging data...' },
                 logs: []
             }
         ];
@@ -449,13 +449,13 @@
         function runSimulationStep() {
             const step = simulationSteps[currentStep];
 
-            // 1. Resetar estados visuais antigos
+            // 1. Reset visual styling
             document.querySelectorAll('.node-card').forEach(card => {
                 card.classList.remove('active', 'border-pink-500', 'border-purple-400', 'border-violet-500', 'border-amber-500');
                 card.classList.add('border-slate-700/60');
             });
             
-            // Oculta todos os pulsos SVG
+            // Hide all SVG pulses
             simulationSteps.forEach(s => {
                 const pulse = document.getElementById(s.pulseId);
                 if (pulse) pulse.classList.add('hidden');
@@ -467,7 +467,7 @@
                 }
             });
 
-            // 2. Destacar cartões ativos no passo atual
+            // 2. Highlight active cards
             step.activeCards.forEach(id => {
                 const card = document.getElementById(id);
                 if (card) {
@@ -485,7 +485,7 @@
                 }
             });
 
-            // 3. Ativar animação de fluxo no SVG
+            // 3. Activate SVG flow animation
             const activePulse = document.getElementById(step.pulseId);
             if (activePulse) activePulse.classList.remove('hidden');
             
@@ -495,7 +495,7 @@
                 activePath.setAttribute('stroke-width', '4');
             }
 
-            // 4. Atualizar Status nos Cartões de nós
+            // 4. Update status labels
             Object.keys(step.nodeStatus).forEach(nodeId => {
                 const statusEl = document.getElementById(`status-${nodeId}`);
                 if (statusEl) {
@@ -504,7 +504,7 @@
                 }
             });
 
-            // Resetar status dos nós ociosos
+            // Reset idle nodes
             const allNodeIds = ['django-api', 'ingest-worker', 'broker', 'gemma-model', 'scrapper-worker', 'llm-worker', 's3-storage'];
             allNodeIds.forEach(nodeId => {
                 if (!Object.keys(step.nodeStatus).includes(nodeId)) {
@@ -514,20 +514,20 @@
                             statusEl.innerText = '0 msg/s';
                             statusEl.className = 'text-purple-400 font-mono';
                         } else if (nodeId === 's3-storage') {
-                            statusEl.innerText = 'Ativo';
+                            statusEl.innerText = 'Active';
                             statusEl.className = 'text-amber-400 font-medium';
                         } else if (nodeId === 'gemma-model') {
                             statusEl.innerText = 'Local/Inference';
                             statusEl.className = 'text-violet-400 font-medium';
                         } else {
-                            statusEl.innerText = 'Ocioso';
+                            statusEl.innerText = 'Idle';
                             statusEl.className = 'text-emerald-400 font-medium';
                         }
                     }
                 }
             });
 
-            // Avançar para o próximo passo no pipeline
+            // Advance step
             currentStep = (currentStep + 1) % simulationSteps.length;
         }
 
@@ -545,10 +545,10 @@
         function closeDialog() {}
 
         window.onload = function() {
-            // Executa o primeiro passo do diagrama imediatamente
+            // Run the first diagram step immediately
             runSimulationStep();
             
-            // Configura o intervalo automático padrão para 4 segundos
+            // Configure standard auto interval to 4 seconds
             simulationInterval = setInterval(runSimulationStep, 4000);
         };
     </script>
