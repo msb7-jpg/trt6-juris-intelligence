@@ -1,46 +1,46 @@
-FROM python:3.13-slim
+# syntax=docker/dockerfile:1
+FROM python:3.13-slim AS builder
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.6 /uv /uvx /bin/
 
 WORKDIR /app
 
-# Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
-# Ensure binaries installed by pip --system are in PATH
-ENV PATH="/usr/local/bin:$PATH"
+ENV UV_LINK_MODE=copy
 
-# Copy workspace configuration and needed members
-COPY pyproject.toml uv.lock /app/
-COPY shared/ /app/shared/
-COPY apps/api/ /app/apps/api/
+# Cache de dependências: copia apenas os manifestos do workspace
+COPY pyproject.toml uv.lock ./
+COPY shared/pyproject.toml ./shared/
+COPY apps/api/pyproject.toml ./apps/api/
 
-# Export requirements and isolate local workspace packages
-RUN uv export --package api --no-dev --no-editable > requirements.txt && \
-    awk '/^\.\//{print $1}' requirements.txt > local-packages.txt && \
-    grep -v '^\./' requirements.txt > external-requirements.txt
+# Instala dependências externas no ambiente virtual /app/.venv
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-workspace --no-dev --package api
 
-# Build wheels for local packages
-RUN mkdir /wheels && \
-    if [ -s local-packages.txt ]; then \
-        while read -r pkg; do uv build --wheel --out-dir /wheels "$pkg"; done < local-packages.txt; \
-    fi
+# Copia código fonte de shared e api
+COPY shared/ ./shared/
+COPY apps/api/ ./apps/api/
 
-# Install external dependencies globally
-RUN uv pip install --system -r external-requirements.txt
+# Instala os pacotes locais no ambiente virtual
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --package api
 
-# Install local wheels
-RUN if [ -d /wheels ] && [ "$(ls -A /wheels)" ]; then \
-        uv pip install --system /wheels/*.whl; \
-    fi
 
-# Verify installation of internal dependencies
-RUN python -c "import shared; print('Success: shared module installed')"
+FROM python:3.13-slim AS runtime
 
-# Finalize app setup
-WORKDIR /app/apps/api
+WORKDIR /app
+
+# Copia o virtualenv pronto e adiciona ao PATH
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Copia código da aplicação
+COPY --from=builder /app/shared /app/shared
+COPY --from=builder /app/apps/api /app/apps/api
 
 COPY docker/entrypoints/api.sh /entrypoints/api.sh
 RUN chmod +x /entrypoints/api.sh
+
+WORKDIR /app/apps/api
 
 ENTRYPOINT [ "/entrypoints/api.sh" ]

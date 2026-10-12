@@ -1,51 +1,49 @@
-FROM python:3.13-slim
+# syntax=docker/dockerfile:1
+FROM python:3.13-slim AS builder
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.6 /uv /uvx /bin/
 
 WORKDIR /app
 
-# Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
-# Ensure binaries installed by pip --system are in PATH
-ENV PATH="/usr/local/bin:$PATH"
+ENV UV_LINK_MODE=copy
 
-# Copy workspace configuration and needed members
-COPY pyproject.toml uv.lock /app/
-COPY shared/ /app/shared/
-COPY apps/ingestion/ /app/apps/ingestion/
+# Cache de dependências: copia apenas os manifestos do workspace
+COPY pyproject.toml uv.lock ./
+COPY shared/pyproject.toml ./shared/
+COPY apps/ingestion/pyproject.toml ./apps/ingestion/
 
-# Export requirements and isolate local workspace packages
-RUN uv export --package ingestion --no-dev --no-editable > requirements.txt && \
-    awk '/^\.\//{print $1}' requirements.txt > local-packages.txt && \
-    grep -v '^\./' requirements.txt > external-requirements.txt
+# Instala dependências externas no ambiente virtual /app/.venv
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-workspace --no-dev --package ingestion
 
-# Build wheels for local packages
-RUN mkdir /wheels && \
-    if [ -s local-packages.txt ]; then \
-        while read -r pkg; do uv build --wheel --out-dir /wheels "$pkg"; done < local-packages.txt; \
-    fi
+# Copia código fonte de shared e ingestion
+COPY shared/ ./shared/
+COPY apps/ingestion/ ./apps/ingestion/
 
-# Install external dependencies globally
-RUN uv pip install --system -r external-requirements.txt
+# Instala os pacotes locais no ambiente virtual
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --package ingestion
 
-# Install local wheels
-RUN if [ -d /wheels ] && [ "$(ls -A /wheels)" ]; then \
-        uv pip install --system /wheels/*.whl; \
-    fi
 
-# Verify installation
-RUN python -c "import shared; import ingestion; print('Success: Packages installed')"
-# Verify entrypoint exists
-RUN which ingest || (echo "Entrypoint 'ingest' not found in PATH" && exit 1)
+FROM python:3.13-slim AS runtime
 
-# Install supercronic (cron runner for containers)
+WORKDIR /app
+
+# Copia o virtualenv pronto e adiciona ao PATH
+COPY --from=builder /app/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Copia código da aplicação
+COPY --from=builder /app/shared /app/shared
+COPY --from=builder /app/apps/ingestion /app/apps/ingestion
+
+# Instala supercronic (cron runner para containers)
 ADD --chmod=755 https://github.com/aptible/supercronic/releases/download/v0.2.30/supercronic-linux-amd64 /usr/local/bin/supercronic
 
-# Install crontab
+# Instala crontab
 COPY docker/cron/ingestion.crontab /etc/cron/ingestion.crontab
 
-# Finalize app setup
 WORKDIR /app/apps/ingestion
 
 CMD ["supercronic", "/etc/cron/ingestion.crontab"]
