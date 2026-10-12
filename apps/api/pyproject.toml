@@ -5,23 +5,24 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "shared", # Para usar os Schemas ao validar o que recebe dos Workers e para salvar o caminho do PDF no S3.
-    "datasets>=4.6.1",
+    "shared", # Schemas e utilitários compartilhados
+    "torch",
+    "sentence-transformers>=2.2.0",
     "django>=6.0.3",
     "django-filter",
     "djangorestframework>=3.16.1",
-    "hf>=1.5.0",
-    "pandas>=2.2.0,<3.1.0",
-    "pypdf>=6.9.1",
-    "django-stubs>=6.0.1",
-    "djangorestframework-stubs>=3.16.8",
-    "tabulate>=0.10.0",
     "django-silk>=5.5.0",
-    "pytest>=9.0.2",
-    "pytest-django>=4.11.1",
     "psycopg2-binary>=2.9.12",
     "pgvector>=0.2.0",
     "django-cors-headers>=4.4.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-django>=4.11.1",
+    "django-stubs>=6.0.1",
+    "djangorestframework-stubs>=3.16.8",
 ]
 
 [tool.uv.sources]
@@ -29,3 +30,11 @@ shared = { workspace = true }
 
 [tool.django-stubs]
 django_settings_module = "api.settings"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["api*", "core*"]
