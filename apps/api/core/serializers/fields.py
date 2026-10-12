@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from shared.formatters.currency import BRLParser
+from core.formatters.currency import BRLParser
 
 
 class BRLDecimalField(serializers.DecimalField):

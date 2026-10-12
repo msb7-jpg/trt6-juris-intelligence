@@ -11,7 +11,7 @@ BUSCA_SEMANTICA_ENDPOINT = "/api/processos/busca_semantica/"
 
 
 class TestProcessoViewsetBuscaSemantica(BaseProcessoViewsetTests):
-    @patch("shared.embeddings.embed_text")
+    @patch("core.embeddings.embed_text")
     def test_given_valid_query_when_post_busca_semantica_then_return_results_ordered_by_similarity(
         self,
         mock_embed

@@ -213,7 +213,7 @@ def adicionar_analise_ao_processo(numero_processo: str, grau: str, analise_data:
 
     # Pipeline Síncrona de Geração de Embeddings
     try:
-        from shared.embeddings import embed_text
+        from core.embeddings import embed_text
         texto = montar_texto_indexacao(processo)
         if texto:
             logger.info(f"Gerando embedding síncrono para processo_id={processo.id}...")
@@ -257,7 +257,7 @@ def levenshtein_distance(s1: str, s2: str) -> int:
 def buscar_processos_semanticos(consulta: str, top_k: int = 5, metrica: str = "cosseno") -> list[Processo]:
     """Realiza a busca vetorial por similaridade ou texto (Cosseno, Euclidiana, Manhattan, Jaccard, Levenshtein)."""
     from pgvector.django import CosineDistance, L1Distance, L2Distance
-    from shared.embeddings import embed_text
+    from core.embeddings import embed_text
 
     logger.info(f"Iniciando busca semântica para consulta: '{consulta}' | top_k={top_k} | metrica={metrica}")
 
@@ -329,7 +329,7 @@ def reindexar_processos_sem_embedding() -> int:
 
     logger.info(f"Encontrados {total} processos pendentes de indexação vetorial. Iniciando processamento...")
 
-    from shared.embeddings import embed_text
+    from core.embeddings import embed_text
 
     count = 0
     for processo in processos:
