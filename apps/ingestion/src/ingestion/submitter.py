@@ -27,11 +27,12 @@ class ProcessSubmitter:
         api_url: str = None,
         pending_api_url: str = None,
         pending_analise_api_url: str = None,
+        base_url: str = None,
     ):
-        base_url = env_manager.get_api_base_url().rstrip('/')
-        self.api_url = api_url or f"{base_url}/api/processos/deduplicar/"
-        self.pending_api_url = pending_api_url or f"{base_url}/api/processos/nao_possuem_pdf/"
-        self.pending_analise_api_url = pending_analise_api_url or f"{base_url}/api/processos/nao_possuem_analise/"
+        base = (base_url or env_manager.get_api_base_url()).rstrip('/')
+        self.api_url = api_url or f"{base}/api/processos/deduplicar/"
+        self.pending_api_url = pending_api_url or f"{base}/api/processos/nao_possuem_pdf/"
+        self.pending_analise_api_url = pending_analise_api_url or f"{base}/api/processos/nao_possuem_analise/"
 
     def submit(self, processos: list[dict]) -> list[ProcessoResumo] | None:
         try:

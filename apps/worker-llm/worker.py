@@ -90,6 +90,11 @@ def run_pipeline(self, numero_processo: str, grau: str, bucket_name: str, object
             api_url=api_url,
         )
     except Exception as exc:
+        if isinstance(exc, requests.exceptions.HTTPError) and getattr(exc, "response", None) is not None:
+            if exc.response.status_code == 400:
+                logger.error("Erro 400 da API (não retentável): %s", exc)
+                raise exc
+
         logger.exception(
             "Falha na task LLM. Reagendando tentativa: task_id=%s numero_processo=%s grau=%s",
             self.request.id,

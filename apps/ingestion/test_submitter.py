@@ -9,7 +9,7 @@ from ingestion.src.ingestion.submitter import ProcessSubmitter
 def submitter():
     return ProcessSubmitter(base_url="http://api:8000")
 
-@patch("apps.ingestion.src.ingestion.submitter.celery_app.send_task")
+@patch("shared.celery_client.app.send_task")
 def test_launch_scraper(mock_send_task, submitter):
     payload = {"key": "value"}
 
