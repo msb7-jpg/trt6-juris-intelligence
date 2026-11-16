@@ -7,7 +7,7 @@ import {
   type SecurityDashboardResponse,
   type StegoEmbedResponse,
 } from '@/services/security'
-import { Activity, AlertTriangle, BrainCircuit, Database, Image as ImageIcon, Lock, ShieldCheck, Swords, Unlock } from 'lucide-vue-next'
+import { Activity, AlertTriangle, BrainCircuit, Database, Image as ImageIcon, Lock, Play, ShieldCheck, Swords, Unlock } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
@@ -33,6 +33,7 @@ const attackSuite = ref<AttackSuiteResponse | null>(null)
 // Big Data + AI state
 const runningBigData = ref(false)
 const runningAI = ref(false)
+const runningDemo = ref(false)
 
 async function loadDashboard() {
   loadingDashboard.value = true
@@ -160,6 +161,42 @@ async function handleDetectAnomalies() {
   }
 }
 
+async function handleRunFullDemo() {
+  runningDemo.value = true
+  errorMessage.value = ''
+  plaintext.value = 'Dados sigilosos do processo TCU-2026 para cifragem dinamica e esteganografia.'
+  secret.value = 'ChaveSecretaDinamica#2026'
+  algorithm.value = 'spn'
+
+  try {
+    statusMessage.value = 'Demo (1/5): Cifrando e decifrando com chave dinamica...'
+    encryptedResult.value = await securityService.encrypt(plaintext.value, secret.value, algorithm.value)
+    const dec = await securityService.decrypt(encryptedResult.value, secret.value)
+    decryptedText.value = dec.plaintext
+
+    statusMessage.value = 'Demo (2/5): Ocultando payload em PNG (LSB) e verificando SHA-256...'
+    stegoResult.value = await securityService.embedSteganography(JSON.stringify(encryptedResult.value), stegoFile.value)
+    const ext = await securityService.extractSteganography(stegoResult.value.stego_image_b64)
+    extractedText.value = ext.extracted_payload
+
+    statusMessage.value = 'Demo (3/5): Executando suite de ataques (Forca Bruta, Diferencial e Estatistico)...'
+    attackSuite.value = await securityService.runAttackSuite(plaintext.value, secret.value, algorithm.value)
+
+    statusMessage.value = 'Demo (4/5): Gerando carga Big Data (2.000 eventos)...'
+    const bd = await securityService.simulateBigData(2000)
+
+    statusMessage.value = 'Demo (5/5): Rodando IA IsolationForest para detectar anomalias...'
+    const ai = await securityService.detectAnomalies()
+
+    await loadDashboard()
+    statusMessage.value = `Demo completa concluida! ${bd.inserted_events} eventos inseridos, ${ai.anomalies_detected} anomalias detectadas e avalanche de ${attackSuite.value.differential.avalanche_pct}%.`
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Erro ao executar demonstracao completa.'
+  } finally {
+    runningDemo.value = false
+  }
+}
+
 const eventsChartSeries = computed(() => [
   {
     name: 'Eventos',
@@ -205,10 +242,13 @@ onMounted(() => {
         <p>Projeto 2 — Criptografia Dinamica, Esteganografia LSB, Big Data, Deteccao de Anomalias e Analise de Ataques</p>
       </div>
       <div class="header-actions">
-        <button type="button" class="btn secondary" :disabled="runningBigData" @click="handleSimulateBigData">
+        <button type="button" class="btn demo" :disabled="runningDemo || runningBigData || runningAI" @click="handleRunFullDemo">
+          <Play :size="16" /> {{ runningDemo ? 'Executando Demo...' : 'Executar Demo Completa' }}
+        </button>
+        <button type="button" class="btn secondary" :disabled="runningDemo || runningBigData" @click="handleSimulateBigData">
           <Database :size="16" /> {{ runningBigData ? 'Gerando...' : 'Simular Big Data (2k)' }}
         </button>
-        <button type="button" class="btn primary" :disabled="runningAI" @click="handleDetectAnomalies">
+        <button type="button" class="btn primary" :disabled="runningDemo || runningAI" @click="handleDetectAnomalies">
           <BrainCircuit :size="16" /> {{ runningAI ? 'Analisando...' : 'Rodar IA Anomalias' }}
         </button>
       </div>
@@ -413,6 +453,7 @@ onMounted(() => {
   font-size: 0.85rem;
 }
 .btn.primary { background: #2563eb; color: #fff; }
+.btn.demo { background: #0f766e; color: #fff; }
 .btn.secondary { background: #e2e8f0; color: #0f172a; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .banner {
