@@ -1,255 +1,62 @@
-# JusTRT6 — Labor Court Intelligence & Semantic Search
+# JusTRT6 / SecureAI Lab — Cibersegurança Aplicada a Dados e IA (Partes 1 e 2)
 
-[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://www.python.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6.svg)](https://www.typescriptlang.org/)
-[![Django](https://img.shields.io/badge/Django-5.1-092E20.svg)](https://www.djangoproject.com/)
-[![REST APIs](https://img.shields.io/badge/REST_APIs-DRF-red.svg)](https://www.django-rest-framework.org/)
-[![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D.svg)](https://vuejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
-[![pgvector](https://img.shields.io/badge/pgvector-Vector_Search-2496ED.svg)](https://github.com/pgvector/pgvector)
-[![Celery](https://img.shields.io/badge/Celery-Distributed_Tasks-37814A.svg)](https://docs.celeryq.dev/)
-[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600.svg)](https://www.rabbitmq.com/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://www.docker.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-Testing-0A9EDC.svg)](https://docs.pytest.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+> **Branch:** `feat/ciberseguranca-parte1-e-2`  
+> **Disciplina:** Cibersegurança Aplicada a Dados e IA — CESAR School (Prof. Renatta Nigro)  
+> **Relatório Técnico Final (PDF):** [docs/Projeto2_Relatorio_Ciberseguranca.pdf](docs/Projeto2_Relatorio_Ciberseguranca.pdf)
 
-An end-to-end legal data platform that automatically ingests lawsuit records from **TRT-6** (Tribunal Regional do Trabalho da 6ª Região), bypasses PJe captchas using local OCR to download full docket PDFs, extracts structured legal data with local **LLMs** (**LangChain**), and provides sub-second **semantic vector search** via **PostgreSQL** (`pgvector`) with a modern **Vue.js (Vue 3)** dashboard.
+Este branch concentra a implementação prática, os experimentos e a documentação de **Cibersegurança (Partes 1 e 2)** sobre a arquitetura otimizada do repositório (`Django/DRF`, `PostgreSQL`, `MinIO` e `Vue 3`).
 
 ---
 
-## ⚡ Highlights & Impact
+## Documentação e Entregáveis
 
-- **End-to-End Automated Data Pipeline**: Eliminates manual case collection across DataJud and PJe portals using resilient distributed workers managed by **Celery** and **RabbitMQ**.
-- **Autonomous PJe Scraping**: Integrated **Playwright** browser automation coupled with local OCR (`ddddocr`) solves procedural captchas and downloads full PDF dockets without recurring captcha API costs.
-- **Structured Legal Extraction (NLP & LLMs)**: Local LLM worker (OpenAI-compatible / LM Studio / Gemma) orchestrated with **LangChain** extracts core judicial acts, outcomes (`ganhou`, `perdeu`, `acordo`), case amounts, court costs, and legal summaries directly conforming to strict Pydantic schemas.
-- **Sub-Second Vector Search**: **PostgreSQL** with `pgvector` and `sentence-transformers` (`paraphrase-multilingual-MiniLM-L12-v2`) performs cosine similarity search across indexed labor precedents in ~26ms.
-- **Modern Interactive UI**: High-density **Vue.js (Vue 3)** and **TypeScript** dashboard built with Vite, Pinia, and Vue Query, featuring natural language semantic search, predictive outcome indicators, and jurimetric case analytics.
-- **Complete Test Coverage & MLOps**: Comprehensive unit and integration test suites powered by **Pytest**, with experiment tracking, latency, and retrieval accuracy benchmarked in **MLflow** and visualized via **scikit-learn** and UMAP.
-
----
-
-## 🖥️ Interactive Preview
-
-| Semantic Search & Discovery | Case Details & Extracted Insights |
-| :---: | :---: |
-| ![JusTRT6 Semantic Search](docs/assets/pagina-inicial-solucao.gif) | ![Case Details & Judicial Insights](docs/assets/pagina-detalhes-solucao.gif) |
+- **Relatório Final em PDF (Pandoc + Eisvogel):** [docs/Projeto2_Relatorio_Ciberseguranca.pdf](docs/Projeto2_Relatorio_Ciberseguranca.pdf)
+- **Fonte Markdown do Relatório:** [docs/projeto2_relatorio_final.md](docs/projeto2_relatorio_final.md)
+- **Resultados Experimentais Coletados:** [docs/projeto2_relatorio_resultados.md](docs/projeto2_relatorio_resultados.md)
+- **Especificação e Arquitetura (Projeto 2):** [docs/projeto2_requisitos_e_arquitetura.md](docs/projeto2_requisitos_e_arquitetura.md)
+- **Otimização Docker + `uv`:** [docs/docker_uv_optimization_plan.md](docs/docker_uv_optimization_plan.md)
+- **Base da Parte 1 (SecureAI Lab):** [PLANO_ADEQUACAO_SEGURANCA.md](PLANO_ADEQUACAO_SEGURANCA.md) e [Relatório Projeto - SecureAI Lab - Cibersegurança.md](Relatório%20Projeto%20-%20SecureAI%20Lab%20-%20Cibersegurança.md)
 
 ---
 
-## 🏗️ System Architecture
+## Checklist de Rastreabilidade (`Aula 26 - Projeto 2.pdf` $\rightarrow$ Código)
 
-![JusTRT6 Architecture & Event Flow](docs/assets/flow.gif)
-
-The platform is designed as an asynchronous microservices pipeline containerized with **Docker**:
-1. **Data Ingestion (ETL)**: Batches are fetched from CNJ DataJud API, normalized, and deduplicated in **PostgreSQL**.
-2. **Autonomous Docket Scraping**: Processes missing documents trigger **Celery** tasks to solve PJe captchas via **Playwright** + `ddddocr`, uploading docket PDFs to S3-compatible MinIO object storage.
-3. **LLM Extraction & NLP**: `worker-llm` extracts full-text markdown from PDFs, prompting a local LLM via **LangChain** for structured JSON analysis conforming to Pydantic schemas.
-4. **Vector Embedding & Indexing**: Judicial summaries are embedded using `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (384 dimensions) and indexed directly into **PostgreSQL** via `pgvector`.
-5. **Interactive UI**: The **Vue.js** + **TypeScript** dashboard performs sub-second cosine distance searches against backend **REST APIs** and displays predictive legal insights.
-
----
-
-## 📦 Workspace Structure
-
-The project is managed as a unified [uv](https://github.com/astral-sh/uv) workspace:
-
-```
-.
-├── apps/
-│   ├── api/              # Django 5 + Django REST Framework (REST APIs) + PostgreSQL (pgvector)
-│   ├── ingestion/        # DataJud batch data pipeline client and normalizer
-│   ├── worker-scrapper/  # Playwright + ddddocr scraper for PJe TRT-6
-│   └── worker-llm/       # LLM docket parser using OpenDataDataLoader & LangChain
-├── frontend/             # Vue.js (Vue 3), TypeScript, Vite, Tailwind/CSS, Pinia, Vue Query
-├── shared/               # Shared models, S3/MinIO client, Celery client, and embeddings
-├── notebooks/            # Exploratory data analysis, scikit-learn & 2D UMAP embedding cluster plots
-├── scripts/              # Validation benchmark scripts (MLflow experiment tracking)
-├── docs/assets/          # Product screenshots, animated flows, and research charts
-├── compose.yaml          # Multi-container Docker orchestration (PostgreSQL, RabbitMQ, MinIO, workers)
-└── pyproject.toml        # Root uv workspace configuration
-```
+| Página | Trecho / Requisito do PDF | Onde é cumprido no código | Status |
+| :---: | :--- | :--- | :---: |
+| **Pág. 3 / Pág. 7** | *"Desenvolver um mecanismo de criptografia simétrica com geração dinâmica de chaves"* / *"Chave secreta: Deve influenciar a cifragem; Não pode ser fixa"* | `derive_dynamic_key` (`PBKDF2-HMAC-SHA256` com `salt` 16B e `nonce` 8B aleatórios por operação) em [apps/api/core/security/cipher.py](apps/api/core/security/cipher.py) | ✅ |
+| **Pág. 7** | *"Processo de cifragem: XOR, Substituição, Permutação, Blocos"* e *"Difusão / Confusão"* | `DynamicSPNCipher` (blocos de 128 bits, 8 rodadas em CBC: XOR com subchave HMAC, S-Box bijetiva 256B, P-Box e `_diffuse_block`) em [apps/api/core/security/cipher.py](apps/api/core/security/cipher.py) | ✅ |
+| **Pág. 10** | *"2. Criptografia AES-256 (Cifragem, chaves e integridade)"* | `encrypt_data(..., algorithm="aes-256-gcm")` com `AESGCM` + digest `SHA-256` em [apps/api/core/security/cipher.py](apps/api/core/security/cipher.py) | ✅ |
+| **Pág. 3 / Pág. 10** | *"Implementar esteganografia para ocultação de informações em imagens"* / *"3. Esteganografia"* | `embed_payload_in_png` e `extract_payload_from_png` (LSB em PNG com cabeçalho `JTCU` + verificação `SHA-256`) em [apps/api/core/security/steganography.py](apps/api/core/security/steganography.py) | ✅ |
+| **Pág. 5** | *"Onde o Big Data será implementado? Coletar logs das operações criptográficas; Registrar tentativas de acesso e falhas de autenticação; Armazenar eventos de detecção de anomalias; Analisar padrões de comportamento; Processar grandes conjuntos de dados experimentais"* | Model `SecurityEvent` em [apps/api/core/models/security_events.py](apps/api/core/models/security_events.py), `record_security_event` + `generate_experimental_events` (`bulk_create` + snapshot MinIO) em [apps/api/core/security/anomaly_detector.py](apps/api/core/security/anomaly_detector.py) e hooks em `LoginView` ([apps/api/core/views.py](apps/api/core/views.py)) e [apps/api/core/security/views.py](apps/api/core/security/views.py) | ✅ |
+| **Pág. 3 / Pág. 6** | *"Implementar inteligência artificial para detectar comportamentos anormais"* (5 anomalias: tentativas de auth, falhas de descriptografia, alterações em arquivos, acesso atípico, geração de eventos) | `detect_anomalies` (`IsolationForest` via `scikit-learn` + `_classify_actor_anomaly`) e model `AnomalyAlert` em [apps/api/core/security/anomaly_detector.py](apps/api/core/security/anomaly_detector.py) e [apps/api/core/models/security_events.py](apps/api/core/models/security_events.py) | ✅ |
+| **Pág. 3 / Pág. 8** | *"Simular ataques de força bruta, diferencial e estatístico em ambiente controlado"* | `run_brute_force_attack`, `run_differential_attack` e `run_statistical_attack` em [apps/api/core/security/attacks.py](apps/api/core/security/attacks.py) | ✅ |
+| **Pág. 3 / Pág. 9** | *"Avaliar o efeito avalanche, a distribuição estatística e a resistência do sistema"* (4 perguntas da Parte 4) | `evaluate_security_suite` (avalanche 1-bit texto/chave, entropia de Shannon, $\chi^2$ e `verdict`) em [apps/api/core/security/attacks.py](apps/api/core/security/attacks.py) | ✅ |
+| **Pág. 3 / Pág. 10** | *"Criar um dashboard para visualizar ataques, anomalias e resultados dos testes"* / *"6. Dashboard de segurança"* | Endpoints `/api/security/*` ([apps/api/core/security/views.py](apps/api/core/security/views.py), [apps/api/api/urls.py](apps/api/api/urls.py)) e rota `/seguranca` em [frontend/src/pages/SecurityDashboardPage/SecurityDashboardPage.vue](frontend/src/pages/SecurityDashboardPage/SecurityDashboardPage.vue) + [frontend/src/services/security.ts](frontend/src/services/security.ts) | ✅ |
+| **Pág. 11** | *"Relatório e slides: Descrição do algoritmo, Funcionamento, Testes realizados, Resultados, Conclusão"* | Relatório compilado com métricas reais e screenshots em [docs/Projeto2_Relatorio_Ciberseguranca.pdf](docs/Projeto2_Relatorio_Ciberseguranca.pdf) | ✅ |
 
 ---
 
-## 🚀 Getting Started
+## Como Executar
 
-### Prerequisites
-
-- **Python 3.13+**
-- **[uv](https://github.com/astral-sh/uv)** package manager
-- **[Docker](https://www.docker.com/)** and **Docker Compose**
-- **Node.js 20+** or **[Bun](https://bun.sh/)** (for frontend)
-
-### 1. Clone & Environment Configuration
-
+### 1. Subir Backend (`postgres`, `minio`, `rabbitmq`, `api`)
 ```bash
-git clone https://github.com/MigueldsBatista/trt6-juris-intelligence.git
-cd trt6-juris-intelligence
-
-# Copy sample environment variables
-cp .env.example .env
+docker compose up -d --build postgres minio api
+docker compose exec api python manage.py migrate
 ```
 
-### 2. Launch Infrastructure Services
-
-Start PostgreSQL with pgvector, RabbitMQ, and MinIO:
-
+### 2. Executar Testes Unitários & Experimento Ponta a Ponta
 ```bash
-docker compose up -d postgres rabbitmq minio
+# Testes unitários do módulo de segurança
+PYTHONPATH=shared/src:apps/api pytest apps/api/core/tests/test_security_projeto2.py -v
+
+# Experimento completo contra a API (gera docs/projeto2_relatorio_resultados.md)
+python3 scripts/run_projeto2_experiments.py
 ```
 
-Default credentials:
-- **PostgreSQL**: `localhost:5432` (db: `trt6`, user: `trt6`, password: `trt6`)
-- **RabbitMQ Management**: `http://localhost:15672` (user: `user`, password: `password`)
-- **MinIO Console**: `http://localhost:9001` (user: `minioadmin`, password: `minioadmin`)
-
-### 3. Backend & Workspace Setup
-
-Install dependencies across all workspace packages:
-
+### 3. Subir Frontend e Acessar o Dashboard
 ```bash
-uv sync
+cd frontend
+npm install
+npm run dev -- --port 5173
 ```
-
-Apply database migrations:
-
-```bash
-cd apps/api
-uv run python manage.py migrate
-cd ../..
-```
-
-Install Playwright browser binaries (for the scraper):
-
-```bash
-uv run playwright install chromium
-```
-
-### 4. Run the Platform
-
-#### Running via Docker Compose (Recommended)
-
-```bash
-docker compose up --build
-```
-
-#### Running Locally for Development
-
-In separate terminal sessions:
-
-```bash
-# 1. Start Django API
-cd apps/api && uv run python manage.py runserver 0.0.0.0:8000
-
-# 2. Start Scraping Worker
-uv run celery -A pje_scraper.worker worker --loglevel=INFO
-
-# 3. Start LLM Analysis Worker
-cd apps/worker-llm && uv run celery -A worker worker --loglevel=INFO
-
-# 4. Start Frontend
-cd frontend && bun install && bun dev
-```
-
----
-
-## 🔌 API Endpoints Reference
-
-Base URL: `http://localhost:8000/api/`
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/processos/deduplicar/` | Ingests and deduplicates processes from DataJud |
-| `GET` | `/api/processos/nao_possuem_pdf/` | Lists processes pending docket download |
-| `GET` | `/api/processos/nao_possuem_analise/` | Lists processes pending LLM legal analysis |
-| `POST` | `/api/processos/adicionar_analise/` | Receives structured LLM output and indexes embeddings |
-| `POST` | `/api/processos/busca_semantica/` | 384-dimensional cosine similarity semantic search |
-| `GET` | `/health/` | Service health status |
-
-### Semantic Search Example
-
-```bash
-curl -X POST http://localhost:8000/api/processos/busca_semantica/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "consulta": "horas extras não pagas e intervalo intrajornada suprimido",
-    "top_k": 5
-  }'
-```
-
----
-
-## 🧪 Testing & Code Quality
-
-Automated unit and integration testing across workspaces using **Pytest**:
-
-```bash
-# Run Django REST API tests (models, serializers, vector search services)
-cd apps/api && uv run pytest
-
-# Run PJe scraper pipeline and captcha tests
-cd apps/worker-scrapper && uv run pytest
-
-# Run LLM worker parsing and prompt formatting tests
-cd apps/worker-llm && uv run pytest
-```
-
-Static analysis, linting, and formatting check with Ruff:
-
-```bash
-uv run ruff check .
-```
-
----
-
-## 📊 Machine Learning (ML & NLP) Evaluation & Empirical Insights
-
-### 1. High-Dimensional Embedding Interpretability (UMAP & scikit-learn)
-Using 2D UMAP projection and **scikit-learn** on 384-dimensional dense vectors generated by `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`, labor lawsuits naturally cluster in semantic space according to judicial claim outcome (`ganhou`, `perdeu`, `acordo`, `sem_decisao`):
-
-<p align="center">
-  <img src="docs/assets/clusters_processos_juridicos.png" alt="2D UMAP Clusters of Legal Precedents" width="750"/>
-</p>
-
-### 2. Statistical Distributions & Jurimetrics
-Exploratory data analysis on dataset distributions generated in Jupyter notebooks (`notebooks/analise_e_interpretacao.ipynb`):
-
-| Outcome Distribution (`resultado_reclamante`) | Claim Value Log Distribution (`valor_causa_log`) |
-| :---: | :---: |
-| ![Outcome Distribution](docs/assets/distribuicao_resultado_reclamante.png) | ![Case Value Distribution](docs/assets/distribuicao_valor_causa.png) |
-
-### 3. Search Quality Benchmark & Experiment Tracking (MLflow)
-Retrieval quality, query latency, and Top-K accuracy are benchmarked using a curated legal *Golden Set* tracked with **MLflow**:
-
-```bash
-# Execute vector retrieval benchmark across PostgreSQL + pgvector
-uv run python scripts/validate_search.py
-
-# Launch MLflow Tracking UI
-uv run mlflow ui
-```
-
-<p align="center">
-  <img src="docs/assets/experimentos_ml.png" alt="MLflow Search Evaluation Dashboard" width="750"/>
-</p>
-
-Key observed metrics:
-- **Average Vector Retrieval Latency (`avg_latency_ms`)**: ~26.3 ms on **PostgreSQL** (`pgvector` cosine similarity)
-- **Dense Vector Representation**: 384 dimensions (`MiniLM-L12-v2` multilingual embeddings)
-- **MLOps & Pipeline**: Integrated experiment metrics logging with **MLflow** for continuous model evaluation
-
----
-
-## 📚 Academic Research & Paper
-
-This project was developed at **CESAR School** (Recife, Brazil) as an applied legal intelligence system:
-
-> **JusTRT6 Search: Uma Solução de Busca Semântica e Análise Jurídica Baseada em Embeddings para Apoio à Tomada de Decisão**  
-> *Beatriz Pereira, Matheus Velame, Miguel Batista, Rafael Andrade, Rafaela Vidal, Tiago Gurgel*  
-> 📄 Full Paper: [`machine-learning/jusTRT6-artigo-final.pdf`](machine-learning/jusTRT6-artigo-final.pdf)
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+Acesse `http://localhost:5173/seguranca` (ou a porta exibida pelo Vite).
