@@ -4,7 +4,25 @@
 > **Disciplina:** Cibersegurança Aplicada a Dados e IA — CESAR School (Prof. Renatta Nigro)  
 > **Relatório Técnico Final (PDF):** [docs/Projeto2_Relatorio_Ciberseguranca.pdf](docs/Projeto2_Relatorio_Ciberseguranca.pdf)
 
-Este branch concentra a implementação prática, os experimentos e a documentação de **Cibersegurança (Partes 1 e 2)** sobre a arquitetura otimizada do repositório (`Django/DRF`, `PostgreSQL`, `MinIO` e `Vue 3`).
+Este branch concentra a implementação prática, os experimentos e a documentação de **Cibersegurança (Partes 1 e 2)** sobre o ecossistema do **JusTRT6** (`Django/DRF`, `PostgreSQL`, `MinIO`, `RabbitMQ` e `Vue 3`).
+
+---
+
+## Contexto: O que já existia vs. O que foi construído vs. O que é simulado
+
+O **JusTRT6** nasceu como uma plataforma de inteligência jurídica (ingestão de processos, armazenamento de PDFs no MinIO, busca vetorial no PostgreSQL e interface Vue 3). Para atender aos requisitos da disciplina sem reescrever a plataforma do zero, reutilizamos a infraestrutura existente e adicionamos uma camada dedicada de segurança (`/api/security/` e `/seguranca`):
+
+| Camada / Funcionalidade | Origem | Propósito (Evitar / Detectar / Simular) | Como funciona na prática |
+| :--- | :--- | :--- | :--- |
+| **Autenticação por Token, PostgreSQL, MinIO, Vue 3 + ApexCharts** | **Já existia nativamente** | Base operacional | Endpoints `/api/auth/*`, banco relacional/vetorial, object storage S3 e biblioteca de gráficos já faziam parte do projeto. |
+| **Registro real de eventos de Auth (`AUTH_SUCCESS` / `AUTH_FAILURE`)** | **Integrado ao fluxo nativo** | **Detectar** tentativas reais de invasão | O `LoginView` em [apps/api/core/views.py](apps/api/core/views.py) passou a gravar eventos reais de sucesso e falha de login com IP e ator na tabela `SecurityEvent`. |
+| **Derivação Dinâmica de Chaves (`PBKDF2-HMAC-SHA256`)** | **Implementado (Proteção real)** | **Evitar** chaves fixas e reutilização de cifra | Cada operação gera `salt` (16B) e `nonce` (8B) aleatórios em [apps/api/core/security/cipher.py](apps/api/core/security/cipher.py), garantindo que o mesmo texto com o mesmo segredo gere saídas distintas. |
+| **Cifra `SPN Customizada` + `AES-256-GCM`** | **Implementado (Proteção + Estudo)** | **Evitar** exposição de dados e **demonstrar** XOR, S-Box, P-Box, blocos, confusão e difusão | `DynamicSPNCipher` (128 bits, 8 rodadas, CBC) implementa passo a passo os blocos exigidos na Parte 2; `AES-256-GCM` implementa a cifragem autenticada da arquitetura Parte 5. |
+| **Esteganografia LSB em PNG + Verificação `SHA-256`** | **Implementado (Proteção real)** | **Evitar** detecção visual do payload cifrado e **impedir** uso de imagem adulterada | Embute o payload cifrado nos bits menos significativos (LSB) do PNG com cabeçalho `JTCU` e digest `SHA-256`; qualquer alteração de 1 byte aborta a extração com `HTTP 400` e registra `FILE_TAMPERED`. |
+| **Simulação de Adulteração (1 byte)** | **Simulado (Ambiente controlado)** | **Testar** a barreira de integridade | Botão no dashboard e passo em [scripts/run_projeto2_experiments.py](scripts/run_projeto2_experiments.py) alteram propositalmente 1 byte do PNG para comprovar o bloqueio e o disparo do alerta. |
+| **Ataques (Força Bruta, Diferencial/Avalanche, Estatístico)** | **Simulado (Ambiente controlado)** | **Avaliar** resistência da cifra | A força bruta testa um **espaço reduzido (12 bits)** para medir a taxa real (`chaves/s`) e projetar matematicamente a inviabilidade nos espaços completos (128/256 bits). Os ataques diferencial e estatístico medem o **Efeito Avalanche (~50%)**, **Entropia de Shannon** e **Qui-Quadrado ($\chi^2$)**. |
+| **Carga Experimental Big Data (2k–5k eventos)** | **Simulado + Dados reais** | **Validar** escala e alimentar o modelo de IA | Além dos eventos reais de uso da API, `generate_experimental_events` insere em lote (`bulk_create`) milhares de eventos normais e 3 perfis anômalos sintéticos (força bruta, falhas de decifragem e adulteração em horário atípico) com snapshot no MinIO. |
+| **IA Detecção de Anomalias (`IsolationForest`)** | **Implementado (Detecção real)** | **Detectar** comportamentos anormais | Agrega `SecurityEvent` por ator (falhas de auth, falhas de decifragem, `FILE_TAMPERED`, acessos de madrugada e latência) e identifica automaticamente os atores fora do padrão em `AnomalyAlert`. |
 
 ---
 
