@@ -244,12 +244,30 @@ class LoginView(APIView):
         password = serializer.validated_data["password"]
         user = authenticate(request, username=email, password=password)
 
+        from core.models.security_events import SecurityEvent
+        from core.security.anomaly_detector import record_security_event
+
+        ip_address = request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")[0].strip() or request.META.get("REMOTE_ADDR")
+
         if user is None:
+            record_security_event(
+                SecurityEvent.EventType.AUTH_FAILURE,
+                actor_label=email,
+                ip_address=ip_address,
+                success=False,
+            )
             return Response(
                 {"mensagem": "E-mail ou senha invalidos."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
+        record_security_event(
+            SecurityEvent.EventType.AUTH_SUCCESS,
+            user=user,
+            actor_label=email,
+            ip_address=ip_address,
+            success=True,
+        )
         token, _ = Token.objects.get_or_create(user=user)
         return Response(_auth_payload(user, token), status=status.HTTP_200_OK)
 
