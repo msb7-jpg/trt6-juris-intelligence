@@ -43,9 +43,7 @@ class BRLParser:
     @staticmethod
     def _sanitize_whitespace_and_currency_symbol(raw_string: str) -> str:
         """Removes 'R$', spaces, and non-breaking spaces."""
-        # Remove case-insensitive 'R$'
         no_symbol = re.sub(r"(?i)r\$", "", raw_string)
-        # Remove regular spaces and non-breaking spaces (\u00A0)
         return no_symbol.replace("\u00A0", "").replace(" ", "").strip()
 
     @staticmethod
@@ -75,7 +73,6 @@ class BRLParser:
 
     @staticmethod
     def _validate_is_numeric(numeric_string: str, original_input: str) -> None:
-        # Garante que sobrou algo e que esse algo possui apenas números e o ponto decimal
         digits_only = numeric_string.replace(".", "")
         if not digits_only or not digits_only.isdigit():
             raise ValueError(f"Could not parse numeric value: {original_input}")

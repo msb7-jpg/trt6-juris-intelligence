@@ -1,1 +1,0 @@
-"""Formatters shared utilities."""

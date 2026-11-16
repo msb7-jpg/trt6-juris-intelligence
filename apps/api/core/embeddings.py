@@ -1,7 +1,7 @@
 from shared.logger import get_logger
 from shared.singleton import Singleton
 
-logger = get_logger("shared.embeddings")
+logger = get_logger("core.embeddings")
 
 try:
     from sentence_transformers import SentenceTransformer
