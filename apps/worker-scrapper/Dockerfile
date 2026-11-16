@@ -1,9 +1,34 @@
+# syntax=docker/dockerfile:1
+FROM python:3.13-slim AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:0.6 /uv /uvx /bin/
+
+WORKDIR /app
+
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
+
+# Copy workspace metadata for dependency resolution caching
+COPY pyproject.toml uv.lock ./
+COPY shared/pyproject.toml ./shared/
+COPY apps/worker-scrapper/pyproject.toml ./apps/worker-scrapper/
+
+# Install external dependencies using uv cache mount
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-install-workspace --no-dev --package worker-scrapper
+
+# Copy application and shared source code
+COPY shared/ ./shared/
+COPY apps/worker-scrapper/ ./apps/worker-scrapper/
+
+# Install project and local workspace packages
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --package worker-scrapper
+
+# Runtime stage
 FROM python:3.13-slim
 
-# Install uv
-COPY --from=ghcr.io/astral-sh/uv@sha256:2381d6aa60c326b71fd40023f921a0a3b8f91b14d5db6b90402e65a635053709 /uv /uvx /bin/
-
-# System deps for Playwright
+# System deps for Playwright and Chromium
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libnss3 libatk-bridge2.0-0 libxkbcommon0 libxcomposite1 \
@@ -12,45 +37,18 @@ RUN apt-get update && \
         libxcb1 libx11-6 libxrender1 libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# Enable bytecode compilation
-ENV UV_COMPILE_BYTECODE=1
-# Ensure binaries installed by pip --system are in PATH
-ENV PATH="/usr/local/bin:$PATH"
-
-# Copy workspace configuration and needed members
-COPY pyproject.toml uv.lock /app/
-COPY shared/ /app/shared/
-COPY apps/worker-scrapper/ /app/apps/worker-scrapper/
-
-# Export requirements and isolate local workspace packages
-RUN uv export --package worker-scrapper --no-dev --no-editable > requirements.txt && \
-    awk '/^\.\//{print $1}' requirements.txt > local-packages.txt && \
-    grep -v '^\./' requirements.txt > external-requirements.txt
-
-# Build wheels for local packages
-RUN mkdir /wheels && \
-    if [ -s local-packages.txt ]; then \
-        while read -r pkg; do uv build --wheel --out-dir /wheels "$pkg"; done < local-packages.txt; \
-    fi
-
-# Install external dependencies globally
-RUN uv pip install --system -r external-requirements.txt
-
-# Install local wheels
-RUN if [ -d /wheels ] && [ "$(ls -A /wheels)" ]; then \
-        uv pip install --system /wheels/*.whl; \
-    fi
-
-# Playwright browsers
-RUN python -m playwright install --with-deps chromium
-
-# Verify installation
-RUN python -c "import shared; print('Success: shared module installed')"
-
-# Finalize app setup
 WORKDIR /app/apps/worker-scrapper
+
+# Copy the pre-built virtual environment and source trees
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/shared /app/shared
+COPY --from=builder /app/apps/worker-scrapper /app/apps/worker-scrapper
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
+
+# Install Playwright browser binaries
+RUN python -m playwright install --with-deps chromium
 
 COPY docker/entrypoints/celery.sh /entrypoints/celery.sh
 RUN chmod +x /entrypoints/celery.sh
