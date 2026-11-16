@@ -3,6 +3,7 @@ import HomePage from '@/pages/HomePage/HomePage.vue'
 import ProcessDetailPage from '@/pages/ProcessDetailPage/ProcessDetailPage.vue'
 import ProfilePage from '@/pages/ProfilePage/ProfilePage.vue'
 import SavedSearchesPage from '@/pages/SavedSearchesPage/SavedSearchesPage.vue'
+import SecurityDashboardPage from '@/pages/SecurityDashboardPage/SecurityDashboardPage.vue'
 import SettingsPage from '@/pages/SettingsPage/SettingsPage.vue'
 import { useAuthStore } from '@/stores/auth'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -15,6 +16,7 @@ const router = createRouter({
     { path: '/processos/:numeroProcesso/:grau', component: ProcessDetailPage },
     { path: '/buscas-salvas', component: SavedSearchesPage, meta: { requiresAuth: true } },
     { path: '/perfil', component: ProfilePage, meta: { requiresAuth: true } },
+    { path: '/seguranca', component: SecurityDashboardPage },
     { path: '/configuracoes', component: SettingsPage },
   ],
 })

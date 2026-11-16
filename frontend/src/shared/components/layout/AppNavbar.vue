@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { BookmarkCheck, Home, LogIn, LogOut, Settings, UserRound } from 'lucide-vue-next'
+import { BookmarkCheck, Home, LogIn, LogOut, Settings, ShieldCheck, UserRound } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -17,6 +17,7 @@ interface NavLink {
 
 const allLinks: NavLink[] = [
   { to: '/', label: 'Principal', icon: Home },
+  { to: '/seguranca', label: 'Seguranca', icon: ShieldCheck },
   { to: '/buscas-salvas', label: 'Minhas buscas', icon: BookmarkCheck, requiresAuth: true },
   { to: '/perfil', label: 'Perfil', icon: UserRound, requiresAuth: true },
   { to: '/configuracoes', label: 'Configuracoes', icon: Settings },
