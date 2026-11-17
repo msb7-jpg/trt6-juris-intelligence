@@ -2,6 +2,11 @@
 title: "Projeto 2 — Sistema Criptográfico, Esteganografia, Big Data, IA e Análise de Ataques"
 subtitle: "Disciplina: Cibersegurança Aplicada a Dados e IA (CESAR School)"
 author:
+  - "Rafaela Vidal"
+  - "Ygor Rosa"
+  - "Beatriz Pereira"
+  - "Manuela Cavalcanti"
+  - "Matheus Lucena"
   - "Miguel Batista"
 date: "Novembro de 2026"
 subject: "Cibersegurança Aplicada a Dados e IA"
@@ -13,8 +18,6 @@ titlepage-rule-color: "38BDF8"
 titlepage-rule-height: 2
 toc: true
 toc-own-page: true
-lof: true
-lot: true
 listings: true
 colorlinks: true
 linkcolor: "blue"
@@ -23,8 +26,6 @@ header-left: "Projeto 2 — Cibersegurança Aplicada a Dados e IA"
 header-right: "jurisTCU"
 footer-left: "CESAR School — 2026"
 footer-right: "Página \\thepage"
-header-includes: |
-  \newcounter{none}
 ---
 
 # 1. Descrição do Algoritmo
