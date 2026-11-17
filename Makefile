@@ -1,4 +1,12 @@
-.PHONY: worker worker-llm test test-api test-worker-scrapper test-worker-llm test-frontend
+.PHONY: dev dev-down worker worker-llm test test-api test-worker-scrapper test-worker-llm test-frontend
+
+dev:
+	docker compose up -d --wait postgres
+	docker compose up -d --no-deps api
+	cd frontend && ([ -d node_modules ] || bun install) && bun run dev -- --port 5173
+
+dev-down:
+	docker compose stop api postgres
 
 worker:
 	# Limita a concorrência ao número de CPUs disponíveis (ou ajuste para metade, se preferir)
